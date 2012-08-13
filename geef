@@ -14,6 +14,10 @@ main([Command|_Args]) ->
         [Object|_None] = _Rest,
         Exists = geef:object_exists(Path, Object),
         io:format("Exists: ~w~n", [Exists]);
+      "repo-path" ->
+	[Path|_Rest] = _Args,
+	Repo = geef:repository(Path),
+	io:format("Repository path: ~s~n", [geef:repository_path(Repo)]);
       _Else ->
         usage()
     end;
