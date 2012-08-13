@@ -1,5 +1,6 @@
 -module(geef).
 -export([start/0, hex_to_raw/1, object_exists/2]).
+-on_load(start/0).
 
 start() ->
     case code:priv_dir(geef) of
