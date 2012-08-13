@@ -3,7 +3,6 @@
 %%! debug verbose -noshell -pa ebin
 
 main([Command|_Args]) ->
-    geef:start(),
     case Command of
       "h2r" ->
         [Object|_Rest] = _Args,
