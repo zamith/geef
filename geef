@@ -2,17 +2,19 @@
 %% -*- erlang -*-
 %%! debug verbose -noshell -pa ebin
 
+main(["exists"|_Args]) ->
+    [Path|_Rest] = _Args,
+    [Object|_] = _Rest,
+    Repo = geef:repository(Path),
+    Odb = geef:repository_odb(Repo),
+    Exists = geef:odb_exists(Odb, Object),
+    io:format("Exists: ~w~n", [Exists]);
 main([Command|_Args]) ->
     case Command of
       "h2r" ->
         [Object|_Rest] = _Args,
         Raw = geef:hex_to_raw(Object),
         io:format("Raw: ~w~n", [Raw]);
-      "exists" ->
-        [Path|_Rest] = _Args,
-        [Object|_None] = _Rest,
-        Exists = geef:object_exists(Path, Object),
-        io:format("Exists: ~w~n", [Exists]);
       "repo-path" ->
 	[Path|_Rest] = _Args,
 	Repo = geef:repository(Path),
