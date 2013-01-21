@@ -1,6 +1,7 @@
 #include "erl_nif.h"
 #include "repository.h"
 #include "reference.h"
+#include "oid.h"
 #include "geef.h"
 #include <stdio.h>
 #include <string.h>
@@ -78,6 +79,7 @@ static ErlNifFunc geef_funcs[] =
 	{"reference_lookup", 2, geef_reference_lookup},
 	{"reference_resolve", 1, geef_reference_resolve},
 	{"reference_id", 1, geef_reference_id},
+	{"oid_fmt", 1, geef_oid_fmt},
 };
 
 ERL_NIF_INIT(geef, geef_funcs, load, NULL, NULL, unload)

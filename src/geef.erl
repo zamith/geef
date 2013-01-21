@@ -2,7 +2,7 @@
 -export([hex_to_raw/1, repository/1, repository_get_path/1, repository_get_odb/1,
 	 repository_init/2, repository_is_bare/1, repository_get_workdir/1, reference_list/1,
 	 reference_to_id/2, reference_glob/2, reference_lookup/2, reference_resolve/1,
-	 reference_id/1, odb_object_exists/2]).
+	 reference_id/1, odb_object_exists/2, oid_fmt/1]).
 -on_load(load_enif/0).
 
 hex_to_raw(_Val) ->
@@ -53,6 +53,9 @@ repository(Path) ->
     end.
 
 odb_object_exists(_Val, _Val) ->
+    nif_error(?LINE).
+
+oid_fmt(_Oid) ->
     nif_error(?LINE).
 
 nif_error(Line) ->
