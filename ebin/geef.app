@@ -3,7 +3,7 @@
   {description, ""},
   {vsn, "0.0.1"},
   {modules, [
-             geef, repository
+             geef, repository, odb
             ]},
   {registered, []},
   {applications, [

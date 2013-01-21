@@ -1,7 +1,8 @@
 -module(geef).
--export([hex_to_raw/1, repository/1, repository_get_path/1, repository_odb/1,
-	 odb_exists/2, repository_init/2, repository_is_bare/1, repository_get_workdir/1, reference_list/1,
-	 reference_to_id/2, reference_glob/2, reference_lookup/2, reference_resolve/1]).
+-export([hex_to_raw/1, repository/1, repository_get_path/1, repository_get_odb/1,
+	 repository_init/2, repository_is_bare/1, repository_get_workdir/1, reference_list/1,
+	 reference_to_id/2, reference_glob/2, reference_lookup/2, reference_resolve/1,
+	 odb_object_exists/2]).
 -on_load(load_enif/0).
 
 hex_to_raw(_Val) ->
@@ -47,15 +48,8 @@ repository(Path) ->
 	other -> other
     end.
 
-repository_odb({repository, Handle}) ->
-    {ok, Odb} = repository_get_odb(Handle),
-    {ok, {odb, Odb}}.
-
 odb_object_exists(_Val, _Val) ->
     nif_error(?LINE).
-
-odb_exists({odb, Handle}, Sha) ->
-    odb_object_exists(Handle, Sha).
 
 nif_error(Line) ->
     exit({nif_not_loaded,module,?MODULE,line,Line}).

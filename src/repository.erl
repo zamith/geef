@@ -12,3 +12,11 @@ bare() ->
 
 references() ->
     geef:reference_list(Handle).
+
+odb() ->
+    case geef:repository_get_odb(Handle) of
+	{ok, Odb} ->
+	    odb:new(Odb);
+	other ->
+	    other
+    end.
