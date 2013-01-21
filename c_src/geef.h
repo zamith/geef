@@ -11,8 +11,8 @@ typedef struct {
     ERL_NIF_TERM true;
     ERL_NIF_TERM false;
     ERL_NIF_TERM repository;
-} geef_atoms_t;
+} geef_atoms;
 
-extern geef_atoms_t geef_atoms;
+extern geef_atoms atoms;
 
 #endif

@@ -1,5 +1,7 @@
 -module(geef).
--export([hex_to_raw/1, repository/1, repository_path/1, repository_odb/1, odb_exists/2]).
+-export([hex_to_raw/1, repository/1, repository_get_path/1, repository_odb/1,
+	 odb_exists/2, repository_init/2, repository_is_bare/1, repository_get_workdir/1, reference_list/1,
+	 reference_to_id/2, reference_glob/2, reference_lookup/2, reference_resolve/1]).
 -on_load(load_enif/0).
 
 hex_to_raw(_Val) ->
@@ -8,22 +10,46 @@ hex_to_raw(_Val) ->
 repository_open(_Val) ->
     nif_error(?LINE).
 
+repository_is_bare(_Handle) ->
+    nif_error(?LINE).
+
 repository_get_path(_Val) ->
+    nif_error(?LINE).
+
+repository_get_workdir(_Handle) ->
     nif_error(?LINE).
 
 repository_get_odb(_Val) ->
     nif_error(?LINE).
 
-repository_path({repository, Handle}) ->
-    repository_get_path(Handle).
+repository_init(_Path, _Bare) ->
+    nif_error(?LINE).
+
+reference_list(_Repo) ->
+    nif_error(?LINE).
+
+reference_to_id(_Repo, _Refname) ->
+    nif_error(?LINE).
+
+reference_glob(_Repo, _Glob) ->
+    nif_error(?LINE).
+
+reference_lookup(_Repo, _Refname) ->
+    nif_error(?LINE).
+
+reference_resolve(_Handle) ->
+    nif_error(?LINE).
 
 repository(Path) ->
-    {ok, Repository} = repository_open(Path),
-    {repository, Repository}.
+    case repository_open(Path) of
+	{ok, Handle}  ->
+	    repository:new(Handle);
+	other -> other
+    end.
 
 repository_odb({repository, Handle}) ->
     {ok, Odb} = repository_get_odb(Handle),
-    {odb, Odb}.
+    {ok, {odb, Odb}}.
 
 odb_object_exists(_Val, _Val) ->
     nif_error(?LINE).
