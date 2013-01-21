@@ -45,7 +45,8 @@ repository(Path) ->
     case repository_open(Path) of
 	{ok, Handle}  ->
 	    repository:new(Handle);
-	other -> other
+	Other ->
+	    Other
     end.
 
 odb_object_exists(_Val, _Val) ->

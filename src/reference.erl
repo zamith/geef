@@ -5,5 +5,6 @@ resolve() ->
     case geef:reference_resolve(Handle) of
 	{ok, Ref} ->
 	    reference:new(Ref);
-	other -> other
+	Other ->
+	    Other
     end.
