@@ -1,5 +1,5 @@
 -module(repository, [Handle]).
--export([path/0, workdir/0, bare/0, references/0, odb/0, lookup/1]).
+-export([path/0, workdir/0, bare/0, references/0, reference_glob/1, odb/0, lookup/1]).
 
 -spec path() -> binary().
 path() ->
@@ -16,6 +16,10 @@ bare() ->
 -spec references() -> [binary()] | [].
 references() ->
     geef:reference_list(Handle).
+
+-spec reference_glob(binary()) -> [binary()].
+reference_glob(Glob) ->
+    geef:reference_glob(Handle, Glob).
 
 odb() ->
     case geef:repository_get_odb(Handle) of
