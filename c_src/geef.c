@@ -77,6 +77,7 @@ static ErlNifFunc geef_funcs[] =
 	{"reference_glob", 2, geef_reference_glob},
 	{"reference_lookup", 2, geef_reference_lookup},
 	{"reference_resolve", 1, geef_reference_resolve},
+	{"reference_id", 1, geef_reference_id},
 };
 
 ERL_NIF_INIT(geef, geef_funcs, load, NULL, NULL, unload)

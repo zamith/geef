@@ -15,6 +15,7 @@ ERL_NIF_TERM geef_reference_to_id(ErlNifEnv *env, int argc, const ERL_NIF_TERM a
 ERL_NIF_TERM geef_reference_glob(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
 ERL_NIF_TERM geef_reference_lookup(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
 ERL_NIF_TERM geef_reference_resolve(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
+ERL_NIF_TERM geef_reference_id(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
 
 void geef_ref_free(ErlNifEnv *env, void *cd);
 

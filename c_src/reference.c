@@ -160,6 +160,33 @@ geef_reference_glob(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	return data.list;
 }
 
+static int bin_from_oid(ErlNifBinary *bin, const git_oid *id)
+{
+	if (!enif_alloc_binary(GIT_OID_RAWSZ, bin))
+		return -1;
+
+	memcpy(bin->data, id, GIT_OID_RAWSZ);
+	return 0;
+}
+
+ERL_NIF_TERM
+geef_reference_id(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
+{
+	geef_ref *ref;
+	ErlNifBinary bin;
+	const git_oid *id;
+
+	if (!enif_get_resource(env, argv[0], geef_ref_type, (void **) &ref))
+		return enif_make_badarg(env);
+
+	id = git_reference_target(ref->ref);
+
+	if (bin_from_oid(&bin, id) < 0)
+		return atoms.error;
+
+	return enif_make_binary(env, &bin);
+}
+
 ERL_NIF_TERM
 geef_reference_to_id(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 {
@@ -186,9 +213,8 @@ geef_reference_to_id(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 		return geef_error(env);
 	}
 
-	if (!enif_alloc_binary(GIT_OID_RAWSZ, &bin))
+	if (bin_from_oid(&bin, &id) < 0)
 		return atoms.error;
 
-	memcpy(bin.data, &id, GIT_OID_RAWSZ);
 	return enif_make_binary(env, &bin);
 }
