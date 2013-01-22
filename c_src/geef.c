@@ -80,6 +80,7 @@ static ErlNifFunc geef_funcs[] =
 	{"reference_resolve", 1, geef_reference_resolve},
 	{"reference_id", 1, geef_reference_id},
 	{"oid_fmt", 1, geef_oid_fmt},
+	{"oid_parse", 1, geef_oid_parse},
 };
 
 ERL_NIF_INIT(geef, geef_funcs, load, NULL, NULL, unload)

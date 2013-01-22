@@ -1,6 +1,7 @@
 #include "geef.h"
 #include "repository.h"
 #include "reference.h"
+#include "oid.h"
 #include <string.h>
 #include <git2.h>
 
@@ -160,15 +161,6 @@ geef_reference_glob(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	return data.list;
 }
 
-static int bin_from_oid(ErlNifBinary *bin, const git_oid *id)
-{
-	if (!enif_alloc_binary(GIT_OID_RAWSZ, bin))
-		return -1;
-
-	memcpy(bin->data, id, GIT_OID_RAWSZ);
-	return 0;
-}
-
 ERL_NIF_TERM
 geef_reference_id(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 {
@@ -181,7 +173,7 @@ geef_reference_id(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 
 	id = git_reference_target(ref->ref);
 
-	if (bin_from_oid(&bin, id) < 0)
+	if (geef_oid_bin(&bin, id) < 0)
 		return atoms.error;
 
 	return enif_make_binary(env, &bin);
@@ -213,7 +205,7 @@ geef_reference_to_id(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 		return geef_error(env);
 	}
 
-	if (bin_from_oid(&bin, &id) < 0)
+	if (geef_oid_bin(&bin, &id) < 0)
 		return atoms.error;
 
 	return enif_make_binary(env, &bin);
