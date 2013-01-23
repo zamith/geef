@@ -23,8 +23,8 @@ in it.
 
 The API looks basically like this:
 
-    Repo = geef:repository(<<".">>).
-    Workdir = Repo:workdir().
+    Repo = geef_repo:open(<<".">>).
+    Workdir = geef_repo:workdir(Repo).
     Odb = geef:repository_odb(Repo).
     Exists = Odb:exists(HexSha).
 

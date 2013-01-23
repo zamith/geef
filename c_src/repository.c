@@ -48,7 +48,7 @@ geef_repository_init(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	term_repo = enif_make_resource(env, res_repo);
 	enif_release_resource(res_repo);
 
-	return enif_make_tuple2(env, atoms.repository, term_repo);
+	return enif_make_tuple2(env, atoms.ok, term_repo);
 }
 
 ERL_NIF_TERM
@@ -61,7 +61,7 @@ geef_repository_open(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	ErlNifBinary bin;
 	ERL_NIF_TERM term_repo;
 
-	if (!enif_inspect_binary(env, argv[0], &bin))
+	if (!enif_inspect_iolist_as_binary(env, argv[0], &bin))
 		return enif_make_badarg(env);
 
 	path = malloc(bin.size + 1);
