@@ -2,7 +2,7 @@
 
 -export([open/1, init/2, path/1, workdir/1, is_bare/1, references/1]).
 
--record(repo, {handle}).
+-include("geef_records.hlr").
 
 path(#repo{handle=Handle}) ->
     geef:repository_get_path(Handle).

@@ -1,0 +1,3 @@
+-record(ref, {handle}).
+-record(repo, {handle}).
+-record(odb, {handle}).
