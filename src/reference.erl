@@ -1,5 +1,5 @@
 -module(reference, [Handle]).
--export([resolve/0, id/0]).
+-export([resolve/0, id/0, type/0]).
 
 resolve() ->
     case geef:reference_resolve(Handle) of
@@ -12,3 +12,7 @@ resolve() ->
 -spec id() -> binary().
 id() ->
     geef:reference_id(Handle).
+
+-spec type() -> oid | symbolic | error.
+type() ->
+    geef:reference_type(Handle).

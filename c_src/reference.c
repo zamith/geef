@@ -210,3 +210,30 @@ geef_reference_to_id(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 
 	return enif_make_binary(env, &bin);
 }
+
+ERL_NIF_TERM
+geef_reference_type(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
+{
+	geef_ref *ref;
+	int type;
+	ERL_NIF_TERM term_type;
+
+	if (!enif_get_resource(env, argv[0], geef_ref_type, (void **) &ref))
+		return enif_make_badarg(env);
+
+	type = git_reference_type(ref->ref);
+
+	switch (type) {
+	case GIT_REF_OID:
+		term_type = atoms.oid;
+		break;
+	case GIT_REF_SYMBOLIC:
+		term_type = atoms.symbolic;
+		break;
+	default:
+		term_type = atoms.error;
+		break;
+	}
+
+	return term_type;
+}

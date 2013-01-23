@@ -40,6 +40,8 @@ static int load(ErlNifEnv *env, void **priv, ERL_NIF_TERM load_info)
 	atoms.true = enif_make_atom(env, "true");
 	atoms.false = enif_make_atom(env, "false");
 	atoms.repository = enif_make_atom(env, "repository");
+	atoms.oid = enif_make_atom(env, "oid");
+	atoms.symbolic = enif_make_atom(env, "symbolic");
 
 	return 0;
 }
@@ -79,6 +81,7 @@ static ErlNifFunc geef_funcs[] =
 	{"reference_lookup", 2, geef_reference_lookup},
 	{"reference_resolve", 1, geef_reference_resolve},
 	{"reference_id", 1, geef_reference_id},
+	{"reference_type", 1, geef_reference_type},
 	{"oid_fmt", 1, geef_oid_fmt},
 	{"oid_parse", 1, geef_oid_parse},
 };
