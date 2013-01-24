@@ -25,7 +25,7 @@ geef_repository_init(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	ErlNifBinary bin;
 	ERL_NIF_TERM term_repo;
 
-	if (!enif_inspect_binary(env, argv[0], &bin))
+	if (!enif_inspect_iolist_as_binary(env, argv[0], &bin))
 		return enif_make_badarg(env);
 
 	path = malloc(bin.size + 1);
