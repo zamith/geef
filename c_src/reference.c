@@ -48,7 +48,7 @@ geef_reference_lookup(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	geef_ref *res_ref;
 	git_reference *ref;
 	ErlNifBinary bin;
-	ERL_NIF_TERM list, term_ref;
+	ERL_NIF_TERM term_ref;
 	char *name;
 	int error;
 
@@ -115,7 +115,6 @@ static int append_to_list(const char *name, void *payload)
 {
 	struct list_data *data = (struct list_data *) payload;
 	ErlNifBinary bin;
-	ERL_NIF_TERM list;
 	size_t len = strlen(name);
 
 	if (!enif_alloc_binary(len, &bin))
@@ -131,7 +130,6 @@ geef_reference_glob(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 {
 	char *glob;
 	int error;
-	git_strarray array;
 	geef_repository *repo;
 	ErlNifBinary bin;
 	struct list_data data;
