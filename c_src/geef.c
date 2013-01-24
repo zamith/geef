@@ -80,7 +80,7 @@ static ErlNifFunc geef_funcs[] =
 	{"reference_glob", 2, geef_reference_glob},
 	{"reference_lookup", 2, geef_reference_lookup},
 	{"reference_resolve", 1, geef_reference_resolve},
-	{"reference_id", 1, geef_reference_id},
+	{"reference_target", 1, geef_reference_target},
 	{"reference_type", 1, geef_reference_type},
 	{"oid_fmt", 1, geef_oid_fmt},
 	{"oid_parse", 1, geef_oid_parse},

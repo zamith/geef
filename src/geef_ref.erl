@@ -1,6 +1,6 @@
 -module(geef_ref).
 
--export([resolve/1, id/1]).
+-export([resolve/1, target/1]).
 
 -include("geef_records.hlr").
 
@@ -12,6 +12,6 @@ resolve(#ref{handle=Handle}) ->
 	    Other
     end.
 
--spec id(term()) -> binary().
-id(#ref{handle=Handle}) ->
-    geef:reference_id(Handle).
+-spec target(term()) -> binary().
+target(#ref{handle=Handle}) ->
+    geef:reference_target(Handle).

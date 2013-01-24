@@ -1,7 +1,7 @@
 -module(geef).
 -export([hex_to_raw/1, reference_list/1,
 	 reference_to_id/2, reference_glob/2, reference_lookup/2, reference_resolve/1,
-	 reference_id/1, reference_type/1, odb_object_exists/2]).
+	 reference_target/1, reference_type/1, odb_object_exists/2]).
 
 % repository operations
 -export([repository_get_path/1, repository_get_odb/1, repository_open/1, repository_init/2,
@@ -45,7 +45,7 @@ reference_glob(_Repo, _Glob) ->
 reference_lookup(_Repo, _Refname) ->
     nif_error(?LINE).
 
-reference_id(_Handle) ->
+reference_target(_Handle) ->
     nif_error(?LINE).
 
 reference_resolve(_Handle) ->
