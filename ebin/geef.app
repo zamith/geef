@@ -4,9 +4,10 @@
   {vsn, "0.0.1"},
   {modules, [
              geef,
-	     repository,
-	     odb,
-	     reference
+	     geef_repo,
+	     geef_odb,
+	     geef_ref,
+	     geef_oid
             ]},
   {registered, []},
   {applications, [

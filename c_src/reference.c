@@ -55,7 +55,7 @@ geef_reference_lookup(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	if (!enif_get_resource(env, argv[0], geef_repository_type, (void **) &repo))
 		return enif_make_badarg(env);
 
-	if (!enif_inspect_binary(env, argv[1], &bin))
+	if (!enif_inspect_iolist_as_binary(env, argv[1], &bin))
 		return enif_make_badarg(env);
 
 	name = malloc(bin.size + 1);
