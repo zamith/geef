@@ -13,23 +13,28 @@
 -on_load(load_enif/0).
 
 hex_to_raw(_Val) ->
-    nif_error(?LINE).    
+    nif_error(?LINE).
 
+-spec repository_open(iolist()) -> {ok, term()} | {error, term()}.
 repository_open(_Val) ->
     nif_error(?LINE).
 
+-spec repository_is_bare(term()) -> boolean().
 repository_is_bare(_Handle) ->
     nif_error(?LINE).
 
+-spec repository_get_path(term()) -> binary().
 repository_get_path(_Val) ->
     nif_error(?LINE).
 
+-spec repository_get_workdir(term()) -> binary().
 repository_get_workdir(_Handle) ->
     nif_error(?LINE).
 
 repository_get_odb(_Val) ->
     nif_error(?LINE).
 
+-spec repository_init(iolist(), boolean()) -> term().
 repository_init(_Path, _Bare) ->
     nif_error(?LINE).
 
@@ -64,7 +69,7 @@ oid_parse(_Sha) ->
     nif_error(?LINE).
 
 nif_error(Line) ->
-    exit({nif_not_loaded,module,?MODULE,line,Line}).
+    erlang:nif_error({nif_not_loaded,module,?MODULE,line,Line}).
 
 load_enif() ->
     case code:priv_dir(geef) of

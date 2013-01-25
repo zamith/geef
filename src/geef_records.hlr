@@ -1,3 +1,5 @@
--record(ref, {handle, type}).
+-record(ref, {handle, type :: atom()}).
 -record(repo, {handle}).
 -record(odb, {handle}).
+
+-type repo() :: repo.

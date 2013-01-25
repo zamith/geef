@@ -25,7 +25,7 @@ open(Path) ->
 	    Other
     end.
 
--spec init(iolist(), boolean()) -> {ok, term()} | {error, term()}.
+-spec init(iolist(), boolean()) -> {ok, repo()} | {error, term()}.
 init(Path, Bare) ->
     case geef:repository_init(Path, Bare) of
 	{ok, Handle} ->
