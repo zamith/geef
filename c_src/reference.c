@@ -164,15 +164,28 @@ geef_reference_target(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 {
 	geef_ref *ref;
 	ErlNifBinary bin;
-	const git_oid *id;
 
 	if (!enif_get_resource(env, argv[0], geef_ref_type, (void **) &ref))
 		return enif_make_badarg(env);
 
-	id = git_reference_target(ref->ref);
+	if (git_reference_type(ref->ref) == GIT_REF_OID) {
+		const git_oid *id;
+		id = git_reference_target(ref->ref);
 
-	if (geef_oid_bin(&bin, id) < 0)
-		return atoms.error;
+		if (geef_oid_bin(&bin, id) < 0)
+			return atoms.error;
+	} else {
+		const char *name;
+		size_t len;
+
+		name = git_reference_symbolic_target(ref->ref);
+		len = strlen(name);
+
+		if (enif_alloc_binary(len, &bin) < 0)
+			return atoms.error;
+
+		memcpy(bin.data, name, len + 1);
+	}
 
 	return enif_make_binary(env, &bin);
 }
