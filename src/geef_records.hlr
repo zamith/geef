@@ -2,4 +2,6 @@
 -record(repo, {handle}).
 -record(odb, {handle}).
 
--type repo() :: repo.
+-type ref() :: #ref{}.
+-type repo() :: #repo{}.
+-type odb() :: #odb{}.

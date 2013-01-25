@@ -4,19 +4,23 @@
 
 -include("geef_records.hlr").
 
+-spec path(repo()) -> binary().
 path(#repo{handle=Handle}) ->
     geef:repository_get_path(Handle).
 
+-spec workdir(repo()) -> binary().
 workdir(#repo{handle=Handle}) ->
     geef:repository_get_workdir(Handle).
 
+-spec is_bare(repo()) -> boolean().
 is_bare(#repo{handle=Handle}) ->
     geef:repository_is_bare(Handle).
 
+-spec references(repo()) -> [binary()].
 references(#repo{handle=Handle}) ->
     geef:reference_list(Handle).
 
--spec open(iolist()) -> {ok, term()} | {error, term()}.
+-spec open(iolist()) -> {ok, repo()} | {error, term()}.
 open(Path) ->
     case geef:repository_open(Path) of
 	{ok, Handle} ->
