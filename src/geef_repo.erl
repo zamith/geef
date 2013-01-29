@@ -2,7 +2,7 @@
 
 -export([open/1, init/2, path/1, workdir/1, is_bare/1, references/1]).
 
--include("geef_records.hlr").
+-include("geef_records.hrl").
 
 -spec path(repo()) -> binary().
 path(#repo{handle=Handle}) ->

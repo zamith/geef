@@ -2,7 +2,7 @@
 
 -export([lookup/2, resolve/1, target/1]).
 
--include("geef_records.hlr").
+-include("geef_records.hrl").
 
 -spec new(term()) -> ref().
 new(Handle) ->

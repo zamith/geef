@@ -1,7 +1,7 @@
 -module(geef_odb).
 -export([exists/2]).
 
--include("geef_records.hlr").
+-include("geef_records.hrl").
 
 -spec exists(odb(), string()) -> boolean().
 exists(#odb{handle=Handle}, Sha) ->

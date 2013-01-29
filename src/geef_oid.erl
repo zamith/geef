@@ -1,6 +1,6 @@
 -module(geef_oid).
 
--include("geef_records.hlr").
+-include("geef_records.hrl").
 -export([parse/1, fmt/1]).
 
 -spec fmt(oid()) -> binary().
