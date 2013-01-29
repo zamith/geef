@@ -27,6 +27,9 @@ resolve(#ref{handle=Handle}) ->
 	    Other
     end.
 
--spec target(ref()) -> binary().
-target(#ref{handle=Handle}) ->
-    geef:reference_target(Handle).
+-spec target(ref()) -> binary() | oid().
+target(#ref{handle=Handle,type=symbolic}) ->
+    geef:reference_target(Handle);
+target(#ref{handle=Handle,type=oid}) ->
+    Oid = geef:reference_target(Handle),
+    #oid{oid=Oid}.
