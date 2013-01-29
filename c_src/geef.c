@@ -2,6 +2,7 @@
 #include "repository.h"
 #include "reference.h"
 #include "oid.h"
+#include "object.h"
 #include "geef.h"
 #include <stdio.h>
 #include <string.h>
@@ -10,6 +11,7 @@
 ErlNifResourceType *geef_repository_type;
 ErlNifResourceType *geef_odb_type;
 ErlNifResourceType *geef_ref_type;
+ErlNifResourceType *geef_object_type;
 
 geef_atoms atoms;
 
@@ -35,6 +37,12 @@ static int load(ErlNifEnv *env, void **priv, ERL_NIF_TERM load_info)
 	if (geef_ref_type == NULL)
 		return -1;
 
+	geef_object_type = enif_open_resource_type(env, NULL,
+						     "object_type", geef_object_free, ERL_NIF_RT_CREATE, NULL);
+	if (geef_repository_type == NULL)
+		return -1;
+
+
 	atoms.ok = enif_make_atom(env, "ok");
 	atoms.error = enif_make_atom(env, "error");
 	atoms.true = enif_make_atom(env, "true");
@@ -42,6 +50,10 @@ static int load(ErlNifEnv *env, void **priv, ERL_NIF_TERM load_info)
 	atoms.repository = enif_make_atom(env, "repository");
 	atoms.oid = enif_make_atom(env, "oid");
 	atoms.symbolic = enif_make_atom(env, "symbolic");
+	atoms.commit = enif_make_atom(env, "commit");
+	atoms.tree = enif_make_atom(env, "tree");
+	atoms.blob = enif_make_atom(env, "blob");
+	atoms.tag = enif_make_atom(env, "tag");
 
 	return 0;
 }
@@ -84,6 +96,7 @@ static ErlNifFunc geef_funcs[] =
 	{"reference_type", 1, geef_reference_type},
 	{"oid_fmt", 1, geef_oid_fmt},
 	{"oid_parse", 1, geef_oid_parse},
+	{"object_lookup", 2, geef_object_lookup},
 };
 
 ERL_NIF_INIT(geef, geef_funcs, load, NULL, NULL, unload)

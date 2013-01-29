@@ -10,6 +10,9 @@
 % oid parsing
 -export([oid_fmt/1, oid_parse/1]).
 
+% objects
+-export([object_lookup/2]).
+
 -on_load(load_enif/0).
 
 hex_to_raw(_Val) ->
@@ -66,6 +69,9 @@ oid_fmt(_Oid) ->
     nif_error(?LINE).
 
 oid_parse(_Sha) ->
+    nif_error(?LINE).
+
+object_lookup(_Repo, _Oid) ->
     nif_error(?LINE).
 
 nif_error(Line) ->

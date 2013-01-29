@@ -2,8 +2,10 @@
 -record(repo, {handle}).
 -record(odb, {handle}).
 -record(oid, {oid}).
+-record(object, {type :: atom(), handle}).
 
 -type ref() :: #ref{}.
 -type repo() :: #repo{}.
 -type odb() :: #odb{}.
 -type oid() :: #oid{}.
+-type object() :: #object{}.

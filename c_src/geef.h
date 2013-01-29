@@ -13,6 +13,10 @@ typedef struct {
 	ERL_NIF_TERM repository;
 	ERL_NIF_TERM oid;
 	ERL_NIF_TERM symbolic;
+	ERL_NIF_TERM commit;
+	ERL_NIF_TERM tree;
+	ERL_NIF_TERM blob;
+	ERL_NIF_TERM tag;
 } geef_atoms;
 
 extern geef_atoms atoms;
