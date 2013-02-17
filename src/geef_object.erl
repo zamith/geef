@@ -8,7 +8,7 @@
 lookup(#repo{handle=Repo}, #oid{oid=Oid}) ->
     case geef:object_lookup(Repo, Oid) of
 	{ok, Type, Handle} ->
-	    #object{type=Type, handle=Handle};
+	    {ok, #object{type=Type, handle=Handle}};
 	Other ->
 	    Other
     end.

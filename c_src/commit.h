@@ -1,0 +1,6 @@
+#ifndef GEEF_COMMIT_H
+#define GEEF_COMMIT_H
+
+ERL_NIF_TERM geef_commit_tree_id(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
+
+#endif
