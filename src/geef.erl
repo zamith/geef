@@ -78,6 +78,10 @@ object_lookup(_Repo, _Oid) ->
 commit_tree_id(_Handle) ->
     nif_error(?LINE).
 
+-spec commit_tree(term) -> term().
+commit_tree(_Handle) ->
+    nif_error(?LINE).
+
 nif_error(Line) ->
     erlang:nif_error({nif_not_loaded,module,?MODULE,line,Line}).
 
