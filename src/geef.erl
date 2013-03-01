@@ -92,5 +92,4 @@ load_enif() ->
         Dir ->
             SoName = filename:join(Dir, geef)
     end,
-    io:format("Hey There: ~s~n", [SoName]),
     erlang:load_nif(SoName, 0).
