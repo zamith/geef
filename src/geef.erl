@@ -11,7 +11,7 @@
 -export([oid_fmt/1, oid_parse/1]).
 
 % objects
--export([object_lookup/2, commit_tree_id/1]).
+-export([object_lookup/2, commit_tree_id/1, commit_tree/1]).
 
 -on_load(load_enif/0).
 
