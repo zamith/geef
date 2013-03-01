@@ -5,7 +5,7 @@
 -export([lookup/2]).
 
 -spec lookup(repo(), oid()) -> object().
-lookup(Repo = #repo{handle=RepoHandle}, #oid{oid=Oid}) ->
+lookup(#repo{handle=RepoHandle}, #oid{oid=Oid}) ->
     case geef:object_lookup(RepoHandle, Oid) of
 	{ok, Type, Handle} ->
 	    {ok, #object{type=Type, handle=Handle}};
