@@ -4,7 +4,7 @@
 -include_lib("eunit/include/eunit.hrl").
 -endif.
 
--export([bypath/2]).
+-export([bypath/2, id/1]).
 
 -include("geef_records.hrl").
 
@@ -15,6 +15,9 @@ bypath(#object{type=tree,handle=Handle}, Path) ->
 	Other ->
 	    Other
     end.
+
+id(Obj = #object{type=tree}) ->
+    geef_object:id(Obj).
 
 -ifdef(TEST).
 

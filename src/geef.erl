@@ -11,7 +11,7 @@
 -export([oid_fmt/1, oid_parse/1]).
 
 % objects
--export([object_lookup/2, commit_tree_id/1, commit_tree/1, tree_bypath/2]).
+-export([object_lookup/2, object_id/1, commit_tree_id/1, commit_tree/1, tree_bypath/2]).
 
 -on_load(load_enif/0).
 
@@ -72,6 +72,9 @@ oid_parse(_Sha) ->
     nif_error(?LINE).
 
 object_lookup(_Repo, _Oid) ->
+    nif_error(?LINE).
+
+object_id(_Handle) ->
     nif_error(?LINE).
 
 -spec commit_tree_id(term) -> binary().

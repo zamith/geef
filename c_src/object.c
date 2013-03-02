@@ -63,3 +63,21 @@ geef_object_lookup(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 
 	return enif_make_tuple3(env, atoms.ok, geef_object_type2atom(git_object_type(obj->obj)), term_obj);
 }
+
+ERL_NIF_TERM
+geef_object_id(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
+{
+	ErlNifBinary bin;
+	const git_oid *id;
+	geef_object *obj;
+
+	if (!enif_get_resource(env, argv[0], geef_object_type, (void **) &obj))
+		return enif_make_badarg(env);
+
+	id = git_object_id(obj->obj);
+
+	if (geef_oid_bin(&bin, id) < 0)
+		return atoms.error;
+
+	return enif_make_tuple2(env, atoms.ok, enif_make_binary(env, &bin));
+}

@@ -1,5 +1,5 @@
 -module(geef_commit).
--export([tree_id/1, tree/1]).
+-export([tree_id/1, tree/1, id/1]).
 
 -include("geef_records.hrl").
 
@@ -15,3 +15,6 @@ tree(#object{type=commit,handle=Handle}) ->
 	Other ->
 	    Other
     end.
+
+id(Obj = #object{type=commit}) ->
+    geef_object:id(Obj).
