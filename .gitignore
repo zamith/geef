@@ -3,3 +3,5 @@
 *.o
 *.swp
 rebar
+ebin/
+.eunit
