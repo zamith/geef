@@ -12,8 +12,8 @@ bypath(#object{type=tree,handle=Handle}, Path) ->
     case geef:tree_bypath(Handle, Path) of
 	{ok, Mode, Type, Id, Name} ->
 	    {ok, #tree_entry{mode=Mode, type=Type, id=geef_oid:parse(Id), name=Name}};
-	other ->
-	    other
+	Other ->
+	    Other
     end.
 
 -ifdef(TEST).
