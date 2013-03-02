@@ -11,7 +11,7 @@
 -export([oid_fmt/1, oid_parse/1]).
 
 % objects
--export([object_lookup/2, commit_tree_id/1, commit_tree/1]).
+-export([object_lookup/2, commit_tree_id/1, commit_tree/1, tree_bypath/2]).
 
 -on_load(load_enif/0).
 
@@ -80,6 +80,10 @@ commit_tree_id(_Handle) ->
 
 -spec commit_tree(term) -> term().
 commit_tree(_Handle) ->
+    nif_error(?LINE).
+
+-spec tree_bypath(term, iolist()) -> term().
+tree_bypath(_TreeHandle, _Path) ->
     nif_error(?LINE).
 
 nif_error(Line) ->

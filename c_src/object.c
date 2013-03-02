@@ -8,12 +8,13 @@
 void geef_object_free(ErlNifEnv *env, void *cd)
 {
 	geef_object *obj = (geef_object *) cd;
+	enif_release_resource(obj->repo);
 	git_object_free(obj->obj);
 }
 
-static ERL_NIF_TERM object_type(git_object *obj)
+ERL_NIF_TERM geef_object_type2atom(const git_otype type)
 {
-	switch(git_object_type(obj)) {
+	switch(type) {
 	case GIT_OBJ_COMMIT:
 		return atoms.commit;
 	case GIT_OBJ_TREE:
@@ -57,6 +58,8 @@ geef_object_lookup(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	term_obj = enif_make_resource(env, obj);
 	enif_release_resource(obj);
 
+	obj->repo = repo;
+	enif_keep_resource(repo);
 
-	return enif_make_tuple3(env, atoms.ok, object_type(obj->obj), term_obj);
+	return enif_make_tuple3(env, atoms.ok, geef_object_type2atom(git_object_type(obj->obj)), term_obj);
 }

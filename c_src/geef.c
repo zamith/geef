@@ -4,6 +4,7 @@
 #include "oid.h"
 #include "object.h"
 #include "commit.h"
+#include "tree.h"
 #include "geef.h"
 #include <stdio.h>
 #include <string.h>
@@ -42,7 +43,6 @@ static int load(ErlNifEnv *env, void **priv, ERL_NIF_TERM load_info)
 						     "object_type", geef_object_free, ERL_NIF_RT_CREATE, NULL);
 	if (geef_repository_type == NULL)
 		return -1;
-
 
 	atoms.ok = enif_make_atom(env, "ok");
 	atoms.error = enif_make_atom(env, "error");
@@ -100,6 +100,7 @@ static ErlNifFunc geef_funcs[] =
 	{"object_lookup", 2, geef_object_lookup},
 	{"commit_tree", 1, geef_commit_tree},
 	{"commit_tree_id", 1, geef_commit_tree_id},
+	{"tree_bypath", 2, geef_tree_bypath},
 };
 
 ERL_NIF_INIT(geef, geef_funcs, load, NULL, NULL, unload)
