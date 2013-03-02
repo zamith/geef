@@ -11,7 +11,7 @@
 -export([oid_fmt/1, oid_parse/1]).
 
 % objects
--export([object_lookup/2, object_id/1, commit_tree_id/1, commit_tree/1, tree_bypath/2]).
+-export([object_lookup/2, object_id/1, commit_tree_id/1, commit_tree/1, tree_bypath/2, blob_size/1, blob_content/1]).
 
 -on_load(load_enif/0).
 
@@ -87,6 +87,14 @@ commit_tree(_Handle) ->
 
 -spec tree_bypath(term, iolist()) -> term().
 tree_bypath(_TreeHandle, _Path) ->
+    nif_error(?LINE).
+
+-spec blob_size(term) -> {ok, integer()} | error.
+blob_size(_ObjHandle) ->
+    nif_error(?LINE).
+
+-spec blob_content(term) -> {ok, binary()} | error.
+blob_content(_ObjHandle) ->
     nif_error(?LINE).
 
 nif_error(Line) ->
