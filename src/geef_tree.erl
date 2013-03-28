@@ -10,8 +10,8 @@
 
 bypath(#object{type=tree,handle=Handle}, Path) ->
     case geef:tree_bypath(Handle, Path) of
-	{ok, Mode, Type, Id, Name} ->
-	    {ok, #tree_entry{mode=Mode, type=Type, id=geef_oid:parse(Id), name=Name}};
+	{ok, Mode, Type, Oid, Name} ->
+	    {ok, Mode, Type, #oid{oid=Oid}, Name};
 	Other ->
 	    Other
     end.
@@ -26,6 +26,7 @@ id(Obj = #object{type=tree}) ->
 bypath_test() ->
     {ok, Repo} = geef_repo:open(".."),
     {ok, Tree} = geef_object:lookup(Repo, geef_oid:parse("395e1c39cb203640b78da8458a42afdb92bef7aa")),
-    {ok, #tree_entry{type=blob, name= <<"README.md">>}} = geef_tree:bypath(Tree, "README.md").
+    Id = geef_oid:parse("80d5c15a040c93a4f98f4496a05ebf30cdd58650"),
+    {ok, 8#100644, blob, Id, <<"README.md">>} = geef_tree:bypath(Tree, "README.md").
 
 -endif.

@@ -3,11 +3,9 @@
 -record(odb, {handle}).
 -record(oid, {oid}).
 -record(object, {type :: atom(), handle}).
--record(tree_entry, {mode, type :: atom(), id :: oid(), name :: binary()}).
 
 -type ref() :: #ref{}.
 -type repo() :: #repo{}.
 -type odb() :: #odb{}.
 -type oid() :: #oid{}.
 -type object() :: #object{}.
--type tree_entry() :: #tree_entry{}.
