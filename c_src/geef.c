@@ -89,6 +89,7 @@ static ErlNifFunc geef_funcs[] =
 	{"repository_get_workdir", 1, geef_repository_workdir},
 	{"repository_get_odb", 1, geef_repository_odb},
 	{"odb_object_exists", 2, geef_odb_exists},
+	{"odb_write", 3, geef_odb_write},
 	{"reference_list", 1, geef_reference_list},
 	{"reference_to_id", 2, geef_reference_to_id},
 	{"reference_glob", 2, geef_reference_glob},

@@ -28,6 +28,20 @@ ERL_NIF_TERM geef_object_type2atom(const git_otype type)
 	}
 }
 
+git_otype geef_object_atom2type(ERL_NIF_TERM term)
+{
+	if (!enif_compare(term, atoms.commit))
+		return GIT_OBJ_COMMIT;
+	else if (!enif_compare(term, atoms.tree))
+		return GIT_OBJ_TREE;
+	else if (!enif_compare(term, atoms.blob))
+		return GIT_OBJ_BLOB;
+	else if (!enif_compare(term, atoms.tag))
+		return GIT_OBJ_TAG;
+
+	return GIT_OBJ_BAD;
+}
+
 ERL_NIF_TERM
 geef_object_lookup(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 {

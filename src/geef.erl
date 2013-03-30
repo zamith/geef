@@ -1,7 +1,7 @@
 -module(geef).
 -export([hex_to_raw/1, reference_list/1,
 	 reference_to_id/2, reference_glob/2, reference_lookup/2, reference_resolve/1,
-	 reference_target/1, reference_type/1, odb_object_exists/2]).
+	 reference_target/1, reference_type/1, odb_object_exists/2, odb_write/3]).
 
 % repository operations
 -export([repository_get_path/1, repository_get_odb/1, repository_open/1, repository_init/2,
@@ -63,6 +63,10 @@ reference_type(_Handle) ->
     nif_error(?LINE).
 
 odb_object_exists(_Val, _Val) ->
+    nif_error(?LINE).
+
+-spec odb_write(term, iolist(), atom()) -> term.
+odb_write(_Handle, _Contents, _Type) ->
     nif_error(?LINE).
 
 oid_fmt(_Oid) ->

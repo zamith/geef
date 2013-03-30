@@ -1,4 +1,6 @@
 #include "repository.h"
+#include "object.h"
+#include "oid.h"
 #include "geef.h"
 #include <string.h>
 #include <git2.h>
@@ -190,4 +192,28 @@ geef_odb_exists(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 		return atoms.true;
 
 	return atoms.false;
+}
+
+ERL_NIF_TERM
+geef_odb_write(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
+{
+	git_otype type;
+	git_oid oid;
+	geef_odb *odb;
+	ErlNifBinary contents, oid_bin;
+
+	if (!enif_get_resource(env, argv[0], geef_odb_type, (void **) &odb))
+		return enif_make_badarg(env);
+
+	if (!enif_inspect_iolist_as_binary(env, argv[1], &contents))
+		return enif_make_badarg(env);
+
+	type = geef_object_atom2type(argv[2]);
+	if (git_odb_write(&oid, odb->odb, contents.data, contents.size, type) < 0)
+		return geef_error(env);
+
+	if (geef_oid_bin(&oid_bin, &oid) < 0)
+		return atoms.error;
+
+	return enif_make_tuple2(env, atoms.ok, enif_make_binary(env, &oid_bin));
 }
