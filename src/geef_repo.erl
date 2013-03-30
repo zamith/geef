@@ -1,6 +1,6 @@
 -module(geef_repo).
 
--export([open/1, init/2, path/1, workdir/1, is_bare/1, references/1]).
+-export([open/1, init/2, path/1, workdir/1, odb/1, is_bare/1, references/1]).
 
 -include("geef_records.hrl").
 
@@ -11,6 +11,15 @@ path(#repo{handle=Handle}) ->
 -spec workdir(repo()) -> binary().
 workdir(#repo{handle=Handle}) ->
     geef:repository_get_workdir(Handle).
+
+-spec odb(repo()) -> {ok, odb} | {error, term}.
+odb(#repo{handle=Handle}) ->
+    case geef:repository_get_odb(Handle) of
+	{ok, OdbHandle} ->
+	    {ok, #odb{handle=OdbHandle}};
+	Other ->
+	    Other
+    end.
 
 -spec is_bare(repo()) -> boolean().
 is_bare(#repo{handle=Handle}) ->
