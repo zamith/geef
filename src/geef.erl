@@ -1,3 +1,6 @@
+%%% @private
+%%% NIF functions, not to be used directly.
+
 -module(geef).
 -export([hex_to_raw/1, reference_list/1,
 	 reference_to_id/2, reference_glob/2, reference_lookup/2, reference_resolve/1,

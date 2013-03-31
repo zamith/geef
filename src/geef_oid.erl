@@ -1,3 +1,4 @@
+%%% @doc Dealing with object names
 -module(geef_oid).
 
 -ifdef(TEST).
@@ -8,12 +9,13 @@
 
 -export([parse/1, fmt/1]).
 
+%% @doc Get the hex-encoded hash
 -spec fmt(oid()) -> binary().
 fmt(#oid{oid=Oid}) ->
     geef:oid_fmt(Oid).
 
-
--spec parse(binary()) -> oid().
+%% @doc Parse an iolist as a hash
+-spec parse(iolist()) -> oid().
 parse(Sha) ->
     Oid = geef:oid_parse(Sha),
     #oid{oid=Oid}.
