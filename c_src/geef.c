@@ -60,6 +60,11 @@ static int load(ErlNifEnv *env, void **priv, ERL_NIF_TERM load_info)
 	return 0;
 }
 
+int upgrade(ErlNifEnv* env, void** priv_data, void** old_priv_data, ERL_NIF_TERM load_info)
+{
+	return 0;
+}
+
 static void unload(ErlNifEnv* env, void* priv_data)
 {
 	git_threads_shutdown();
@@ -109,4 +114,4 @@ static ErlNifFunc geef_funcs[] =
 	{"blob_content", 1, geef_blob_content},
 };
 
-ERL_NIF_INIT(geef, geef_funcs, load, NULL, NULL, unload)
+ERL_NIF_INIT(geef, geef_funcs, load, NULL, upgrade, unload)
