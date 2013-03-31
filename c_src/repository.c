@@ -174,24 +174,21 @@ geef_repository_odb(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 ERL_NIF_TERM
 geef_odb_exists(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 {
-	char sha[MAXBUFLEN] = {0};
 	geef_odb *odb;
+	ErlNifBinary bin;
 	git_oid oid;
 	int exists;
 
 	if (!enif_get_resource(env, argv[0], geef_odb_type, (void **) &odb))
 		return enif_make_badarg(env);
 
-	if (enif_get_string(env, argv[1], sha, sizeof(sha), ERL_NIF_LATIN1) < 1)
+	if (!enif_inspect_binary(env, argv[1], &bin))
 		return enif_make_badarg(env);
 
-	git_oid_fromstr(&oid, sha);
+	git_oid_fromraw(&oid, bin.data);
 	exists = git_odb_exists(odb->odb, &oid);
 
-	if (exists)
-		return atoms.true;
-
-	return atoms.false;
+	return exists ? atoms.true : atoms.false;
 }
 
 ERL_NIF_TERM
