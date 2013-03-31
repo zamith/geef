@@ -5,7 +5,7 @@
 
 % repository operations
 -export([repository_get_path/1, repository_get_odb/1, repository_open/1, repository_init/2,
-	 repository_is_bare/1, repository_get_workdir/1]).
+	 repository_is_bare/1, repository_get_workdir/1, repository_discover/1]).
 
 % oid parsing
 -export([oid_fmt/1, oid_parse/1]).
@@ -39,6 +39,10 @@ repository_get_odb(_Val) ->
 
 -spec repository_init(iolist(), boolean()) -> term().
 repository_init(_Path, _Bare) ->
+    nif_error(?LINE).
+
+-spec repository_discover(iolist()) -> {ok, string()} | error.
+repository_discover(_Path) ->
     nif_error(?LINE).
 
 reference_list(_Repo) ->

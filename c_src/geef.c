@@ -84,6 +84,7 @@ static ErlNifFunc geef_funcs[] =
 {
 	{"repository_init", 2, geef_repository_init},
 	{"repository_open", 1, geef_repository_open},
+	{"repository_discover", 1, geef_repository_discover},
 	{"repository_is_bare", 1, geef_repository_is_bare},
 	{"repository_get_path", 1, geef_repository_path},
 	{"repository_get_workdir", 1, geef_repository_workdir},
