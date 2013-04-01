@@ -25,7 +25,7 @@ The API looks basically like this:
 
     {ok, Repo} = geef_repo:open(<<".">>).
     Workdir = geef_repo:workdir(Repo).
-    {ok, Odb} = geef)repo:odb(Repo).
+    {ok, Odb} = geef_repo:odb(Repo).
     Exists = Odb:exists(HexSha).
 
 
