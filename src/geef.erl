@@ -2,7 +2,7 @@
 %%% NIF functions, not to be used directly.
 
 -module(geef).
--export([hex_to_raw/1, reference_list/1,
+-export([reference_list/1,
 	 reference_to_id/2, reference_glob/2, reference_lookup/2, reference_resolve/1,
 	 reference_target/1, reference_type/1, odb_object_exists/2, odb_write/3]).
 
@@ -20,9 +20,6 @@
 -export([library_version/0]).
 
 -on_load(load_enif/0).
-
-hex_to_raw(_Val) ->
-    nif_error(?LINE).
 
 -spec repository_open(iolist()) -> {ok, term()} | {error, term()}.
 repository_open(_Val) ->
