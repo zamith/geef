@@ -16,6 +16,9 @@
 % objects
 -export([object_lookup/2, object_id/1, commit_tree_id/1, commit_tree/1, tree_bypath/2, blob_size/1, blob_content/1]).
 
+% git_libgit2
+-export([library_version/0]).
+
 -on_load(load_enif/0).
 
 hex_to_raw(_Val) ->
@@ -106,6 +109,10 @@ blob_size(_ObjHandle) ->
 
 -spec blob_content(term) -> {ok, binary()} | error.
 blob_content(_ObjHandle) ->
+    nif_error(?LINE).
+
+-spec library_version() -> {integer, integer, integer}.
+library_version() ->
     nif_error(?LINE).
 
 nif_error(Line) ->

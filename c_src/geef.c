@@ -6,6 +6,7 @@
 #include "commit.h"
 #include "tree.h"
 #include "blob.h"
+#include "library.h"
 #include "geef.h"
 #include <stdio.h>
 #include <string.h>
@@ -112,6 +113,7 @@ static ErlNifFunc geef_funcs[] =
 	{"tree_bypath", 2, geef_tree_bypath},
 	{"blob_size", 1, geef_blob_size},
 	{"blob_content", 1, geef_blob_content},
+	{"library_version", 0, geef_library_version},
 };
 
 ERL_NIF_INIT(geef, geef_funcs, load, NULL, upgrade, unload)
