@@ -1,11 +1,13 @@
 -record(ref, {handle, type :: atom()}).
 -record(repo, {handle}).
 -record(odb, {handle}).
+-record(revwalk, {handle}).
 -record(oid, {oid}).
 -record(object, {type :: atom(), handle}).
 
 -type ref() :: #ref{}.
 -type repo() :: #repo{}.
+-type revwalk() :: #revwalk{}.
 -type odb() :: #odb{}.
 -type oid() :: #oid{}.
 -type object() :: #object{}.

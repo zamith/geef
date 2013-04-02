@@ -7,6 +7,7 @@
 #include "tree.h"
 #include "blob.h"
 #include "library.h"
+#include "revwalk.h"
 #include "geef.h"
 #include <stdio.h>
 #include <string.h>
@@ -16,6 +17,7 @@ ErlNifResourceType *geef_repository_type;
 ErlNifResourceType *geef_odb_type;
 ErlNifResourceType *geef_ref_type;
 ErlNifResourceType *geef_object_type;
+ErlNifResourceType *geef_revwalk_type;
 
 geef_atoms atoms;
 
@@ -43,6 +45,10 @@ static int load(ErlNifEnv *env, void **priv, ERL_NIF_TERM load_info)
 
 	geef_object_type = enif_open_resource_type(env, NULL,
 						     "object_type", geef_object_free, ERL_NIF_RT_CREATE, NULL);
+
+	geef_revwalk_type = enif_open_resource_type(env, NULL,
+		  "revwalk_type", geef_revwalk_free, ERL_NIF_RT_CREATE, NULL);
+
 	if (geef_repository_type == NULL)
 		return -1;
 
@@ -57,6 +63,10 @@ static int load(ErlNifEnv *env, void **priv, ERL_NIF_TERM load_info)
 	atoms.tree = enif_make_atom(env, "tree");
 	atoms.blob = enif_make_atom(env, "blob");
 	atoms.tag = enif_make_atom(env, "tag");
+	/* Revwalk */
+	atoms.toposort    = enif_make_atom(env, "sort_topo");
+	atoms.timesort    = enif_make_atom(env, "sort_time");
+	atoms.reversesort = enif_make_atom(env, "sort_reverse");
 
 	return 0;
 }
@@ -122,6 +132,11 @@ static ErlNifFunc geef_funcs[] =
 	{"blob_size", 1, geef_blob_size},
 	{"blob_content", 1, geef_blob_content},
 	{"library_version", 0, geef_library_version},
+	{"revwalk_new",  1,    geef_revwalk_new},
+	{"revwalk_push", 3,    geef_revwalk_push},
+	{"revwalk_next", 1,    geef_revwalk_next},
+	{"revwalk_sorting", 2, geef_revwalk_sorting},
+	{"revwalk_reset", 1,   geef_revwalk_reset},
 };
 
 ERL_NIF_INIT(geef, geef_funcs, load, NULL, upgrade, unload)

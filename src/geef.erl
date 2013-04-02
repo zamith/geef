@@ -19,7 +19,12 @@
 % git_libgit2
 -export([library_version/0]).
 
+% revision walker
+-export([revwalk_new/1, revwalk_push/3, revwalk_next/1, revwalk_sorting/2, revwalk_reset/1]).
+
 -on_load(load_enif/0).
+
+-define(NIF_FN, nif_error(?LINE)).
 
 -spec repository_open(iolist()) -> {ok, term()} | {error, term()}.
 repository_open(_Val) ->
@@ -111,6 +116,21 @@ blob_content(_ObjHandle) ->
 -spec library_version() -> {integer, integer, integer}.
 library_version() ->
     nif_error(?LINE).
+
+revwalk_new(_Repo) ->
+    ?NIF_FN.
+
+revwalk_push(_Walk, _Id, _Hide) ->
+    ?NIF_FN.
+
+revwalk_next(_Walk) ->
+    ?NIF_FN.
+
+revwalk_sorting(_Walk, _Sort) ->
+    ?NIF_FN.
+
+revwalk_reset(_Walk) ->
+    ?NIF_FN.
 
 nif_error(Line) ->
     erlang:nif_error({nif_not_loaded,module,?MODULE,line,Line}).

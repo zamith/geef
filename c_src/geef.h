@@ -17,6 +17,9 @@ typedef struct {
 	ERL_NIF_TERM tree;
 	ERL_NIF_TERM blob;
 	ERL_NIF_TERM tag;
+	ERL_NIF_TERM toposort;
+	ERL_NIF_TERM timesort;
+	ERL_NIF_TERM reversesort;
 } geef_atoms;
 
 extern geef_atoms atoms;

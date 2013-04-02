@@ -63,6 +63,9 @@ geef_object_lookup(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	git_oid_fromraw(&id, bin.data);
 
 	obj = enif_alloc_resource(geef_object_type, sizeof(geef_object));
+	if (!obj)
+		return atoms.error;
+
 	if (git_object_lookup(&obj->obj, repo->repo, &id, GIT_OBJ_ANY) < 0) {
 		enif_release_resource(obj);
 		return geef_error(env);
