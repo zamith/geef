@@ -75,15 +75,23 @@ ERL_NIF_TERM
 geef_error(ErlNifEnv *env)
 {
 	const git_error *error;
+	ErlNifBinary bin;
+	const char *message;
+	size_t len;
 
 	error = giterr_last();
-	if (error) {
-		return enif_make_tuple2(env, atoms.error,
-					enif_make_string(env, error->message, ERL_NIF_LATIN1));
-	}
+	if (error && error->message)
+		message = error->message;
+	else
+		message = "No message specified";
 
-	return enif_make_tuple2(env, atoms.error,
-				enif_make_string(env, "No message specified", ERL_NIF_LATIN1));
+	len = strlen(message);
+	if (!enif_alloc_binary(len, &bin))
+		return atoms.error;
+
+	memcpy(bin.data, message, len);
+
+	return enif_make_tuple2(env, atoms.error, enif_make_binary(env, &bin));
 }
 
 static ErlNifFunc geef_funcs[] =
