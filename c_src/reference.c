@@ -211,15 +211,13 @@ geef_reference_to_id(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	memcpy(name, bin.data, bin.size);
 	name[bin.size] = '\0';
 
-	if (git_reference_name_to_id(&id, repo->repo, name) < 0) {
-		enif_release_binary(&bin);
+	if (git_reference_name_to_id(&id, repo->repo, name) < 0)
 		return geef_error(env);
-	}
 
 	if (geef_oid_bin(&bin, &id) < 0)
 		return atoms.error;
 
-	return enif_make_binary(env, &bin);
+	return enif_make_tuple2(env, atoms.ok, enif_make_binary(env, &bin));
 }
 
 ERL_NIF_TERM

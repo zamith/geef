@@ -1,6 +1,6 @@
 -module(geef_ref).
 
--export([lookup/2, resolve/1, target/1]).
+-export([lookup/2, resolve/1, target/1, name_to_id/2]).
 
 -include("geef_records.hrl").
 
@@ -33,3 +33,12 @@ target(#ref{handle=Handle,type=symbolic}) ->
 target(#ref{handle=Handle,type=oid}) ->
     Oid = geef:reference_target(Handle),
     #oid{oid=Oid}.
+
+-spec name_to_id(repo(), iolist()) -> {ok, oid()} | {error, binary()}.
+name_to_id(#repo{handle=Handle}, Name) ->
+    case geef:reference_to_id(Handle, Name) of
+	{ok, Oid} ->
+	    {ok, #oid{oid=Oid}};
+	Other ->
+	    Other
+    end.
