@@ -8,15 +8,15 @@
 
 -export([lookup/2, id/1]).
 
--spec lookup(repo(), oid() | iolist()) -> object().
-lookup(#repo{handle=RepoHandle}, #oid{oid=Oid}) ->
-    case geef:object_lookup(RepoHandle, Oid) of
+-spec lookup(pid(), oid() | iolist()) -> object().
+lookup(Repo, #oid{oid=Oid}) ->
+    case geef_repo:lookup_object(Repo, Oid) of
 	{ok, Type, Handle} ->
 	    {ok, #object{type=Type, handle=Handle}};
 	Other ->
 	    Other
     end;
-lookup(Repo = #repo{}, Id) ->
+lookup(Repo, Id) ->
     lookup(Repo, geef_oid:parse(Id)).
 
 id(#object{handle=Handle}) ->
