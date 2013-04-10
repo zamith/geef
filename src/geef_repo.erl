@@ -15,7 +15,8 @@
 	 terminate/2, code_change/3]).
 
 %% API
--export([open/1, init/2, path/1, workdir/1, odb/1, is_bare/1, references/1, discover/1, lookup_object/2, stop/1]).
+-export([open/1, init/2, path/1, workdir/1, odb/1, is_bare/1, references/1, discover/1,
+	 lookup_object/2, revwalk/1, stop/1]).
 
 -include("geef_records.hrl").
 -record(state, {handle}).
@@ -80,6 +81,10 @@ references(Pid) ->
 lookup_object(Pid, Oid) ->
     gen_server:call(Pid, {lookup_object, Oid}).
 
+%% @doc Create a revision walker for the given repository.
+revwalk(Pid) ->
+    gen_server:call(Pid, revwalk).
+
 stop(Pid) ->
     gen_server:call(Pid, stop).
 
@@ -112,6 +117,9 @@ handle_call({lookup_object, Oid}, _From, State = #state{handle=Handle}) ->
     {reply, Reply, State};
 handle_call(stop, _From, State) ->
     {stop, normal, State};
+handle_call(revwalk, _From, State = #state{handle=Handle}) ->
+    Reply = handle_revwalk(Handle),
+    {reply, Reply, State};
 handle_call(_Request, _From, State) ->
     Reply = {error, "Unkown call"},
     {reply, Reply, State}.
@@ -153,4 +161,12 @@ handle_odb(Handle) ->
 	    {ok, #odb{handle=OdbHandle}};
 	Other ->
 	    Other
+    end.
+
+handle_revwalk(Handle) ->
+    case geef:revwalk_new(Handle) of
+	{ok, WalkHandle} ->
+	    geef_revwalk:start_link(WalkHandle);
+	Error ->
+	    Error
     end.

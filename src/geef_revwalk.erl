@@ -1,45 +1,110 @@
+%%%-------------------------------------------------------------------
+%%% @author Carlos Martín Nieto <cmn@dwim.me>
+%%% @copyright (C) 2013, Carlos Martín Nieto
+%%% @doc
+%%%
+%%% @end
+%%% Created :  6 Apr 2013 by Carlos Martín Nieto <cmn@dwim.me>
+%%%-------------------------------------------------------------------
 -module(geef_revwalk).
 
--export([new/1, push/2, hide/2, next/1, sorting/2]).
+-behaviour(gen_server).
 
+%% API
+-export([start_link/1]).
+-export([push/2, hide/2, next/1, sorting/2]).
+
+%% gen_server callbacks
+-export([init/1, handle_call/3, handle_cast/2, handle_info/2,
+	 terminate/2, code_change/3]).
+
+-record(state, {handle}).
 -include("geef_records.hrl").
 
-
-%% @doc Create a revision walker
--spec new(repo()) -> {ok, revwalk()} | {error, term}.
-new(#repo{handle=Handle}) ->
-    case geef:revwalk_new(Handle) of
-	{ok, WalkHandle} ->
-	    {ok, #revwalk{handle=WalkHandle}};
-	Other ->
-	    Other
-    end.
-
+%%%===================================================================
+%%% API
+%%%===================================================================
 
 %% @doc Push a commit. This commit and its parents will be included in
 %% the walk as long as they haven't been hidden. At least one commit
 %% must be pushed before starting a walk.
--spec push(revwalk(), oid()) -> ok | {error, binary()}.
-push(#revwalk{handle=Handle}, #oid{oid=Oid}) ->
-    geef:revwalk_push(Handle, Oid, false).
+-spec push(pid(), oid()) -> ok | {error, binary()}.
+push(Pid, #oid{oid=Oid}) ->
+    gen_server:call(Pid, {push, Oid}).
 
 %% @doc Hide a commit. Hide a commit and its parents. Any Parent of
 %% this commit won't be included in the walk.
--spec hide(revwalk(), oid()) -> ok | {error, binary()}.
-hide(#revwalk{handle=Handle}, #oid{oid=Oid}) ->
-    geef:revwalk_push(Handle, Oid, true).
+-spec hide(pid(), oid()) -> ok | {error, binary()}.
+hide(Pid, #oid{oid=Oid}) ->
+    gen_server:call(Pid, {hide, Oid}).
+
+%% @doc Select the sorting method
+-spec sorting(pid, atom() | [atom()]) -> ok.
+sorting(Pid, Opts) when is_list(Opts) ->
+    gen_server:call(Pid, {sort, Opts});
+sorting(Pid, Opt) when is_atom(Opt) ->
+    gen_server:call(Pid, {sort, [Opt]}).
 
 %% @doc Next commit in the walk
-next(#revwalk{handle=Handle}) ->
+next(Pid) ->
+    gen_server:call(Pid, next).
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Starts the server
+%%
+%% @spec start_link() -> {ok, Pid} | ignore | {error, Error}
+%% @end
+%%--------------------------------------------------------------------
+start_link(Handle) ->
+    gen_server:start_link(?MODULE, Handle, []).
+
+%%%===================================================================
+%%% gen_server callbacks
+%%%===================================================================
+
+%% @private
+init(Handle) ->
+    {ok, #state{handle=Handle}}.
+
+%% @private
+handle_call({sort, Opts}, _From, State = #state{handle=Handle}) ->
+    geef:revwalk_sorting(Handle, Opts),
+    {reply, ok, State};
+handle_call({push, Oid}, _From, State = #state{handle=Handle}) ->
+    Reply = geef:revwalk_push(Handle, Oid, false),
+    {reply, Reply, State};
+handle_call({hide, Oid}, _From, State = #state{handle=Handle}) ->
+    Reply = geef:revwalk_push(Handle, Oid, true),
+    {reply, Reply, State};
+handle_call(next, _From, State = #state{handle=Handle}) ->
+    Reply = handle_next(Handle),
+    {reply, Reply, State}.
+
+%% @private
+handle_cast(_Msg, State) ->
+    {noreply, State}.
+
+%% @private
+handle_info(_Info, State) ->
+    {noreply, State}.
+
+%% @private
+terminate(_Reason, _State) ->
+    ok.
+
+%% @private
+code_change(_OldVsn, State, _Extra) ->
+    {ok, State}.
+
+%%%===================================================================
+%%% Internal functions
+%%%===================================================================
+
+handle_next(Handle) ->
     case geef:revwalk_next(Handle) of
 	{ok, Oid} ->
 	    {ok, #oid{oid=Oid}};
 	Other ->
 	    Other
     end.
-
-sorting(#revwalk{handle=Handle}, Opts) when is_list(Opts) ->
-    geef:revwalk_sorting(Handle, Opts);
-sorting(Walk = #revwalk{}, Opt) when is_atom(Opt) ->
-    sorting(Walk, [Opt]).
-
