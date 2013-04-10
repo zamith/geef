@@ -62,6 +62,7 @@ geef_revwalk_push(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 ERL_NIF_TERM
 geef_revwalk_next(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 {
+	int error;
 	ErlNifBinary bin;
 	geef_revwalk *walk;
 
@@ -71,8 +72,12 @@ geef_revwalk_next(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	if (!enif_alloc_binary(GIT_OID_RAWSZ, &bin))
 		return atoms.error;
 
-	if (git_revwalk_next((git_oid *)bin.data, walk->walk) < 0)
+	if ((error = git_revwalk_next((git_oid *)bin.data, walk->walk)) < 0) {
+		if (error == GIT_ITEROVER)
+			return enif_make_tuple2(env, atoms.error, atoms.iterover);
+
 		return geef_error(env);
+	}
 
 	return enif_make_tuple2(env, atoms.ok, enif_make_binary(env, &bin));
 }

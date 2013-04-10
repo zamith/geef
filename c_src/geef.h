@@ -20,6 +20,7 @@ typedef struct {
 	ERL_NIF_TERM toposort;
 	ERL_NIF_TERM timesort;
 	ERL_NIF_TERM reversesort;
+	ERL_NIF_TERM iterover;
 } geef_atoms;
 
 extern geef_atoms atoms;

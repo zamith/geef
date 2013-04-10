@@ -67,6 +67,7 @@ static int load(ErlNifEnv *env, void **priv, ERL_NIF_TERM load_info)
 	atoms.toposort    = enif_make_atom(env, "sort_topo");
 	atoms.timesort    = enif_make_atom(env, "sort_time");
 	atoms.reversesort = enif_make_atom(env, "sort_reverse");
+	atoms.iterover    = enif_make_atom(env, "iterover");
 
 	return 0;
 }
