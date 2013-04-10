@@ -12,7 +12,7 @@
 
 %% API
 -export([start_link/1]).
--export([push/2, hide/2, next/1, sorting/2]).
+-export([push/2, hide/2, next/1, sorting/2, stop/1]).
 
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
@@ -49,6 +49,10 @@ sorting(Pid, Opt) when is_atom(Opt) ->
 next(Pid) ->
     gen_server:call(Pid, next).
 
+%% @doc Stop the revwalk server
+stop(Pid) ->
+    gen_server:call(Pid, stop).
+
 %%--------------------------------------------------------------------
 %% @doc
 %% Starts the server
@@ -79,7 +83,9 @@ handle_call({hide, Oid}, _From, State = #state{handle=Handle}) ->
     {reply, Reply, State};
 handle_call(next, _From, State = #state{handle=Handle}) ->
     Reply = handle_next(Handle),
-    {reply, Reply, State}.
+    {reply, Reply, State};
+handle_call(stop, _From, State) ->
+    {stop, normal, ok, State}.
 
 %% @private
 handle_cast(_Msg, State) ->

@@ -22,5 +22,5 @@ odb_write_test(Repo) ->
     Expected = geef_oid:parse("c300118399f01fe52b316061b5d32beb27e0adfd"),
     [?_assertEqual(Actual, Expected)].
 
-stop(_Repo) ->
-    ok.
+stop(Repo) ->
+    geef_repo:stop(Repo).

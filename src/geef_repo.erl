@@ -116,7 +116,7 @@ handle_call({lookup_object, Oid}, _From, State = #state{handle=Handle}) ->
     Reply = geef:object_lookup(Handle, Oid),
     {reply, Reply, State};
 handle_call(stop, _From, State) ->
-    {stop, normal, State};
+    {stop, normal, ok, State};
 handle_call(revwalk, _From, State = #state{handle=Handle}) ->
     Reply = handle_revwalk(Handle),
     {reply, Reply, State};
