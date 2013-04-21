@@ -16,7 +16,7 @@
 
 %% API
 -export([open/1, init/2, path/1, workdir/1, odb/1, is_bare/1, references/1, discover/1,
-	 lookup_object/2, revwalk/1, stop/1]).
+	 lookup_object/2, lookup_reference/2, revwalk/1, stop/1]).
 
 -include("geef_records.hrl").
 -record(state, {handle}).
@@ -81,6 +81,10 @@ references(Pid) ->
 lookup_object(Pid, Oid) ->
     gen_server:call(Pid, {lookup_object, Oid}).
 
+%% @private
+lookup_reference(Pid, Name) ->
+    gen_server:call(Pid, {lookup_reference, Name}).
+
 %% @doc Create a revision walker for the given repository.
 revwalk(Pid) ->
     gen_server:call(Pid, revwalk).
@@ -114,6 +118,9 @@ handle_call(refs, _From, State = #state{handle=Handle}) ->
     {reply, Reply, State};
 handle_call({lookup_object, Oid}, _From, State = #state{handle=Handle}) ->
     Reply = geef:object_lookup(Handle, Oid),
+    {reply, Reply, State};
+handle_call({lookup_reference, Name}, _From, State = #state{handle=Handle}) ->
+    Reply = geef:reference_lookup(Handle, Name),
     {reply, Reply, State};
 handle_call(stop, _From, State) ->
     {stop, normal, ok, State};

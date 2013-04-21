@@ -9,9 +9,9 @@ new(Handle) ->
     Type = geef:reference_type(Handle),
     #ref{handle=Handle, type=Type}.
 
--spec lookup(repo(), iolist()) -> {ok, ref()} | {error, term()}.
-lookup(#repo{handle=Handle}, Refname) ->
-    case geef:reference_lookup(Handle, Refname) of
+-spec lookup(pid(), iolist()) -> {ok, ref()} | {error, term()}.
+lookup(Repo, Refname) ->
+    case geef_repo:lookup_reference(Repo, Refname) of
 	{ok, Ref} ->
 	    {ok, new(Ref)};
 	Other ->
