@@ -1,5 +1,5 @@
 -module(geef_commit).
--export([tree_id/1, tree/1, id/1]).
+-export([tree_id/1, tree/1, id/1, lookup/2]).
 
 -include("geef_records.hrl").
 
@@ -15,6 +15,10 @@ tree(#object{type=commit,handle=Handle}) ->
 	Other ->
 	    Other
     end.
+
+-spec lookup(repo(), oid() | iolist()) -> object().
+lookup(Repo, Id) ->
+    geef_object:lookup(Repo, Id, commit).
 
 id(Obj = #object{type=commit}) ->
     geef_object:id(Obj).

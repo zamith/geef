@@ -10,8 +10,7 @@
 
 -spec lookup(repo(), oid() | iolist()) -> object().
 lookup(Repo, Id) ->
-    {ok, Obj = #object{type=blob}} = geef_object:lookup(Repo, Id),
-    Obj.
+    geef_object:lookup(Repo, Id, blob).
 
 -spec id(object()) -> oid().
 id(Obj = #object{type=blob}) ->

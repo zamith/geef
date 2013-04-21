@@ -4,7 +4,7 @@
 -include_lib("eunit/include/eunit.hrl").
 -endif.
 
--export([bypath/2, id/1]).
+-export([bypath/2, id/1, lookup/2]).
 
 -include("geef_records.hrl").
 
@@ -18,6 +18,10 @@ bypath(#object{type=tree,handle=Handle}, Path) ->
 
 id(Obj = #object{type=tree}) ->
     geef_object:id(Obj).
+
+-spec lookup(repo(), oid() | iolist()) -> {ok, object()} | {error, term()}.
+lookup(Repo, Id) ->
+    geef_object:lookup(Repo, Id, tree).
 
 -ifdef(TEST).
 
