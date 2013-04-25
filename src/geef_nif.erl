@@ -22,6 +22,9 @@
 % revision walker
 -export([revwalk_new/1, revwalk_push/3, revwalk_next/1, revwalk_sorting/2, revwalk_reset/1]).
 
+% index
+-export([index_new/0, index_write/1, index_write_tree/1, index_write_tree/2, index_clear/1]).
+
 -on_load(load_enif/0).
 
 -define(NIF_FN, nif_error(?LINE)).
@@ -130,6 +133,21 @@ revwalk_sorting(_Walk, _Sort) ->
     ?NIF_FN.
 
 revwalk_reset(_Walk) ->
+    ?NIF_FN.
+
+index_new() ->
+    ?NIF_FN.
+
+index_write(_Handle) ->
+    ?NIF_FN.
+
+index_write_tree(_Handle) ->
+    ?NIF_FN.
+
+index_write_tree(_Handle, _RepoHandle) ->
+    ?NIF_FN.
+
+index_clear(_Handle) ->
     ?NIF_FN.
 
 nif_error(Line) ->

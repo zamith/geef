@@ -30,7 +30,7 @@ lookup(Repo, Id, Type) ->
     end.
 
 id(#object{handle=Handle}) ->
-    case geef:object_id(Handle) of
+    case geef_nif:object_id(Handle) of
 	{ok, Oid} ->
 	    #oid{oid=Oid};
 	Other ->

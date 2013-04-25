@@ -8,6 +8,7 @@
 #include "blob.h"
 #include "library.h"
 #include "revwalk.h"
+#include "index.h"
 #include "geef.h"
 #include <stdio.h>
 #include <string.h>
@@ -18,6 +19,7 @@ ErlNifResourceType *geef_odb_type;
 ErlNifResourceType *geef_ref_type;
 ErlNifResourceType *geef_object_type;
 ErlNifResourceType *geef_revwalk_type;
+ErlNifResourceType *geef_index_type;
 
 geef_atoms atoms;
 
@@ -48,6 +50,9 @@ static int load(ErlNifEnv *env, void **priv, ERL_NIF_TERM load_info)
 
 	geef_revwalk_type = enif_open_resource_type(env, NULL,
 		  "revwalk_type", geef_revwalk_free, ERL_NIF_RT_CREATE, NULL);
+
+	geef_index_type = enif_open_resource_type(env, NULL,
+		  "index_type", geef_index_free, ERL_NIF_RT_CREATE, NULL);
 
 	if (geef_repository_type == NULL)
 		return -1;
@@ -138,6 +143,11 @@ static ErlNifFunc geef_funcs[] =
 	{"revwalk_next", 1,    geef_revwalk_next},
 	{"revwalk_sorting", 2, geef_revwalk_sorting},
 	{"revwalk_reset", 1,   geef_revwalk_reset},
+	{"index_new",   0, geef_revwalk_new},
+	{"index_write", 1, geef_index_write},
+	{"index_write_tree", 1, geef_index_write_tree},
+	{"index_write_tree", 2, geef_index_write_tree},
+	{"index_clear", 1, geef_index_clear},
 };
 
 ERL_NIF_INIT(geef_nif, geef_funcs, load, NULL, upgrade, unload)

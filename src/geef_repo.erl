@@ -16,7 +16,7 @@
 
 %% API
 -export([open/1, init/2, path/1, workdir/1, odb/1, is_bare/1, references/1, discover/1,
-	 lookup_object/2, lookup_reference/2, revwalk/1, stop/1]).
+	 lookup_object/2, lookup_reference/2, revwalk/1, stop/1, handle/1]).
 
 -include("geef_records.hrl").
 -record(state, {handle}).
@@ -91,6 +91,11 @@ revwalk(Pid) ->
 
 stop(Pid) ->
     gen_server:call(Pid, stop).
+
+%% @private
+%% @doc Get the underlying repo resource6
+handle(Pid) ->
+    gen_server:call(Pid, handle).
 
 %%%===================================================================
 %%% gen_server callbacks
