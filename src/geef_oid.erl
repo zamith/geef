@@ -12,12 +12,12 @@
 %% @doc Get the hex-encoded hash
 -spec fmt(oid()) -> binary().
 fmt(#oid{oid=Oid}) ->
-    geef:oid_fmt(Oid).
+    geef_nif:oid_fmt(Oid).
 
 %% @doc Parse an iolist as a hash
 -spec parse(iolist()) -> oid().
 parse(Sha) ->
-    Oid = geef:oid_parse(Sha),
+    Oid = geef_nif:oid_parse(Sha),
     #oid{oid=Oid}.
 
 -ifdef(TEST).

@@ -73,13 +73,13 @@ init(Handle) ->
 
 %% @private
 handle_call({sort, Opts}, _From, State = #state{handle=Handle}) ->
-    geef:revwalk_sorting(Handle, Opts),
+    geef_nif:revwalk_sorting(Handle, Opts),
     {reply, ok, State};
 handle_call({push, Oid}, _From, State = #state{handle=Handle}) ->
-    Reply = geef:revwalk_push(Handle, Oid, false),
+    Reply = geef_nif:revwalk_push(Handle, Oid, false),
     {reply, Reply, State};
 handle_call({hide, Oid}, _From, State = #state{handle=Handle}) ->
-    Reply = geef:revwalk_push(Handle, Oid, true),
+    Reply = geef_nif:revwalk_push(Handle, Oid, true),
     {reply, Reply, State};
 handle_call(next, _From, State = #state{handle=Handle}) ->
     Reply = handle_next(Handle),
@@ -108,7 +108,7 @@ code_change(_OldVsn, State, _Extra) ->
 %%%===================================================================
 
 handle_next(Handle) ->
-    case geef:revwalk_next(Handle) of
+    case geef_nif:revwalk_next(Handle) of
 	{ok, Oid} ->
 	    {ok, #oid{oid=Oid}};
 	Other ->

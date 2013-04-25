@@ -9,7 +9,7 @@
 -include("geef_records.hrl").
 
 bypath(#object{type=tree,handle=Handle}, Path) ->
-    case geef:tree_bypath(Handle, Path) of
+    case geef_nif:tree_bypath(Handle, Path) of
 	{ok, Mode, Type, Oid, Name} ->
 	    {ok, Mode, Type, #oid{oid=Oid}, Name};
 	Other ->

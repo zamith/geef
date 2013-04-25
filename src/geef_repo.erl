@@ -29,13 +29,13 @@
 %% @doc Discover a repository's path from a path contained inside it
 -spec discover(iolist()) -> {ok, binary()} | error | {error, term()}.
 discover(Path) ->
-    geef:repository_discover(Path).
+    geef_nif:repository_discover(Path).
 
 %% @doc Open an existing repository. Path must point to the git-dir or
 %% worktree
 -spec open(iolist()) -> {ok, repo()} | {error, term()}.
 open(Path) ->
-    case geef:repository_open(Path) of
+    case geef_nif:repository_open(Path) of
 	{ok, Handle} ->
 	    start_link(Handle);
 	Other ->
@@ -45,7 +45,7 @@ open(Path) ->
 %% @doc Initialize a new repository
 -spec init(iolist(), boolean()) -> {ok, pid()} | {error, term()}.
 init(Path, Bare) ->
-    case geef:repository_init(Path, Bare) of
+    case geef_nif:repository_init(Path, Bare) of
 	{ok, Handle} ->
 	    start_link(Handle);
 	Other ->
@@ -102,25 +102,25 @@ init(Handle) ->
 
 %% @private
 handle_call(path, _From, State = #state{handle=Handle}) ->
-    Reply = geef:repository_get_path(Handle),
+    Reply = geef_nif:repository_get_path(Handle),
     {reply, Reply, State};
 handle_call(workdir, _From, State = #state{handle=Handle}) ->
-    Reply = geef:repository_get_workdir(Handle),
+    Reply = geef_nif:repository_get_workdir(Handle),
     {reply, Reply, State};
 handle_call(odb, _From, State = #state{handle=Handle}) ->
     Reply = handle_odb(Handle),
     {reply, Reply, State};
 handle_call(bare, _From, State = #state{handle=Handle}) ->
-    Reply = geef:repository_is_bare(Handle),
+    Reply = geef_nif:repository_is_bare(Handle),
     {reply, Reply, State};
 handle_call(refs, _From, State = #state{handle=Handle}) ->
-    Reply = geef:reference_list(Handle),
+    Reply = geef_nif:reference_list(Handle),
     {reply, Reply, State};
 handle_call({lookup_object, Oid}, _From, State = #state{handle=Handle}) ->
-    Reply = geef:object_lookup(Handle, Oid),
+    Reply = geef_nif:object_lookup(Handle, Oid),
     {reply, Reply, State};
 handle_call({lookup_reference, Name}, _From, State = #state{handle=Handle}) ->
-    Reply = geef:reference_lookup(Handle, Name),
+    Reply = geef_nif:reference_lookup(Handle, Name),
     {reply, Reply, State};
 handle_call(stop, _From, State) ->
     {stop, normal, ok, State};
@@ -163,7 +163,7 @@ start_link(Handle) ->
     gen_server:start_link(?MODULE, Handle, []).
 
 handle_odb(Handle) ->
-    case geef:repository_get_odb(Handle) of
+    case geef_nif:repository_get_odb(Handle) of
 	{ok, OdbHandle} ->
 	    {ok, #odb{handle=OdbHandle}};
 	Other ->
@@ -171,7 +171,7 @@ handle_odb(Handle) ->
     end.
 
 handle_revwalk(Handle) ->
-    case geef:revwalk_new(Handle) of
+    case geef_nif:revwalk_new(Handle) of
 	{ok, WalkHandle} ->
 	    geef_revwalk:start_link(WalkHandle);
 	Error ->

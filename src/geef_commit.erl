@@ -5,11 +5,11 @@
 
 -spec tree_id(object()) -> oid().
 tree_id(#object{type=commit,handle=Handle}) ->
-    Oid = geef:commit_tree_id(Handle),
+    Oid = geef_nif:commit_tree_id(Handle),
     #oid{oid=Oid}.
 
 tree(#object{type=commit,handle=Handle}) ->
-    case geef:commit_tree(Handle) of
+    case geef_nif:commit_tree(Handle) of
 	{ok, Type, Handle} ->
 	    {ok, #object{type=Type, handle=Handle}};
 	Other ->

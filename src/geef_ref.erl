@@ -6,7 +6,7 @@
 
 -spec new(term()) -> ref().
 new(Handle) ->
-    Type = geef:reference_type(Handle),
+    Type = geef_nif:reference_type(Handle),
     #ref{handle=Handle, type=Type}.
 
 -spec lookup(pid(), iolist()) -> {ok, ref()} | {error, term()}.
@@ -29,14 +29,14 @@ resolve(#ref{handle=Handle}) ->
 
 -spec target(ref()) -> binary() | oid().
 target(#ref{handle=Handle,type=symbolic}) ->
-    geef:reference_target(Handle);
+    geef_nif:reference_target(Handle);
 target(#ref{handle=Handle,type=oid}) ->
-    Oid = geef:reference_target(Handle),
+    Oid = geef_nif:reference_target(Handle),
     #oid{oid=Oid}.
 
 -spec name_to_id(repo(), iolist()) -> {ok, oid()} | {error, binary()}.
 name_to_id(#repo{handle=Handle}, Name) ->
-    case geef:reference_to_id(Handle, Name) of
+    case geef_nif:reference_to_id(Handle, Name) of
 	{ok, Oid} ->
 	    {ok, #oid{oid=Oid}};
 	Other ->

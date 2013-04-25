@@ -10,13 +10,13 @@
 
 -spec exists(odb(), oid() | iolist()) -> boolean().
 exists(#odb{handle=Handle}, #oid{oid=Oid}) ->
-    geef:odb_object_exists(Handle, Oid);
+    geef_nif:odb_object_exists(Handle, Oid);
 exists(Odb = #odb{}, Sha) ->
     exists(Odb, geef_oid:parse(Sha)).
 
 -spec write(odb(), iolist(), atom()) -> {ok, oid()} | {error, term}.
 write(#odb{handle=Handle}, Contents, Type) ->
-    case geef:odb_write(Handle, Contents, Type) of
+    case geef_nif:odb_write(Handle, Contents, Type) of
 	{ok, Oid} ->
 	    {ok, #oid{oid=Oid}};
 	Other ->

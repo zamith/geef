@@ -140,4 +140,4 @@ static ErlNifFunc geef_funcs[] =
 	{"revwalk_reset", 1,   geef_revwalk_reset},
 };
 
-ERL_NIF_INIT(geef, geef_funcs, load, NULL, upgrade, unload)
+ERL_NIF_INIT(geef_nif, geef_funcs, load, NULL, upgrade, unload)

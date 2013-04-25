@@ -17,10 +17,10 @@ id(Obj = #object{type=blob}) ->
     geef_object:id(Obj).
 
 size(#object{type=blob, handle=Handle}) ->
-    geef:blob_size(Handle).
+    geef_nif:blob_size(Handle).
 
 content(#object{type=blob, handle=Handle}) ->
-    {ok, Content} = geef:blob_content(Handle),
+    {ok, Content} = geef_nif:blob_content(Handle),
     Content.
 
 
@@ -28,7 +28,7 @@ content(#object{type=blob, handle=Handle}) ->
 
 blob_size_test() ->
     {ok, Repo} = geef_repo:open(".."),
-    Blob = lookup(Repo, "80d5c15a040c93a4f98f4496a05ebf30cdd58650"),
+    {ok, Blob} = lookup(Repo, "80d5c15a040c93a4f98f4496a05ebf30cdd58650"),
     ?assertMatch(889, ?MODULE:size(Blob)),
     ?assertMatch(889, erlang:size(content(Blob))).
 

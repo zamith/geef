@@ -1,7 +1,7 @@
 %%% @private
 %%% NIF functions, not to be used directly.
 
--module(geef).
+-module(geef_nif).
 -export([reference_list/1,
 	 reference_to_id/2, reference_glob/2, reference_lookup/2, reference_resolve/1,
 	 reference_target/1, reference_type/1, odb_object_exists/2, odb_write/3]).
