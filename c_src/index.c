@@ -1,6 +1,7 @@
 #include "geef.h"
 #include "oid.h"
 #include "index.h"
+#include "object.h"
 #include <string.h>
 #include <git2.h>
 
@@ -71,6 +72,24 @@ geef_index_write_tree(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 		return atoms.error;
 
 	return enif_make_tuple2(env, atoms.ok, enif_make_binary(env, &bin));
+}
+
+ERL_NIF_TERM
+geef_index_read_tree(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
+{
+	geef_index *index;
+	geef_object *tree;
+
+	if (!enif_get_resource(env, argv[0], geef_index_type, (void **) &index))
+		return enif_make_badarg(env);
+
+	if (!enif_get_resource(env, argv[0], geef_object_type, (void **) &tree))
+		return enif_make_badarg(env);
+
+	if (git_index_read_tree(index->index, (git_tree *)tree->obj) < 0)
+		return geef_error(env);
+
+	return atoms.ok;
 }
 
 ERL_NIF_TERM

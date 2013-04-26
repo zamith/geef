@@ -147,7 +147,8 @@ static ErlNifFunc geef_funcs[] =
 	{"index_write", 1, geef_index_write},
 	{"index_write_tree", 1, geef_index_write_tree},
 	{"index_write_tree", 2, geef_index_write_tree},
-	{"index_clear", 1, geef_index_clear},
+	{"index_clear",      1, geef_index_clear},
+	{"index_read_tree",  2, geef_index_read_tree},
 };
 
 ERL_NIF_INIT(geef_nif, geef_funcs, load, NULL, upgrade, unload)

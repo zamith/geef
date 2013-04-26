@@ -12,7 +12,7 @@
 
 %% API
 -export([start_link/1]).
--export([new/0, write/1, write_tree/1, write_tree/2, clear/1, stop/1]).
+-export([new/0, write/1, write_tree/1, write_tree/2, clear/1, stop/1, read_tree/2]).
 
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
@@ -47,6 +47,9 @@ write_tree(Pid) ->
 -spec write_tree(pid(), pid()) -> {ok, oid()} | {error, term()}.
 write_tree(Pid, Repo) ->
     gen_server:call(Pid, {write_tree, Repo}).
+
+read_tree(Pid, #object{type=tree, handle=TreeHandle}) ->
+    gen_server:call(Pid, {read_tree, TreeHandle}).
 
 %% @doc Clear the contents of the index.
 -spec clear(pid()) -> ok.
@@ -86,7 +89,10 @@ handle_call(clear, _From, State = #state{handle=Handle}) ->
     Reply = geef_nif:index_clear(Handle),
     {reply, Reply, State};
 handle_call(stop, _From, State) ->
-    {stop, normal, ok, State}.
+    {stop, normal, ok, State};
+handle_call({read_tree, TreeHandle}, _From, State = #state{handle=Handle}) ->
+    Reply = geef_nif:index_read_tree(Handle, TreeHandle),
+    {reply, Reply, State}.
 
 %% @private
 handle_cast(_Msg, State) ->

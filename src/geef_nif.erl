@@ -23,7 +23,8 @@
 -export([revwalk_new/1, revwalk_push/3, revwalk_next/1, revwalk_sorting/2, revwalk_reset/1]).
 
 % index
--export([index_new/0, index_write/1, index_write_tree/1, index_write_tree/2, index_clear/1]).
+-export([index_new/0, index_write/1, index_write_tree/1, index_write_tree/2,
+	 index_clear/1, index_read_tree/2]).
 
 -on_load(load_enif/0).
 
@@ -145,6 +146,9 @@ index_write_tree(_Handle) ->
     ?NIF_FN.
 
 index_write_tree(_Handle, _RepoHandle) ->
+    ?NIF_FN.
+
+index_read_tree(_Handle, _TreeHandle) ->
     ?NIF_FN.
 
 index_clear(_Handle) ->
