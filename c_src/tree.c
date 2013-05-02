@@ -40,7 +40,6 @@ static ERL_NIF_TERM tree_entry_to_term(ErlNifEnv *env, const git_tree_entry *ent
 ERL_NIF_TERM
 geef_tree_bypath(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 {
-	char *path;
 	int error;
 	geef_object *obj;
 	ErlNifBinary bin;
@@ -52,17 +51,10 @@ geef_tree_bypath(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	if (!enif_inspect_iolist_as_binary(env, argv[1], &bin))
 		return enif_make_badarg(env);
 
-	path = malloc(bin.size + 1);
-	if (!path)
+	if (!geef_terminate_binary(&bin))
 		return geef_oom(env);
 
-	memcpy(path, bin.data, bin.size);
-	path[bin.size] = '\0';
-
-	error = git_tree_entry_bypath(&entry, (git_tree *)obj->obj, path);
-	free(path);
-
-	if (error < 0)
+	if (git_tree_entry_bypath(&entry, (git_tree *)obj->obj, (char *) bin.data) < 0)
 		return geef_error(env);
 
 	return tree_entry_to_term(env, entry);

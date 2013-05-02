@@ -40,7 +40,6 @@ geef_commit_tree(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	term_obj = enif_make_resource(env, obj);
 	enif_release_resource(obj);
 
-
 	return enif_make_tuple3(env, atoms.ok, atoms.tree, term_obj);
 
 }

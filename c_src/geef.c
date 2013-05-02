@@ -123,6 +123,16 @@ geef_oom(ErlNifEnv *env)
 	return enif_make_tuple2(env, atoms.error, atoms.enomem);
 }
 
+int geef_terminate_binary(ErlNifBinary *bin)
+{
+	if (!enif_realloc_binary(bin, bin->size + 1))
+		return 0;
+
+	bin->data[bin->size - 1] = '\0';
+
+	return 1;
+}
+
 static ErlNifFunc geef_funcs[] =
 {
 	{"repository_init", 2, geef_repository_init},

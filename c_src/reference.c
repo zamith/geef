@@ -49,7 +49,6 @@ geef_reference_lookup(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	git_reference *ref;
 	ErlNifBinary bin;
 	ERL_NIF_TERM term_ref;
-	char *name;
 	int error;
 
 	if (!enif_get_resource(env, argv[0], geef_repository_type, (void **) &repo))
@@ -58,15 +57,10 @@ geef_reference_lookup(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	if (!enif_inspect_iolist_as_binary(env, argv[1], &bin))
 		return enif_make_badarg(env);
 
-	name = malloc(bin.size + 1);
-	if (!name)
+	if (!geef_terminate_binary(&bin))
 		return geef_oom(env);
 
-	memcpy(name, bin.data, bin.size);
-	name[bin.size] = '\0';
-
-	error = git_reference_lookup(&ref, repo->repo, name);
-	free(name);
+	error = git_reference_lookup(&ref, repo->repo, (char *)bin.data);
 
 	if (error < 0)
 		return geef_error(env);
@@ -128,7 +122,6 @@ static int append_to_list(const char *name, void *payload)
 ERL_NIF_TERM
 geef_reference_glob(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 {
-	char *glob;
 	int error;
 	geef_repository *repo;
 	ErlNifBinary bin;
@@ -140,18 +133,13 @@ geef_reference_glob(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	if (!enif_inspect_iolist_as_binary(env, argv[1], &bin))
 		return enif_make_badarg(env);
 
-	glob = malloc(bin.size + 1);
-	if (!glob)
+	if (!geef_terminate_binary(&bin))
 		return geef_oom(env);
-
-	memcpy(glob, bin.data, bin.size);
-	glob[bin.size] = '\0';
 
 	data.env = env;
 	data.list = enif_make_list(env, 0);
 
-	error = git_reference_foreach_glob(repo->repo, glob, GIT_REF_LISTALL, append_to_list, &data);
-	free(glob);
+	error = git_reference_foreach_glob(repo->repo, (char *) bin.data, GIT_REF_LISTALL, append_to_list, &data);
 
 	if (error < 0)
 		return geef_error(env);
@@ -195,7 +183,6 @@ geef_reference_to_id(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 {
 	geef_repository *repo;
 	ErlNifBinary bin;
-	char *name;
 	git_oid id;
 
 	if (!enif_get_resource(env, argv[0], geef_repository_type, (void **) &repo))
@@ -204,14 +191,10 @@ geef_reference_to_id(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	if (!enif_inspect_iolist_as_binary(env, argv[1], &bin))
 		return enif_make_badarg(env);
 
-	name = malloc(bin.size + 1);
-	if (!name)
+	if (!geef_terminate_binary(&bin))
 		return geef_oom(env);
 
-	memcpy(name, bin.data, bin.size);
-	name[bin.size] = '\0';
-
-	if (git_reference_name_to_id(&id, repo->repo, name) < 0)
+	if (git_reference_name_to_id(&id, repo->repo, (char *)bin.data) < 0)
 		return geef_error(env);
 
 	if (geef_oid_bin(&bin, &id) < 0)

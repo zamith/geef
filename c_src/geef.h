@@ -29,4 +29,7 @@ typedef struct {
 
 extern geef_atoms atoms;
 
+/** NUL-terminate a binary */
+int geef_terminate_binary(ErlNifBinary *bin);
+
 #endif

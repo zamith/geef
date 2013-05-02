@@ -20,8 +20,7 @@ void geef_odb_free(ErlNifEnv *env, void *cd)
 ERL_NIF_TERM
 geef_repository_init(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 {
-	char *path;
-	int error, bare;
+	int bare;
 	git_repository *repo;
 	geef_repository *res_repo;
 	ErlNifBinary bin;
@@ -30,19 +29,12 @@ geef_repository_init(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	if (!enif_inspect_iolist_as_binary(env, argv[0], &bin))
 		return enif_make_badarg(env);
 
-	path = malloc(bin.size + 1);
-	if (!path)
+	if (!geef_terminate_binary(&bin))
 		return geef_oom(env);
-
-	memcpy(path, bin.data, bin.size);
-	path[bin.size] = '\0';
 
 	bare = !enif_compare(argv[1], atoms.true);
 
-	error = git_repository_init(&repo, path, bare);
-	free(path);
-
-	if (error < 0)
+	if (git_repository_init(&repo, (char *) bin.data, bare) < 0)
 		return geef_error(env);
 
 	res_repo = enif_alloc_resource(geef_repository_type, sizeof(geef_repository));
@@ -56,8 +48,6 @@ geef_repository_init(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 ERL_NIF_TERM
 geef_repository_open(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 {
-	char *path;
-	int error;
 	git_repository *repo;
 	geef_repository *res_repo;
 	ErlNifBinary bin;
@@ -66,17 +56,10 @@ geef_repository_open(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	if (!enif_inspect_iolist_as_binary(env, argv[0], &bin))
 		return enif_make_badarg(env);
 
-	path = malloc(bin.size + 1);
-	if (!path)
+	if (!geef_terminate_binary(&bin))
 		return geef_oom(env);
 
-	memcpy(path, bin.data, bin.size);
-	path[bin.size] = '\0';
-
-	error = git_repository_open(&repo, path);
-	free(path);
-
-	if (error < 0)
+	if (git_repository_open(&repo, (char *) bin.data) < 0)
 		return geef_error(env);
 
 	res_repo = enif_alloc_resource(geef_repository_type, sizeof(geef_repository));
@@ -90,57 +73,31 @@ geef_repository_open(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 ERL_NIF_TERM
 geef_repository_discover(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 {
-	char *path, *buffer;
-	size_t buffer_len;
-	ErlNifBinary bin, res_bin;
+	ErlNifBinary bin, path;
 	int error;
 
 	if (!enif_inspect_iolist_as_binary(env, argv[0], &bin))
 		return enif_make_badarg(env);
 
-	path = malloc(bin.size + 1);
-	if (!path)
+	if (!geef_terminate_binary(&bin))
 		return geef_oom(env);
 
-	memcpy(path, bin.data, bin.size);
-	path[bin.size] = '\0';
-
-	buffer_len = 256;
-	buffer = malloc(buffer_len);
-	if (!buffer)
+	if (!enif_alloc_binary(256, &path))
 		return geef_oom(env);
 
-	while ((error = git_repository_discover(buffer, buffer_len, path, 0, NULL)) < 0 &&
+	while ((error = git_repository_discover((char *) path.data, path.size,(char *) bin.data, 0, NULL)) < 0 &&
 	       giterr_last()->klass == GITERR_REPOSITORY) {
-		char *tmp;
-		buffer_len *= 2;
-		tmp = realloc(buffer, buffer_len);
-		if (!tmp) {
-			free(path);
-			free(buffer);
+		if (!enif_realloc_binary(&path, path.size * 2))
 			return geef_oom(env);
-		}
-
-		buffer = tmp;
 	}
 
-	free(path);
-
 	if (error < 0) {
-		free(buffer);
 		return geef_error(env);
 	}
 
-	buffer_len = strlen(buffer);
-	if (!enif_alloc_binary(buffer_len, &res_bin)) {
-		free(buffer);
-		return geef_oom(env);
-	}
+	enif_realloc_binary(&path, strlen((char *) path.data));
 
-	memcpy(res_bin.data, buffer, buffer_len);
-	free(buffer);
-
-	return enif_make_tuple2(env, atoms.ok, enif_make_binary(env, &res_bin));
+	return enif_make_tuple2(env, atoms.ok, enif_make_binary(env, &path));
 }
 
 ERL_NIF_TERM
