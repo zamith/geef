@@ -32,5 +32,21 @@ create_ref_test(Repo) ->
     [?_assertEqual(geef_ref:target(Ref0), Id),
      ?_assertEqual(geef_ref:target(Ref1), <<"refs/heads/branch">>)].
 
+rm_r(Path) ->
+    case filelib:is_dir(Path) of
+	false ->
+	    ok = file:delete(Path);
+	true ->
+	    case file:list_dir(Path) of
+		{ok, []} ->
+		    ok = file:del_dir(Path);
+		{ok, Filenames} ->
+		    lists:foreach(fun(X) -> rm_r(filename:join([Path, X])) end, Filenames),
+		    file:del_dir(Path)
+	    end
+    end.
+
 stop(Repo) ->
-    geef_repo:stop(Repo).
+    Path = geef_repo:path(Repo),
+    geef_repo:stop(Repo),
+    rm_r(Path).
