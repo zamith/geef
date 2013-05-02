@@ -1,4 +1,4 @@
--record(ref, {handle, type :: atom()}).
+-record(ref, {handle, type :: atom(), target :: binary() | oid()}).
 -record(repo, {handle}).
 -record(odb, {handle}).
 -record(revwalk, {handle}).
