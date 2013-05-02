@@ -1,6 +1,6 @@
 -module(geef_ref).
 
--export([lookup/2, resolve/1, target/1, name_to_id/2]).
+-export([lookup/2, resolve/1, target/1, name_to_id/2, create/4]).
 
 -include("geef_records.hrl").
 
@@ -15,6 +15,12 @@ new(Handle) ->
 		     #oid{oid=Bin}
 	     end,
     #ref{handle=Handle, type=Type, target=Target}.
+
+-spec create(pid(), iolist(), oid() | binary(), boolean()) -> {ok, ref()} | {error, term()}
+.
+create(Repo, Refname, Target, Force) ->
+    {ok, Ref} = geef_repo:create_reference(Repo, Refname, Target, Force),
+    {ok, new(Ref)}.
 
 -spec lookup(pid(), iolist()) -> {ok, ref()} | {error, term()}.
 lookup(Repo, Refname) ->

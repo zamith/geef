@@ -2,7 +2,7 @@
 %%% NIF functions, not to be used directly.
 
 -module(geef_nif).
--export([reference_list/1,
+-export([reference_list/1, reference_create/5,
 	 reference_to_id/2, reference_glob/2, reference_lookup/2, reference_resolve/1,
 	 reference_target/1, reference_type/1, odb_object_exists/2, odb_write/3]).
 
@@ -59,6 +59,9 @@ repository_discover(_Path) ->
 
 reference_list(_Repo) ->
     nif_error(?LINE).
+
+reference_create(_Repo, _Refname, _Type, _Target, _Force) ->
+    ?NIF_FN.
 
 reference_to_id(_Repo, _Refname) ->
     nif_error(?LINE).
