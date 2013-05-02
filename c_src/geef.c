@@ -73,6 +73,9 @@ static int load(ErlNifEnv *env, void **priv, ERL_NIF_TERM load_info)
 	atoms.timesort    = enif_make_atom(env, "sort_time");
 	atoms.reversesort = enif_make_atom(env, "sort_reverse");
 	atoms.iterover    = enif_make_atom(env, "iterover");
+	/* Errors */
+	atoms.enomem = enif_make_atom(env, "enomem");
+	atoms.eunknown = enif_make_atom(env, "eunknown");
 
 	return 0;
 }
@@ -92,22 +95,32 @@ geef_error(ErlNifEnv *env)
 {
 	const git_error *error;
 	ErlNifBinary bin;
-	const char *message;
 	size_t len;
 
 	error = giterr_last();
-	if (error && error->message)
-		message = error->message;
-	else
-		message = "No message specified";
 
-	len = strlen(message);
+	if (!error)
+		return enif_make_tuple2(env, atoms.error, atoms.eunknown);
+
+	if (error->klass == GITERR_NOMEMORY)
+		return geef_oom(env);
+
+	if (!error->message)
+		return enif_make_tuple2(env, atoms.error, atoms.eunknown);
+
+	len = strlen(error->message);
 	if (!enif_alloc_binary(len, &bin))
-		return atoms.error;
+		return geef_oom(env);
 
-	memcpy(bin.data, message, len);
+	memcpy(bin.data, error->message, len);
 
 	return enif_make_tuple2(env, atoms.error, enif_make_binary(env, &bin));
+}
+
+ERL_NIF_TERM
+geef_oom(ErlNifEnv *env)
+{
+	return enif_make_tuple2(env, atoms.error, atoms.enomem);
 }
 
 static ErlNifFunc geef_funcs[] =

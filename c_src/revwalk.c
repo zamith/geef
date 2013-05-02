@@ -23,7 +23,7 @@ geef_revwalk_new(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 
 	walk = enif_alloc_resource(geef_revwalk_type, sizeof(geef_revwalk));
 	if (!walk)
-		return atoms.error;
+		return geef_oom(env);
 
 	if (git_revwalk_new(&walk->walk, repo->repo) < 0) {
 		enif_release_resource(walk);
@@ -70,7 +70,7 @@ geef_revwalk_next(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 		return enif_make_badarg(env);
 
 	if (!enif_alloc_binary(GIT_OID_RAWSZ, &bin))
-		return atoms.error;
+		return geef_oom(env);
 
 	if ((error = git_revwalk_next((git_oid *)bin.data, walk->walk)) < 0) {
 		if (error == GIT_ITEROVER)

@@ -39,7 +39,7 @@ geef_blob_content(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 		return atoms.error;
 
 	if (!enif_alloc_binary(len, &bin))
-		return atoms.error;
+		return geef_oom(env);
 
 	memcpy(bin.data, content, len);
 

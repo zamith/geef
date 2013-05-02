@@ -4,6 +4,7 @@
 #include "erl_nif.h"
 
 ERL_NIF_TERM geef_error(ErlNifEnv *env);
+ERL_NIF_TERM geef_oom(ErlNifEnv *env);
 
 typedef struct {
 	ERL_NIF_TERM ok;
@@ -21,6 +22,9 @@ typedef struct {
 	ERL_NIF_TERM timesort;
 	ERL_NIF_TERM reversesort;
 	ERL_NIF_TERM iterover;
+
+	ERL_NIF_TERM enomem;
+	ERL_NIF_TERM eunknown;
 } geef_atoms;
 
 extern geef_atoms atoms;

@@ -32,7 +32,7 @@ geef_repository_init(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 
 	path = malloc(bin.size + 1);
 	if (!path)
-		return atoms.error;
+		return geef_oom(env);
 
 	memcpy(path, bin.data, bin.size);
 	path[bin.size] = '\0';
@@ -68,7 +68,7 @@ geef_repository_open(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 
 	path = malloc(bin.size + 1);
 	if (!path)
-		return atoms.error;
+		return geef_oom(env);
 
 	memcpy(path, bin.data, bin.size);
 	path[bin.size] = '\0';
@@ -100,7 +100,7 @@ geef_repository_discover(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 
 	path = malloc(bin.size + 1);
 	if (!path)
-		return atoms.error;
+		return geef_oom(env);
 
 	memcpy(path, bin.data, bin.size);
 	path[bin.size] = '\0';
@@ -108,7 +108,7 @@ geef_repository_discover(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	buffer_len = 256;
 	buffer = malloc(buffer_len);
 	if (!buffer)
-		return atoms.error;
+		return geef_oom(env);
 
 	while ((error = git_repository_discover(buffer, buffer_len, path, 0, NULL)) < 0 &&
 	       giterr_last()->klass == GITERR_REPOSITORY) {
@@ -118,7 +118,7 @@ geef_repository_discover(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 		if (!tmp) {
 			free(path);
 			free(buffer);
-			return atoms.error;
+			return geef_oom(env);
 		}
 
 		buffer = tmp;
@@ -134,7 +134,7 @@ geef_repository_discover(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	buffer_len = strlen(buffer);
 	if (!enif_alloc_binary(buffer_len, &res_bin)) {
 		free(buffer);
-		return atoms.error;
+		return geef_oom(env);
 	}
 
 	memcpy(res_bin.data, buffer, buffer_len);
@@ -158,7 +158,7 @@ geef_repository_path(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	len = strlen(path);
 
 	if (!enif_alloc_binary(len, &bin))
-		return atoms.error;
+		return geef_oom(env);
 
 	memcpy(bin.data, path, len);
 	return enif_make_binary(env, &bin);
@@ -182,7 +182,7 @@ geef_repository_workdir(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	len = strlen(path);
 
 	if (!enif_alloc_binary(len, &bin))
-		return atoms.error;
+		return geef_oom(env);
 
 	memcpy(bin.data, path, len);
 	return enif_make_binary(env, &bin);
@@ -266,7 +266,7 @@ geef_odb_write(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 		return geef_error(env);
 
 	if (geef_oid_bin(&oid_bin, &oid) < 0)
-		return atoms.error;
+		return geef_oom(env);
 
 	return enif_make_tuple2(env, atoms.ok, enif_make_binary(env, &oid_bin));
 }

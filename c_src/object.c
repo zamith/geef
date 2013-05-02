@@ -64,7 +64,7 @@ geef_object_lookup(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 
 	obj = enif_alloc_resource(geef_object_type, sizeof(geef_object));
 	if (!obj)
-		return atoms.error;
+		return geef_oom(env);
 
 	if (git_object_lookup(&obj->obj, repo->repo, &id, GIT_OBJ_ANY) < 0) {
 		enif_release_resource(obj);
@@ -94,7 +94,7 @@ geef_object_id(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	id = git_object_id(obj->obj);
 
 	if (geef_oid_bin(&bin, id) < 0)
-		return atoms.error;
+		return geef_oom(env);
 
 	return enif_make_tuple2(env, atoms.ok, enif_make_binary(env, &bin));
 }

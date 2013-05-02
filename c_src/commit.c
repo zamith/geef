@@ -18,7 +18,7 @@ geef_commit_tree_id(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	id = git_commit_tree_id((git_commit *) obj->obj);
 
 	if (geef_oid_bin(&bin, id) < 0)
-		return atoms.error;
+		return geef_oom(env);
 
 	return enif_make_binary(env, &bin);
 }

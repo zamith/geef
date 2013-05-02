@@ -38,7 +38,7 @@ geef_reference_list(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 
 on_error:
 	git_strarray_free(&array);
-	return atoms.error;
+	return geef_oom(env);
 }
 
 ERL_NIF_TERM
@@ -60,7 +60,7 @@ geef_reference_lookup(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 
 	name = malloc(bin.size + 1);
 	if (!name)
-		return atoms.error;
+		return geef_oom(env);
 
 	memcpy(name, bin.data, bin.size);
 	name[bin.size] = '\0';
@@ -142,7 +142,7 @@ geef_reference_glob(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 
 	glob = malloc(bin.size + 1);
 	if (!glob)
-		return atoms.error;
+		return geef_oom(env);
 
 	memcpy(glob, bin.data, bin.size);
 	glob[bin.size] = '\0';
@@ -173,7 +173,7 @@ geef_reference_target(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 		id = git_reference_target(ref->ref);
 
 		if (geef_oid_bin(&bin, id) < 0)
-			return atoms.error;
+			return geef_oom(env);
 	} else {
 		const char *name;
 		size_t len;
@@ -182,7 +182,7 @@ geef_reference_target(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 		len = strlen(name);
 
 		if (enif_alloc_binary(len, &bin) < 0)
-			return atoms.error;
+			return geef_oom(env);
 
 		memcpy(bin.data, name, len + 1);
 	}
@@ -206,7 +206,7 @@ geef_reference_to_id(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 
 	name = malloc(bin.size + 1);
 	if (!name)
-		return atoms.error;
+		return geef_oom(env);
 
 	memcpy(name, bin.data, bin.size);
 	name[bin.size] = '\0';
@@ -215,7 +215,7 @@ geef_reference_to_id(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 		return geef_error(env);
 
 	if (geef_oid_bin(&bin, &id) < 0)
-		return atoms.error;
+		return geef_oom(env);
 
 	return enif_make_tuple2(env, atoms.ok, enif_make_binary(env, &bin));
 }
@@ -268,7 +268,7 @@ geef_reference_create(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 
 	/* Allocate the extra byte for the NUL terminator */
 	if (!enif_realloc_binary(&name, name.size + 1))
-		return atoms.error;
+		return geef_oom(env);
 
 	name.data[name.size-1] = '\0';
 
@@ -283,7 +283,7 @@ geef_reference_create(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	} else if (enif_is_identical(argv[2], atoms.symbolic)) {
 		/* Allocate the extra byte for the NUL terminator */
 		if (!enif_realloc_binary(&target, target.size + 1))
-			return atoms.error;
+			return geef_oom(env);
 
 		target.data[target.size - 1] = '\0';
 		ptarget = (const char *) target.data;

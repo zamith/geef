@@ -24,11 +24,11 @@ static ERL_NIF_TERM tree_entry_to_term(ErlNifEnv *env, const git_tree_entry *ent
 	ErlNifBinary name, oid;
 
 	if (geef_oid_bin(&oid, git_tree_entry_id(entry)) < 0)
-		return atoms.error;
+		return geef_oom(env);
 
 	if (geef_string_bin(&name, git_tree_entry_name(entry)) < 0) {
 		enif_release_binary(&name);
-		return atoms.error;
+		return geef_oom(env);
 	}
 
 	return enif_make_tuple5(env, atoms.ok, enif_make_int(env, git_tree_entry_filemode(entry)),
@@ -54,7 +54,7 @@ geef_tree_bypath(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 
 	path = malloc(bin.size + 1);
 	if (!path)
-		return atoms.error;
+		return geef_oom(env);
 
 	memcpy(path, bin.data, bin.size);
 	path[bin.size] = '\0';
