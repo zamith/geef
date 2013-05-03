@@ -13,6 +13,7 @@ typedef struct {
 
 void geef_index_free(ErlNifEnv *env, void *cd);
 
+ERL_NIF_TERM geef_index_new(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
 ERL_NIF_TERM geef_index_write(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
 ERL_NIF_TERM geef_index_write_tree(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
 ERL_NIF_TERM geef_index_clear(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);

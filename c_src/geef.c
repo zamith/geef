@@ -167,7 +167,7 @@ static ErlNifFunc geef_funcs[] =
 	{"revwalk_next", 1,    geef_revwalk_next},
 	{"revwalk_sorting", 2, geef_revwalk_sorting},
 	{"revwalk_reset", 1,   geef_revwalk_reset},
-	{"index_new",   0, geef_revwalk_new},
+	{"index_new",   0, geef_index_new},
 	{"index_write", 1, geef_index_write},
 	{"index_write_tree", 1, geef_index_write_tree},
 	{"index_write_tree", 2, geef_index_write_tree},
