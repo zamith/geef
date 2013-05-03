@@ -29,6 +29,7 @@ lookup(Repo, Id, Type) ->
 	    {error, Err}
     end.
 
+-spec id(object()) -> {ok, oid()} | {error, term()}.
 id(#object{handle=Handle}) ->
     case geef_nif:object_id(Handle) of
 	{ok, Oid} ->
