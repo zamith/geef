@@ -171,6 +171,7 @@ static ErlNifFunc geef_funcs[] =
 	{"index_write", 1, geef_index_write},
 	{"index_write_tree", 1, geef_index_write_tree},
 	{"index_write_tree", 2, geef_index_write_tree},
+	{"index_add",        2, geef_index_add},
 	{"index_clear",      1, geef_index_clear},
 	{"index_read_tree",  2, geef_index_read_tree},
 };

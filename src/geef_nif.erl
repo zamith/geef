@@ -2,29 +2,7 @@
 %%% NIF functions, not to be used directly.
 
 -module(geef_nif).
--export([reference_list/1, reference_create/5,
-	 reference_to_id/2, reference_glob/2, reference_lookup/2, reference_resolve/1,
-	 reference_target/1, reference_type/1, odb_object_exists/2, odb_write/3]).
-
-% repository operations
--export([repository_get_path/1, repository_get_odb/1, repository_open/1, repository_init/2,
-	 repository_is_bare/1, repository_get_workdir/1, repository_discover/1]).
-
-% oid parsing
--export([oid_fmt/1, oid_parse/1]).
-
-% objects
--export([object_lookup/2, object_id/1, commit_tree_id/1, commit_tree/1, tree_bypath/2, blob_size/1, blob_content/1]).
-
-% git_libgit2
--export([library_version/0]).
-
-% revision walker
--export([revwalk_new/1, revwalk_push/3, revwalk_next/1, revwalk_sorting/2, revwalk_reset/1]).
-
-% index
--export([index_new/0, index_write/1, index_write_tree/1, index_write_tree/2,
-	 index_clear/1, index_read_tree/2]).
+-compile(export_all).
 
 -on_load(load_enif/0).
 
@@ -152,6 +130,9 @@ index_write_tree(_Handle, _RepoHandle) ->
     ?NIF_FN.
 
 index_read_tree(_Handle, _TreeHandle) ->
+    ?NIF_FN.
+
+index_add(_Handle, _Entry) ->
     ?NIF_FN.
 
 index_clear(_Handle) ->

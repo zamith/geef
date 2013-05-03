@@ -139,9 +139,8 @@ handle_call(stop, _From, State) ->
 handle_call(revwalk, _From, State = #state{handle=Handle}) ->
     Reply = handle_revwalk(Handle),
     {reply, Reply, State};
-handle_call(_Request, _From, State) ->
-    Reply = {error, "Unkown call"},
-    {reply, Reply, State}.
+handle_call(handle, _From, State = #state{handle=Handle}) ->
+    {reply, Handle, State}.
 
 %% @private
 handle_cast(_Msg, State) ->

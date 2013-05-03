@@ -4,6 +4,7 @@
 -record(revwalk, {handle}).
 -record(oid, {oid}).
 -record(object, {type :: atom(), handle}).
+-record(index_entry, {mode, id :: oid(), path :: iolist()}).
 
 -type ref() :: #ref{}.
 -type repo() :: #repo{}.
@@ -11,3 +12,4 @@
 -type odb() :: #odb{}.
 -type oid() :: #oid{}.
 -type object() :: #object{}.
+-type index_entry() :: #index_entry{}.

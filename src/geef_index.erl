@@ -12,7 +12,7 @@
 
 %% API
 -export([start_link/1]).
--export([new/0, write/1, write_tree/1, write_tree/2, clear/1, stop/1, read_tree/2]).
+-export([new/0, write/1, write_tree/1, write_tree/2, clear/1, stop/1, read_tree/2, add/2]).
 
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
@@ -51,6 +51,11 @@ write_tree(Pid, Repo) ->
 read_tree(Pid, #object{type=tree, handle=TreeHandle}) ->
     gen_server:call(Pid, {read_tree, TreeHandle}).
 
+%% @doc Add an entry to the index
+-spec add(pid(), index_entry()) -> ok | {error, term()}.
+add(Pid, Entry) ->
+    gen_server:call(Pid, {add, Entry}).
+
 %% @doc Clear the contents of the index.
 -spec clear(pid()) -> ok.
 clear(Pid) ->
@@ -83,7 +88,7 @@ handle_call(write_tree, _From, State = #state{handle=Handle}) ->
 handle_call({write_tree, Repo}, _From, State = #state{handle=Handle}) ->
     RepoHandle = geef_repo:handle(Repo),
     {ok, Oid} = geef_nif:index_write_tree(Handle, RepoHandle),
-    Reply = #oid{oid=Oid},
+    Reply = {ok, #oid{oid=Oid}},
     {reply, Reply, State};
 handle_call(clear, _From, State = #state{handle=Handle}) ->
     Reply = geef_nif:index_clear(Handle),
@@ -92,6 +97,9 @@ handle_call(stop, _From, State) ->
     {stop, normal, ok, State};
 handle_call({read_tree, TreeHandle}, _From, State = #state{handle=Handle}) ->
     Reply = geef_nif:index_read_tree(Handle, TreeHandle),
+    {reply, Reply, State};
+handle_call({add, Entry}, _From, State = #state{handle=Handle}) ->
+    Reply = geef_nif:index_add(Handle, Entry),
     {reply, Reply, State}.
 
 %% @private
