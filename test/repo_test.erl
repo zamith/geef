@@ -48,18 +48,14 @@ create_ref_test(Repo) ->
 rm_r(Path) ->
     case filelib:is_dir(Path) of
 	false ->
-	    ok = file:delete(Path);
+	    file:delete(Path);
 	true ->
-	    case file:list_dir(Path) of
-		{ok, []} ->
-		    ok = file:del_dir(Path);
-		{ok, Filenames} ->
-		    lists:foreach(fun(X) -> rm_r(filename:join([Path, X])) end, Filenames),
-		    file:del_dir(Path)
-	    end
+	    {ok, Entries} = file:list_dir(Path),
+	    lists:foreach(fun(X) -> ok = rm_r(filename:join([Path, X])) end, Entries),
+	    file:del_dir(Path)
     end.
 
 stop(Repo) ->
     Path = geef_repo:path(Repo),
     geef_repo:stop(Repo),
-    rm_r(Path).
+    ok = rm_r(Path).
