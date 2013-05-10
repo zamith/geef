@@ -17,17 +17,15 @@ First you need to install libgit2:
 Now, if you have Erlang OTP_R13B04 installed, you can compile this NIF to run
 in it.
 
-    $ git clone git://github.com/schacon/geef.git
+    $ git clone git://github.com/carlosmn/geef.git
     $ cd geef
     $ make
 
 The API looks basically like this:
 
-    {ok, Repo} = geef_repo:open(<<".">>).
+    {ok, Repo} = geef_repo:open(".").
     Workdir = geef_repo:workdir(Repo).
-    {ok, Odb} = geef_repo:odb(Repo).
-    Exists = Odb:exists(HexSha).
-
+    {ok, Blob} = geef_blob:lookup(Repo, geef_oid:parse("abcde...")).
 
 CONTRIBUTING
 ==============
@@ -40,10 +38,10 @@ AUTHORS
 ==============
 
 Scott Chacon <schacon@gmail.com>
+Carlos Martín Nieto <cmn@dwim.me>
 
 
 LICENSE
 ==============
 
 MIT.
-
