@@ -1,6 +1,6 @@
 -module(geef_ref).
 
--export([lookup/2, resolve/1, target/1, name_to_id/2, create/4]).
+-export([lookup/2, resolve/1, name_to_id/2, create/4]).
 
 -include("geef_records.hrl").
 
@@ -39,10 +39,6 @@ resolve(#ref{handle=Handle}) ->
 	Other ->
 	    Other
     end.
-
--spec target(ref()) -> binary() | oid().
-target(#ref{target=Target}) ->
-    Target.
 
 -spec name_to_id(repo(), iolist()) -> {ok, oid()} | {error, binary()}.
 name_to_id(#repo{handle=Handle}, Name) ->
