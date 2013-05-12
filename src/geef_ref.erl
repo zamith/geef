@@ -33,7 +33,7 @@ lookup(Repo, Refname) ->
 
 -spec resolve(ref()) -> {ok, ref()} | {error, term()}.
 resolve(#ref{handle=Handle}) ->
-    case geef:reference_resolve(Handle) of
+    case geef_nif:reference_resolve(Handle) of
 	{ok, Ref} ->
 	    {ok, new(Ref)};
 	Other ->
