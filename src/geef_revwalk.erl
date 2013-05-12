@@ -28,15 +28,23 @@
 %% @doc Push a commit. This commit and its parents will be included in
 %% the walk as long as they haven't been hidden. At least one commit
 %% must be pushed before starting a walk.
--spec push(pid(), oid()) -> ok | {error, binary()}.
+-spec push(pid(), oid() | iolist()) -> ok | {error, binary()}.
 push(Pid, #oid{oid=Oid}) ->
+    gen_server:call(Pid, {push, Oid});
+push(Pid, Id) ->
+    #oid{oid=Oid} = geef_oid:parse(Id),
     gen_server:call(Pid, {push, Oid}).
+
 
 %% @doc Hide a commit. Hide a commit and its parents. Any Parent of
 %% this commit won't be included in the walk.
--spec hide(pid(), oid()) -> ok | {error, binary()}.
+-spec hide(pid(), oid() | iolist()) -> ok | {error, binary()}.
 hide(Pid, #oid{oid=Oid}) ->
+    gen_server:call(Pid, {hide, Oid});
+hide(Pid, Id) ->
+    #oid{oid=Oid} = geef_oid:parse(Id),
     gen_server:call(Pid, {hide, Oid}).
+
 
 %% @doc Select the sorting method
 -spec sorting(pid, atom() | [atom()]) -> ok.

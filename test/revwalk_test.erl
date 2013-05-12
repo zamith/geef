@@ -26,8 +26,7 @@ count_walk(Walk, Acc) ->
 
 amount_test(Repo) ->
     {ok, Walk} = geef_repo:revwalk(Repo),
-    Id = geef_oid:parse("a4a7dce85cf63874e984719f4fdd239f5145052f"),
-    ok = geef_revwalk:push(Walk, Id),
+    ok = geef_revwalk:push(Walk, "a4a7dce85cf63874e984719f4fdd239f5145052f"),
     Count = count_walk(Walk, 0),
     geef_revwalk:stop(Walk),
     [?_assertEqual(6, Count)].
