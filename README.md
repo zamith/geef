@@ -23,14 +23,28 @@ in it.
 
 The API looks basically like this:
 
-    {ok, Repo} = geef_repo:open(".").
-    Workdir = geef_repo:workdir(Repo).
-    {ok, Blob} = geef_blob:lookup(Repo, geef_oid:parse("abcde...")).
+```erlang
+{ok, Repo} = geef_repo:open(".").
+Workdir = geef_repo:workdir(Repo).
+{ok, Blob} = geef_blob:lookup(Repo, geef_oid:parse("abcde...")).
+```
+
+Elixir
+======
+
+Some effort is made to let elixir programmers use the library in a
+more OO fashion. As an example, you can resolve a reference by calling
+a `resolve` method on it.
+
+```elixir
+{ :ok, original_ref } = :geef_ref.lookup(repo, refname)
+{ :ok, resolved_ref } = original_ref.resolve()
+```
 
 CONTRIBUTING
 ==============
 
-Fork schacon/geef on GitHub, make it awesomer (preferably in a branch named
+Fork carlosmn/geef on GitHub, make it awesomer (preferably in a branch named
 for the topic), send a pull request.
 
 
