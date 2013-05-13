@@ -7,11 +7,11 @@
 
 -include("geef_records.hrl").
 
--export([parse/1, fmt/1]).
+-export([parse/1, hex/1]).
 
-%% @doc Get the hex-encoded hash
--spec fmt(geef_oid()) -> binary().
-fmt(#geef_oid{oid=Oid}) ->
+%% @doc Get a hex-encoded string of the hash
+-spec hex(geef_oid()) -> binary().
+hex(#geef_oid{oid=Oid}) ->
     geef_nif:oid_fmt(Oid).
 
 %% @doc Parse an iolist as a hash
@@ -24,8 +24,8 @@ parse(Sha) ->
 
 back_and_forth_test() ->
     ?assertMatch(<<"d71c6ff702e75247ce29c51279d78a7a202f5cc9">>,
-		 fmt(parse(<<"d71c6ff702e75247ce29c51279d78a7a202f5cc9">>))),
+		 hex(parse(<<"d71c6ff702e75247ce29c51279d78a7a202f5cc9">>))),
     ?assertMatch(<<"d71c6ff702e75247ce29c51279d78a7a202f5cc9">>,
-		 fmt(parse("d71c6ff702e75247ce29c51279d78a7a202f5cc9"))).
+		 hex(parse("d71c6ff702e75247ce29c51279d78a7a202f5cc9"))).
 
 -endif.
