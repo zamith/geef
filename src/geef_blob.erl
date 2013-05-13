@@ -8,18 +8,18 @@
 
 -export([lookup/2, id/1, size/1, content/1]).
 
--spec lookup(repo(), oid() | iolist()) -> object().
+-spec lookup(pid(), geef_oid() | iolist()) -> geef_object().
 lookup(Repo, Id) ->
     geef_object:lookup(Repo, Id, blob).
 
--spec id(object()) -> oid().
-id(Obj = #object{type=blob}) ->
+-spec id(geef_object()) -> geef_oid().
+id(Obj = #geef_object{type=blob}) ->
     geef_object:id(Obj).
 
-size(#object{type=blob, handle=Handle}) ->
+size(#geef_object{type=blob, handle=Handle}) ->
     geef_nif:blob_size(Handle).
 
-content(#object{type=blob, handle=Handle}) ->
+content(#geef_object{type=blob, handle=Handle}) ->
     {ok, Content} = geef_nif:blob_content(Handle),
     Content.
 

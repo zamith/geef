@@ -29,7 +29,7 @@ index_add_test(Repo) ->
     {ok, Odb} = geef_repo:odb(Repo),
     {ok, BlobId} = geef_odb:write(Odb, Data, blob),
     {ok, Idx} = geef_index:new(),
-    Entry = #index_entry{mode=8#100644, id=BlobId, path="README"},
+    Entry = #geef_index_entry{mode=8#100644, id=BlobId, path="README"},
     ok = geef_index:add(Idx, Entry),
     {ok, TreeId} = geef_index:write_tree(Idx, Repo),
     Expected = geef_oid:parse("5a20bbbf65ea75ad4d9f995d179156824ccca3a1"),
@@ -42,8 +42,8 @@ create_ref_test(Repo) ->
     {ok, _} = geef_ref:create(Repo, "refs/heads/other", "refs/heads/branch", true),
     {ok, Ref0} = geef_ref:lookup(Repo, "refs/heads/branch"),
     {ok, Ref1} = geef_ref:lookup(Repo, "refs/heads/other"),
-    [?_assertEqual(Ref0#ref.target, Id),
-     ?_assertEqual(Ref1#ref.target, <<"refs/heads/branch">>)].
+    [?_assertEqual(Ref0#geef_ref.target, Id),
+     ?_assertEqual(Ref1#geef_ref.target, <<"refs/heads/branch">>)].
 
 rm_r(Path) ->
     case filelib:is_dir(Path) of

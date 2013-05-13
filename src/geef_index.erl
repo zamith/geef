@@ -39,20 +39,20 @@ write(Pid) ->
     gen_server:call(Pid, write).
 
 %% @doc Write out the index's contents to its the repository.
--spec write_tree(pid()) -> {ok, oid()} | {error, term()}.
+-spec write_tree(pid()) -> {ok, geef_oid()} | {error, term()}.
 write_tree(Pid) ->
     gen_server:call(Pid, write_tree).
 
 %% @doc Write out the index's contents to the given repository
--spec write_tree(pid(), pid()) -> {ok, oid()} | {error, term()}.
+-spec write_tree(pid(), pid()) -> {ok, geef_oid()} | {error, term()}.
 write_tree(Pid, Repo) ->
     gen_server:call(Pid, {write_tree, Repo}).
 
-read_tree(Pid, #object{type=tree, handle=TreeHandle}) ->
+read_tree(Pid, #geef_object{type=tree, handle=TreeHandle}) ->
     gen_server:call(Pid, {read_tree, TreeHandle}).
 
 %% @doc Add an entry to the index
--spec add(pid(), index_entry()) -> ok | {error, term()}.
+-spec add(pid(), geef_index_entry()) -> ok | {error, term()}.
 add(Pid, Entry) ->
     gen_server:call(Pid, {add, Entry}).
 
@@ -83,12 +83,12 @@ handle_call(write, _From, State = #state{handle=Handle}) ->
     {reply, Reply, State};
 handle_call(write_tree, _From, State = #state{handle=Handle}) ->
     {ok, Oid} = geef_nif:index_write_tree(Handle),
-    Reply = #oid{oid=Oid},
+    Reply = #geef_oid{oid=Oid},
     {reply, Reply, State};
 handle_call({write_tree, Repo}, _From, State = #state{handle=Handle}) ->
     RepoHandle = geef_repo:handle(Repo),
     {ok, Oid} = geef_nif:index_write_tree(Handle, RepoHandle),
-    Reply = {ok, #oid{oid=Oid}},
+    Reply = {ok, #geef_oid{oid=Oid}},
     {reply, Reply, State};
 handle_call(clear, _From, State = #state{handle=Handle}) ->
     Reply = geef_nif:index_clear(Handle),

@@ -1,10 +1,10 @@
 -module(geef_ref).
 
--export([lookup/2, resolve/1, name_to_id/2, create/4]).
+-export([lookup/2, resolve/1, create/4, target/1]).
 
 -include("geef_records.hrl").
 
--spec new(term()) -> ref().
+-spec new(term()) -> geef_ref().
 new(Handle) ->
     Type = geef_nif:reference_type(Handle),
     Bin = geef_nif:reference_target(Handle),
@@ -12,17 +12,17 @@ new(Handle) ->
 		 symbolic ->
 		     Bin;
 		 oid ->
-		     #oid{oid=Bin}
+		     #geef_oid{oid=Bin}
 	     end,
-    #ref{handle=Handle, type=Type, target=Target}.
+    #geef_ref{handle=Handle, type=Type, target=Target}.
 
--spec create(pid(), iolist(), oid() | binary(), boolean()) -> {ok, ref()} | {error, term()}
+-spec create(pid(), iolist(), geef_oid() | binary(), boolean()) -> {ok, geef_ref()} | {error, term()}
 .
 create(Repo, Refname, Target, Force) ->
     {ok, Ref} = geef_repo:create_reference(Repo, Refname, Target, Force),
     {ok, new(Ref)}.
 
--spec lookup(pid(), iolist()) -> {ok, ref()} | {error, term()}.
+-spec lookup(pid(), iolist()) -> {ok, geef_ref()} | {error, term()}.
 lookup(Repo, Refname) ->
     case geef_repo:lookup_reference(Repo, Refname) of
 	{ok, Ref} ->
@@ -31,8 +31,8 @@ lookup(Repo, Refname) ->
 	    Other
     end.
 
--spec resolve(ref()) -> {ok, ref()} | {error, term()}.
-resolve(#ref{handle=Handle}) ->
+-spec resolve(geef_ref()) -> {ok, geef_ref()} | {error, term()}.
+resolve(#geef_ref{handle=Handle}) ->
     case geef_nif:reference_resolve(Handle) of
 	{ok, Ref} ->
 	    {ok, new(Ref)};
@@ -40,11 +40,6 @@ resolve(#ref{handle=Handle}) ->
 	    Other
     end.
 
--spec name_to_id(repo(), iolist()) -> {ok, oid()} | {error, binary()}.
-name_to_id(#repo{handle=Handle}, Name) ->
-    case geef_nif:reference_to_id(Handle, Name) of
-	{ok, Oid} ->
-	    {ok, #oid{oid=Oid}};
-	Other ->
-	    Other
-    end.
+-spec target(geef_ref()) -> {geef_oid(), binary()}.
+target(#geef_ref{target=Target}) ->
+    Target.

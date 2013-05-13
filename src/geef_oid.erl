@@ -10,15 +10,15 @@
 -export([parse/1, fmt/1]).
 
 %% @doc Get the hex-encoded hash
--spec fmt(oid()) -> binary().
-fmt(#oid{oid=Oid}) ->
+-spec fmt(geef_oid()) -> binary().
+fmt(#geef_oid{oid=Oid}) ->
     geef_nif:oid_fmt(Oid).
 
 %% @doc Parse an iolist as a hash
--spec parse(iolist()) -> oid().
+-spec parse(iolist()) -> geef_oid().
 parse(Sha) ->
     Oid = geef_nif:oid_parse(Sha),
-    #oid{oid=Oid}.
+    #geef_oid{oid=Oid}.
 
 -ifdef(TEST).
 

@@ -1,15 +1,11 @@
--record(ref, {handle, type :: atom(), target :: binary() | oid()}).
--record(repo, {handle}).
--record(odb, {handle}).
--record(revwalk, {handle}).
--record(oid, {oid}).
--record(object, {type :: atom(), handle}).
--record(index_entry, {mode, id :: oid(), path :: iolist()}).
+-record(geef_ref, {handle, type :: atom(), target :: binary() | geef_oid()}).
+-record(geef_odb, {handle}).
+-record(geef_oid, {oid}).
+-record(geef_object, {type :: atom(), handle}).
+-record(geef_index_entry, {mode, id :: geef_oid(), path :: iolist()}).
 
--type ref() :: #ref{}.
--type repo() :: #repo{}.
--type revwalk() :: #revwalk{}.
--type odb() :: #odb{}.
--type oid() :: #oid{}.
--type object() :: #object{}.
--type index_entry() :: #index_entry{}.
+-type geef_ref() :: #geef_ref{}.
+-type geef_odb() :: #geef_odb{}.
+-type geef_oid() :: #geef_oid{}.
+-type geef_object() :: #geef_object{}.
+-type geef_index_entry() :: #geef_index_entry{}.

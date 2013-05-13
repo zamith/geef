@@ -28,21 +28,21 @@
 %% @doc Push a commit. This commit and its parents will be included in
 %% the walk as long as they haven't been hidden. At least one commit
 %% must be pushed before starting a walk.
--spec push(pid(), oid() | iolist()) -> ok | {error, binary()}.
-push(Pid, #oid{oid=Oid}) ->
+-spec push(pid(), geef_oid() | iolist()) -> ok | {error, binary()}.
+push(Pid, #geef_oid{oid=Oid}) ->
     gen_server:call(Pid, {push, Oid});
 push(Pid, Id) ->
-    #oid{oid=Oid} = geef_oid:parse(Id),
+    #geef_oid{oid=Oid} = geef_oid:parse(Id),
     gen_server:call(Pid, {push, Oid}).
 
 
 %% @doc Hide a commit. Hide a commit and its parents. Any Parent of
 %% this commit won't be included in the walk.
--spec hide(pid(), oid() | iolist()) -> ok | {error, binary()}.
-hide(Pid, #oid{oid=Oid}) ->
+-spec hide(pid(), geef_oid() | iolist()) -> ok | {error, binary()}.
+hide(Pid, #geef_oid{oid=Oid}) ->
     gen_server:call(Pid, {hide, Oid});
 hide(Pid, Id) ->
-    #oid{oid=Oid} = geef_oid:parse(Id),
+    #geef_oid{oid=Oid} = geef_oid:parse(Id),
     gen_server:call(Pid, {hide, Oid}).
 
 
@@ -118,7 +118,7 @@ code_change(_OldVsn, State, _Extra) ->
 handle_next(Handle) ->
     case geef_nif:revwalk_next(Handle) of
 	{ok, Oid} ->
-	    {ok, #oid{oid=Oid}};
+	    {ok, #geef_oid{oid=Oid}};
 	Other ->
 	    Other
     end.

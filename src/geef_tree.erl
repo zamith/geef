@@ -8,20 +8,20 @@
 
 -include("geef_records.hrl").
 
--spec get(object(), iolist()) -> {ok, integer(), atom(), oid(), binary()} | {error, term()}.
-get(#object{type=tree,handle=Handle}, Path) ->
+-spec get(geef_object(), iolist()) -> {ok, integer(), atom(), geef_oid(), binary()} | {error, term()}.
+get(#geef_object{type=tree,handle=Handle}, Path) ->
     case geef_nif:tree_bypath(Handle, Path) of
-	{ok, Mode, Type, Oid, Name} ->
-	    {ok, Mode, Type, #oid{oid=Oid}, Name};
+	{ok, Mode, Type, Geef_Oid, Name} ->
+	    {ok, Mode, Type, #geef_oid{oid=Geef_Oid}, Name};
 	Other ->
 	    Other
     end.
 
--spec id(object()) -> {ok, oid()} | {error, term()}.
-id(Obj = #object{type=tree}) ->
+-spec id(geef_object()) -> {ok, geef_oid()} | {error, term()}.
+id(Obj = #geef_object{type=tree}) ->
     geef_object:id(Obj).
 
--spec lookup(repo(), oid() | iolist()) -> {ok, object()} | {error, term()}.
+-spec lookup(pid(), geef_oid() | iolist()) -> {ok, geef_object()} | {error, term()}.
 lookup(Repo, Id) ->
     geef_object:lookup(Repo, Id, tree).
 

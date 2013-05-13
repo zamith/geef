@@ -33,7 +33,7 @@ discover(Path) ->
 
 %% @doc Open an existing repository. Path must point to the git-dir or
 %% worktree
--spec open(iolist()) -> {ok, repo()} | {error, term()}.
+-spec open(iolist()) -> {ok, pid()} | {error, term()}.
 open(Path) ->
     case geef_nif:repository_open(Path) of
 	{ok, Handle} ->
@@ -64,7 +64,7 @@ workdir(Pid) ->
 
 %% @doc The repository's current object database. This encompasses all
 %% the configured backends.
--spec odb(pid()) -> {ok, odb()} | {error, term}.
+-spec odb(pid()) -> {ok, geef_odb()} | {error, term}.
 odb(Pid) ->
     gen_server:call(Pid, odb).
 
@@ -176,7 +176,7 @@ start_link(Handle) ->
 handle_odb(Handle) ->
     case geef_nif:repository_get_odb(Handle) of
 	{ok, OdbHandle} ->
-	    {ok, #odb{handle=OdbHandle}};
+	    {ok, #geef_odb{handle=OdbHandle}};
 	Other ->
 	    Other
     end.
@@ -189,7 +189,7 @@ handle_revwalk(Handle) ->
 	    Error
     end.
 
-handle_create_reference(Repo, Refname, #oid{oid=Oid}, Force) ->
+handle_create_reference(Repo, Refname, #geef_oid{oid=Oid}, Force) ->
      geef_nif:reference_create(Repo, Refname, oid, Oid, Force);
 handle_create_reference(Repo, Refname, Target, Force) ->
     geef_nif:reference_create(Repo, Refname, symbolic, Target, Force).

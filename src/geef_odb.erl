@@ -8,17 +8,17 @@
 
 -include("geef_records.hrl").
 
--spec exists(odb(), oid() | iolist()) -> boolean().
-exists(#odb{handle=Handle}, #oid{oid=Oid}) ->
+-spec exists(geef_odb(), geef_oid() | iolist()) -> boolean().
+exists(#geef_odb{handle=Handle}, #geef_oid{oid=Oid}) ->
     geef_nif:odb_object_exists(Handle, Oid);
-exists(Odb = #odb{}, Sha) ->
+exists(Odb = #geef_odb{}, Sha) ->
     exists(Odb, geef_oid:parse(Sha)).
 
--spec write(odb(), iolist(), atom()) -> {ok, oid()} | {error, term}.
-write(#odb{handle=Handle}, Contents, Type) ->
+-spec write(geef_odb(), iolist(), atom()) -> {ok, geef_oid()} | {error, term}.
+write(#geef_odb{handle=Handle}, Contents, Type) ->
     case geef_nif:odb_write(Handle, Contents, Type) of
 	{ok, Oid} ->
-	    {ok, #oid{oid=Oid}};
+	    {ok, #geef_oid{oid=Oid}};
 	Other ->
 	    Other
     end.
