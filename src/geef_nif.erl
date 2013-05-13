@@ -59,6 +59,9 @@ reference_resolve(_Handle) ->
 reference_type(_Handle) ->
     nif_error(?LINE).
 
+reference_name(_Handle) ->
+    nif_error(?LINE).
+
 odb_object_exists(_Val, _Val) ->
     nif_error(?LINE).
 

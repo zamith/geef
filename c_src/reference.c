@@ -231,6 +231,28 @@ geef_reference_type(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 }
 
 ERL_NIF_TERM
+geef_reference_name(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
+{
+	geef_ref *ref;
+	const char *name;
+	ErlNifBinary bin;
+	size_t len;
+
+	if (!enif_get_resource(env, argv[0], geef_ref_type, (void **) &ref))
+		return enif_make_badarg(env);
+
+	name = git_reference_name(ref->ref);
+	len = strlen(name);
+
+	if (enif_alloc_binary(len, &bin) < 0)
+		return geef_oom(env);
+
+	memcpy(bin.data, name, len + 1);
+
+	return enif_make_binary(env, &bin);
+}
+
+ERL_NIF_TERM
 geef_reference_create(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 {
 	geef_repository *repo;
