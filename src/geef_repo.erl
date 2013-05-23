@@ -64,7 +64,7 @@ workdir(Pid) ->
 
 %% @doc The repository's current object database. This encompasses all
 %% the configured backends.
--spec odb(pid()) -> {ok, geef_odb()} | {error, term}.
+-spec odb(pid()) -> {ok, pid()} | {error, term}.
 odb(Pid) ->
     gen_server:call(Pid, odb).
 
@@ -176,7 +176,7 @@ start_link(Handle) ->
 handle_odb(Handle) ->
     case geef_nif:repository_get_odb(Handle) of
 	{ok, OdbHandle} ->
-	    {ok, #geef_odb{handle=OdbHandle}};
+	    geef_odb:start_link(OdbHandle);
 	Other ->
 	    Other
     end.
