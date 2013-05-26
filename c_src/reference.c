@@ -8,7 +8,6 @@
 ERL_NIF_TERM
 geef_reference_list(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 {
-	unsigned int flags = GIT_REF_LISTALL;
 	size_t i;
 	git_strarray array;
 	geef_repository *repo;
@@ -17,7 +16,7 @@ geef_reference_list(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	if (!enif_get_resource(env, argv[0], geef_repository_type, (void **) &repo))
 		return enif_make_badarg(env);
 
-	if (git_reference_list(&array, repo->repo, flags) < 0)
+	if (git_reference_list(&array, repo->repo) < 0)
 		return geef_error(env);
 
 	list = enif_make_list(env, 0);
@@ -139,7 +138,7 @@ geef_reference_glob(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	data.env = env;
 	data.list = enif_make_list(env, 0);
 
-	error = git_reference_foreach_glob(repo->repo, (char *) bin.data, GIT_REF_LISTALL, append_to_list, &data);
+	error = git_reference_foreach_glob(repo->repo, (char *) bin.data, append_to_list, &data);
 
 	if (error < 0)
 		return geef_error(env);
