@@ -248,7 +248,7 @@ geef_reference_name(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 
 	memcpy(bin.data, name, len + 1);
 
-	return enif_make_binary(env, &bin);
+	return enif_make_tuple2(env, atoms.ok, enif_make_binary(env, &bin));
 }
 
 ERL_NIF_TERM
