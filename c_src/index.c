@@ -107,16 +107,16 @@ geef_index_add(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	if (!enif_get_tuple(env, argv[1], &arity, &eentry))
 		return enif_make_badarg(env);
 
-	if (arity != 4)
+	if (arity != 13)
 		return enif_make_badarg(env);
 
 	/* TODO: check for the 'tree_entry' tag */
 	memset(&entry, 0, sizeof(entry));
 
-	if (!enif_get_uint(env, eentry[1], &entry.mode))
+	if (!enif_get_uint(env, eentry[5], &entry.mode))
 		return enif_make_badarg(env);
 
-	if (!enif_inspect_iolist_as_binary(env, eentry[3], &path))
+	if (!enif_inspect_iolist_as_binary(env, eentry[12], &path))
 		return enif_make_badarg(env);
 
 	if (!geef_terminate_binary(&path))
@@ -124,7 +124,7 @@ geef_index_add(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 
 	entry.path = (char *) path.data;
 	/* Extract the oid from the tuple */
-	if (!enif_get_tuple(env, eentry[2], &arity, &oid))
+	if (!enif_get_tuple(env, eentry[9], &arity, &oid))
 		return enif_make_badarg(env);
 
 	if (!enif_inspect_binary(env, oid[1], &id))
