@@ -4,5 +4,7 @@
 
 -spec line(iolist()) -> iolist().
 line(Text) ->
-    Prefix = io_lib:format("~4.16.0b", [iolist_size(Text) + 1]),
+    % prefix's own size + text size + LF
+    Len = 4 + iolist_size(Text) + 1,
+    Prefix = io_lib:format("~4.16.0b", [Len]),
     [Prefix, Text, "\n"].
