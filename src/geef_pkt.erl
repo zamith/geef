@@ -15,38 +15,48 @@ line(Text) ->
 
 -spec parse(iolist()) -> {{want | have, geef_oid()}, binary()}.
 parse(In) ->
-    {Len, Rest} = unpack(In),
-    case Len of
-	0 ->
-	    flush;
-	_ ->
-	    parse_pkt(Rest, Len - 4)
+    case unpack(In) of
+	{error, ebufs} ->
+	    {error, ebufs};
+	{0, Rest} ->
+	    {flush, Rest};
+	{Len, Rest} ->
+	    parse_pkt(Rest, Len)
     end.
 
 -spec parse_request(iolist()) -> geef_request().
 parse_request(In) ->
-    {_, Line} = unpack(In),
-    %% Split it into request, host, rest (should be empty)
-    [S, H, _] = binary:split(Line, <<0>>, [global]),
-    case S of
-	<<"git-upload-pack ", Path/binary>> ->
-	    Service = upload_pack;
-	<<"git-receive-pack ", Path/binary>> ->
-	    Service = receive_pack
-    end,
-    <<"host=", Host/binary>> = H,
-    #geef_request{service=Service, path=Path, host=Host}.
+    case unpack(In) of
+	{error, ebufs} ->
+	    {error, ebufs};
+	{_, Line} ->
+	    %% Split it into request, host, rest (should be empty)
+	    [S, H, _] = binary:split(Line, <<0>>, [global]),
+	    case S of
+		<<"git-upload-pack ", Path/binary>> ->
+		    Service = upload_pack;
+		<<"git-receive-pack ", Path/binary>> ->
+		    Service = receive_pack
+	    end,
+	    <<"host=", Host/binary>> = H,
+	    {ok, #geef_request{service=Service, path=Path, host=Host}}
+    end.
 
--spec unpack(iolist()) -> {non_neg_integer(), binary()}.
+-spec unpack(iolist()) -> {error, ebufs} | {non_neg_integer(), binary()}.
 unpack(In0) ->
     In = iolist_to_binary(In0),
     <<BLen:4/binary, Rest/binary>> = In,
     Len = binary_to_integer(BLen, 16),
-    {Len, Rest}.
+    if Len == 0 ->
+	    {0, Rest};
+       Len - 4 > size(Rest) ->
+	    {error, ebufs};
+       true ->
+	    {Len - 4, Rest}
+    end.
 
-parse_pkt(In, Len) when size(In) < Len ->
-    {error, ebufs};
 parse_pkt(In, Len0) ->
+    io:format("~p, ~p~n", [In, Len0]),
     Len1 = Len0 - 5, % "want " | "have "
     case In of
 	<<"want ", Sha:?SHA_LEN/binary, Rest0/binary>> ->
