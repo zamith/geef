@@ -16,10 +16,8 @@ line(Text) ->
 -spec parse(iolist()) -> {{want | have, geef_oid()}, binary()}.
 parse(In) ->
     case unpack(In) of
-	{error, ebufs} ->
-	    {error, ebufs};
-	{0, Rest} ->
-	    {flush, Rest};
+	Err = {error, ebufs} ->
+	    Err;
 	{Len, Rest} ->
 	    parse_pkt(Rest, Len)
     end.
@@ -27,43 +25,43 @@ parse(In) ->
 -spec parse_request(iolist()) -> geef_request().
 parse_request(In) ->
     case unpack(In) of
-	{error, ebufs} ->
-	    {error, ebufs};
+	Err = {error, ebufs} ->
+	    Err;
 	{_, Line} ->
 	    %% Split it into request, host, rest (should be empty)
-	    [S, H, _] = binary:split(Line, <<0>>, [global]),
-	    case S of
-		<<"git-upload-pack ", Path/binary>> ->
-		    Service = upload_pack;
-		<<"git-receive-pack ", Path/binary>> ->
-		    Service = receive_pack
-	    end,
+	    [S, H, _] = binary:split(Line, <<0:8>>, [global]),
+	    {Service, Path} = service_path(S),
 	    <<"host=", Host/binary>> = H,
 	    {ok, #geef_request{service=Service, path=Path, host=Host}}
     end.
 
--spec unpack(iolist()) -> {error, ebufs} | {non_neg_integer(), binary()}.
-unpack(In0) ->
-    In = iolist_to_binary(In0),
-    <<BLen:4/binary, Rest/binary>> = In,
-    Len = binary_to_integer(BLen, 16),
-    if Len == 0 ->
-	    {0, Rest};
-       Len - 4 > size(Rest) ->
-	    {error, ebufs};
-       true ->
-	    {Len - 4, Rest}
-    end.
+service_path(<<"git-upload-pack ", Path/binary>>) ->
+    {upload_pack, Path};
+service_path(<<"git-receive-pack ", Path/binary>>) ->
+    {receive_pack, Path}.
 
-parse_pkt(In, Len0) ->
-    io:format("~p, ~p~n", [In, Len0]),
-    Len1 = Len0 - 5, % "want " | "have "
-    case In of
-	<<"want ", Sha:?SHA_LEN/binary, Rest0/binary>> ->
-	    Pkt = {want, geef_oid:parse(Sha)};
-	<<"have ", Sha:?SHA_LEN/binary, Rest0/binary>> ->
-	    Pkt = {have, geef_oid:parse(Sha)}
-    end,
-    Len2 = Len1 - ?SHA_LEN, % get rid of the LF if we have it
-    <<_:Len2/binary, Rest/binary>> = Rest0,
-    {Pkt, Rest}.
+-spec unpack(iolist()) -> {error, ebufs} | {non_neg_integer(), binary()}.
+unpack(In) ->
+    <<BLen:4/binary, Rest/binary>> = iolist_to_binary(In),
+    Len = binary_to_integer(BLen, 16),
+    do_unpack(Len, Rest).
+
+do_unpack(0, Rest) ->
+    {0, Rest};
+do_unpack(Len, Rest) when Len - 4 > size(Rest) ->
+    {error, ebufs};
+do_unpack(Len, Rest) ->
+    {Len - 4, Rest}.
+
+parse_pkt(In, 0) ->
+    {flush, In};
+parse_pkt(In, Len) ->
+    LenLF = Len - 5 - ?SHA_LEN, % "want " | "want " + sha, remove LF if it's there
+    {Type, Rest0} = pkt_type(In),
+    <<Sha:?SHA_LEN/binary, _:LenLF/binary, Rest/binary>> = Rest0,
+    {{Type, geef_oid:parse(Sha)}, Rest}.
+
+pkt_type(<<"have ", Rest/binary>>) ->
+    {have, Rest};
+pkt_type(<<"want ", Rest/binary>>) ->
+    {want, Rest}.
