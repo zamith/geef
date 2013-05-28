@@ -10,3 +10,9 @@ have_test() ->
     Expected = {{want, geef_oid:parse("e17ca7f2d877acbf8b9a9a1cb4c243ca72e86463")}, <<>>},
     Actual = geef_pkt:parse("0032want e17ca7f2d877acbf8b9a9a1cb4c243ca72e86463\n"),
     ?assertEqual(Expected, Actual).
+
+request_test() ->
+    Line = <<"0039git-upload-pack /schacon/gitbook.git\0host=example.com\0">>,
+    Expected = #geef_request{service=upload_pack, path= <<"/schacon/gitbook.git">>, host= <<"example.com">>},
+    Actual = geef_pkt:parse_request(Line),
+    ?assertEqual(Expected, Actual).

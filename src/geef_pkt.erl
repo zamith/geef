@@ -1,6 +1,6 @@
 -module(geef_pkt).
 
--export([line/1, parse/1]).
+-export([line/1, parse/1, parse_request/1]).
 
 -include("geef_records.hrl").
 
@@ -14,16 +14,35 @@ line(Text) ->
     [Prefix, Text, "\n"].
 
 -spec parse(iolist()) -> {{want | have, geef_oid()}, binary()}.
-parse(In0) ->
-    In = iolist_to_binary(In0),
-    <<BLen:4/binary, Rest/binary>> = In,
-    Len = binary_to_integer(BLen, 16),
+parse(In) ->
+    {Len, Rest} = unpack(In),
     case Len of
 	0 ->
 	    flush;
 	_ ->
 	    parse_pkt(Rest, Len - 4)
     end.
+
+-spec parse_request(iolist()) -> geef_request().
+parse_request(In) ->
+    {_, Line} = unpack(In),
+    %% Split it into request, host, rest (should be empty)
+    [S, H, _] = binary:split(Line, <<0>>, [global]),
+    case S of
+	<<"git-upload-pack ", Path/binary>> ->
+	    Service = upload_pack;
+	<<"git-receive-pack ", Path/binary>> ->
+	    Service = receive_pack
+    end,
+    <<"host=", Host/binary>> = H,
+    #geef_request{service=Service, path=Path, host=Host}.
+
+-spec unpack(iolist()) -> {non_neg_integer(), binary()}.
+unpack(In0) ->
+    In = iolist_to_binary(In0),
+    <<BLen:4/binary, Rest/binary>> = In,
+    Len = binary_to_integer(BLen, 16),
+    {Len, Rest}.
 
 parse_pkt(In, Len) when size(In) < Len ->
     {error, ebufs};
