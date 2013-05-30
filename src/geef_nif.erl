@@ -101,6 +101,10 @@ blob_size(_ObjHandle) ->
 blob_content(_ObjHandle) ->
     nif_error(?LINE).
 
+-spec tag_peel(term()) -> {ok, atom(), term()} | {error, term()}.
+tag_peel(_Tag) ->
+    ?NIF_FN.
+
 -spec library_version() -> {integer, integer, integer}.
 library_version() ->
     nif_error(?LINE).

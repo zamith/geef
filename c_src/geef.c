@@ -6,6 +6,7 @@
 #include "commit.h"
 #include "tree.h"
 #include "blob.h"
+#include "tag.h"
 #include "library.h"
 #include "revwalk.h"
 #include "index.h"
@@ -162,6 +163,7 @@ static ErlNifFunc geef_funcs[] =
 	{"tree_bypath", 2, geef_tree_bypath},
 	{"blob_size", 1, geef_blob_size},
 	{"blob_content", 1, geef_blob_content},
+	{"tag_peel", 1, geef_tag_peel},
 	{"library_version", 0, geef_library_version},
 	{"revwalk_new",  1,    geef_revwalk_new},
 	{"revwalk_push", 3,    geef_revwalk_push},
