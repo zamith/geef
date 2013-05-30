@@ -6,7 +6,7 @@
 
 -include("geef_records.hrl").
 
--export([lookup/2, lookup/3, id/1]).
+-export([lookup/2, lookup/3, id/1, type/1]).
 
 -spec lookup(pid(), geef_oid() | iolist()) -> {ok, geef_object()} | {error, term()}.
 lookup(Repo, #geef_oid{oid=Oid}) ->
@@ -37,6 +37,10 @@ id(#geef_object{handle=Handle}) ->
 	Other ->
 	    Other
     end.
+
+-spec type(geef_object()) -> atom().
+type(#geef_object{type=Type}) ->
+    Type.
 
 -ifdef(TEST).
 
