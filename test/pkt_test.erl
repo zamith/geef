@@ -8,6 +8,11 @@ flush_test() ->
     Actual = geef_pkt:parse("0000"),
     ?assertEqual(Expected, Actual).
 
+done_test() ->
+    Expected = {done, <<>>},
+    Actual = geef_pkt:parse("0009done\n"),
+    ?assertEqual(Expected, Actual).
+
 have_test() ->
     Expected = {{want, geef_oid:parse("e17ca7f2d877acbf8b9a9a1cb4c243ca72e86463")}, <<>>},
     Actual = geef_pkt:parse("0032want e17ca7f2d877acbf8b9a9a1cb4c243ca72e86463\n"),

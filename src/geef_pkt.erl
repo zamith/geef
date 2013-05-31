@@ -56,12 +56,21 @@ do_unpack(Len, Rest) ->
 parse_pkt(In, 0) ->
     {flush, In};
 parse_pkt(In, Len) ->
-    LenLF = Len - 5 - ?SHA_LEN, % "want " | "want " + sha, remove LF if it's there
-    {Type, Rest0} = pkt_type(In),
-    <<Sha:?SHA_LEN/binary, _:LenLF/binary, Rest/binary>> = Rest0,
-    {{Type, geef_oid:parse(Sha)}, Rest}.
+    {Type, NameLen, Rest0} = pkt_type(In),
+    LenLF = Len - NameLen, % lets us optionally clean the LF
+    {Pkt, Rest1} = case Type of
+		       done ->
+			   {done, Rest0};
+		       _ ->
+			   <<Sha:?SHA_LEN/binary, R/binary>> = Rest0,
+			   {{Type,  geef_oid:parse(Sha)}, R}
+		   end,
+    <<_:LenLF/binary, Rest/binary>> = Rest1,
+    {Pkt, Rest}.
 
 pkt_type(<<"have ", Rest/binary>>) ->
-    {have, Rest};
+    {have, 5 + ?SHA_LEN, Rest};
 pkt_type(<<"want ", Rest/binary>>) ->
-    {want, Rest}.
+    {want, 5 + ?SHA_LEN, Rest};
+pkt_type(<<"done", Rest/binary>>) ->
+    {done, 4, Rest}.
