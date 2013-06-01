@@ -7,6 +7,8 @@
 -define(SHA_LEN, 40).
 
 -spec line(iolist()) -> iolist().
+line([]) ->
+    [];
 line(Text) ->
     % prefix's own size + text size + LF
     Len = 4 + iolist_size(Text) + 1,
