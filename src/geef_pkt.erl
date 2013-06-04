@@ -15,7 +15,7 @@ line(Text) ->
     Prefix = io_lib:format("~4.16.0b", [Len]),
     [Prefix, Text, "\n"].
 
--spec parse(iolist()) -> {{want | have, geef_oid()}, binary()}.
+-spec parse(iolist()) -> {{want | have, geef_oid()}, binary()} | {error, ebufs}.
 parse(In) ->
     case unpack(In) of
 	Err = {error, ebufs} ->
