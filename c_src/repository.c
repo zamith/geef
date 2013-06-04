@@ -92,6 +92,7 @@ geef_repository_discover(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	}
 
 	if (error < 0) {
+		enif_release_binary(&path);
 		return geef_error(env);
 	}
 

@@ -40,7 +40,6 @@ static ERL_NIF_TERM tree_entry_to_term(ErlNifEnv *env, const git_tree_entry *ent
 ERL_NIF_TERM
 geef_tree_bypath(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 {
-	int error;
 	geef_object *obj;
 	ErlNifBinary bin;
 	git_tree_entry *entry;
@@ -57,5 +56,6 @@ geef_tree_bypath(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	if (git_tree_entry_bypath(&entry, (git_tree *)obj->obj, (char *) bin.data) < 0)
 		return geef_error(env);
 
+	enif_release_binary(&bin);
 	return tree_entry_to_term(env, entry);
 }

@@ -61,6 +61,7 @@ geef_reference_lookup(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 
 	error = git_reference_lookup(&ref, repo->repo, (char *)bin.data);
 
+	enif_release_binary(&bin);
 	if (error < 0)
 		return geef_error(env);
 
@@ -140,6 +141,7 @@ geef_reference_glob(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 
 	error = git_reference_foreach_glob(repo->repo, (char *) bin.data, append_to_list, &data);
 
+	enif_release_binary(&bin);
 	if (error < 0)
 		return geef_error(env);
 
@@ -270,11 +272,8 @@ geef_reference_create(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	if (!enif_inspect_iolist_as_binary(env, argv[3], &target))
 		return enif_make_badarg(env);
 
-	/* Allocate the extra byte for the NUL terminator */
-	if (!enif_realloc_binary(&name, name.size + 1))
+	if (!geef_terminate_binary(&name))
 		return geef_oom(env);
-
-	name.data[name.size-1] = '\0';
 
 	ref = enif_alloc_resource(geef_ref_type, sizeof(geef_ref));
 
@@ -285,16 +284,19 @@ geef_reference_create(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 		const git_oid *oid = (const git_oid *) target.data;
 		error = git_reference_create(&ref->ref, repo->repo, pname, oid, force);
 	} else if (enif_is_identical(argv[2], atoms.symbolic)) {
-		/* Allocate the extra byte for the NUL terminator */
-		if (!enif_realloc_binary(&target, target.size + 1))
+		if (!geef_terminate_binary(&target))
 			return geef_oom(env);
 
-		target.data[target.size - 1] = '\0';
 		ptarget = (const char *) target.data;
 		error = git_reference_symbolic_create(&ref->ref, repo->repo, pname, ptarget, force);		
+		enif_release_binary(&target);
 	} else {
+		enif_release_binary(&target);
+		enif_release_binary(&name);
 		return enif_make_badarg(env);
 	}
+
+	enif_release_binary(&name);
 
 	if (error < 0)
 		return geef_error(env);
