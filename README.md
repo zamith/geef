@@ -20,6 +20,7 @@ in it.
     $ git clone git://github.com/carlosmn/geef.git
     $ cd geef
     $ make
+    $ mix # if you want to build the elixir modules
 
 The API looks basically like this:
 
@@ -32,14 +33,23 @@ Workdir = geef_repo:workdir(Repo).
 Elixir
 ======
 
-Some effort is made to let elixir programmers use the library in a
-more OO fashion. As an example, you can resolve a reference by calling
-a `resolve` method on it.
+There are wrappers for elixir which make use of some elixir-specific
+things, like `Repository.open!`, or `Reference.resolve!`.
 
 ```elixir
-{ :ok, original_ref } = :geef_ref.lookup(repo, refname)
-{ :ok, resolved_ref } = original_ref.resolve()
+alias Geef.Repository
+alias Geef.Reference
+repo = Repository.open!(".")
+ref = Reference.lookup!(repo. "HEAD") |> Reference.resolve!
 ```
+
+Of course, you could also do
+
+```elixir
+ref = Repository.open! "." |> Reference.lookup! "HEAD" |> Reference.resolve!
+```
+
+but then you would leak the repository process.
 
 CONTRIBUTING
 ==============
