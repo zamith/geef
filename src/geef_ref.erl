@@ -33,6 +33,8 @@ lookup(Repo, Refname) ->
     end.
 
 -spec resolve(geef_ref()) -> {ok, geef_ref()} | {error, term()}.
+resolve(Ref = #geef_ref{type=oid}) ->
+    {ok, Ref}; % resolving an oid ref is a no-op, skip going into the NIF
 resolve(#geef_ref{handle=Handle}) ->
     case geef_nif:reference_resolve(Handle) of
 	{ok, Ref} ->
