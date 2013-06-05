@@ -10,11 +10,11 @@
 
 -spec lookup(pid(), geef_oid() | iolist()) -> geef_object().
 lookup(Repo, Id) ->
-    geef_object:lookup(Repo, Id, blob).
+    geef_obj:lookup(Repo, Id, blob).
 
 -spec id(geef_object()) -> geef_oid().
 id(Obj = #geef_object{type=blob}) ->
-    geef_object:id(Obj).
+    geef_obj:id(Obj).
 
 size(#geef_object{type=blob, handle=Handle}) ->
     geef_nif:blob_size(Handle).
