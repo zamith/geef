@@ -1,4 +1,4 @@
--record(geef_ref, {handle, name :: binary(), type :: atom(), target :: binary() | geef_oid()}).
+-record(geef_reference, {handle, name :: binary(), type :: atom(), target :: binary() | geef_oid()}).
 -record(geef_oid, {oid}).
 -record(geef_object, {type :: atom(), handle}).
 -record(geef_index_entry,
@@ -12,7 +12,7 @@
 
 -record(geef_request, {service :: atom, path :: binary(), host :: binary()}).
 
--type geef_ref() :: #geef_ref{}.
+-type geef_reference() :: #geef_reference{}.
 -type geef_oid() :: #geef_oid{}.
 -type geef_object() :: #geef_object{}.
 -type geef_index_entry() :: #geef_index_entry{}.

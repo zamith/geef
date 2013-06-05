@@ -1,3 +1,5 @@
+defrecord :geef_reference, Record.extract(:geef_reference, from: "src/geef_records.hrl")
+
 defmodule Geef.Reference do
   alias Geef.Repository
 

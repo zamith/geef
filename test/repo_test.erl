@@ -42,8 +42,8 @@ create_ref_test(Repo) ->
     {ok, _} = geef_ref:create(Repo, "refs/heads/other", "refs/heads/branch", true),
     {ok, Ref0} = geef_ref:lookup(Repo, "refs/heads/branch"),
     {ok, Ref1} = geef_ref:lookup(Repo, "refs/heads/other"),
-    [?_assertEqual(Ref0#geef_ref.target, Id),
-     ?_assertEqual(Ref1#geef_ref.target, <<"refs/heads/branch">>)].
+    [?_assertEqual(Ref0#geef_reference.target, Id),
+     ?_assertEqual(Ref1#geef_reference.target, <<"refs/heads/branch">>)].
 
 rm_r(Path) ->
     case filelib:is_dir(Path) of
