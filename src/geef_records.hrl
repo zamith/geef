@@ -1,6 +1,6 @@
 -record(geef_reference, {handle, name :: binary(), type :: atom(), target :: binary() | geef_oid()}).
 -record(geef_oid, {oid}).
--record(geef_object, {type :: atom(), handle}).
+-record(geef_object, {type :: atom(), id :: geef_oid(), handle}).
 -record(geef_index_entry,
 	{ctime :: non_neg_integer(), mtime :: non_neg_integer(),
 	 dev :: non_neg_integer(), ino :: non_neg_integer(),

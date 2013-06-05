@@ -6,13 +6,13 @@
 
 -include("geef_records.hrl").
 
--export([lookup/2, lookup/3, id/1]).
+-export([lookup/2, lookup/3]).
 
 -spec lookup(pid(), geef_oid() | iolist()) -> {ok, geef_object()} | {error, term()}.
-lookup(Repo, #geef_oid{oid=Oid}) ->
+lookup(Repo, Id = #geef_oid{oid=Oid}) ->
     case geef_repo:lookup_object(Repo, Oid) of
 	{ok, Type, Handle} ->
-	    {ok, #geef_object{type=Type, handle=Handle}};
+	    {ok, #geef_object{type=Type, id=Id, handle=Handle}};
 	{error, Err} ->
 	    {error, Err}
     end;
@@ -29,15 +29,6 @@ lookup(Repo, Id, Type) ->
 	    {error, Err}
     end.
 
--spec id(geef_object()) -> {ok, geef_oid()} | {error, term()}.
-id(#geef_object{handle=Handle}) ->
-    case geef_nif:object_id(Handle) of
-	{ok, Oid} ->
-	    #geef_oid{oid=Oid};
-	Other ->
-	    Other
-    end.
-
 -ifdef(TEST).
 
 lookup_test() ->
@@ -52,6 +43,6 @@ id_test() ->
     Sha = <<"b5b68cce8b92ca0e7bd48430617ac10c0f2c2923">>,
     Id = geef_oid:parse(Sha),
     {ok, Commit = #geef_object{type=commit}} = lookup(Repo, Sha),
-    Id = id(Commit).
+    Id = Commit#geef_object.id.
 
 -endif.

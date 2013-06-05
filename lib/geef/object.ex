@@ -14,6 +14,5 @@ defmodule Geef.Object do
 
 
   def lookup(repo, id, type), do: :geef_obj.lookup(repo, id, type)
-  def id(obj), do: :geef_obj.id(obj)
 
 end
