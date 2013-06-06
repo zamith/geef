@@ -4,7 +4,7 @@
 -include_lib("eunit/include/eunit.hrl").
 -endif.
 
--export([get/2, id/1, lookup/2]).
+-export([get/2, lookup/2]).
 
 -include("geef_records.hrl").
 
@@ -16,10 +16,6 @@ get(#geef_object{type=tree,handle=Handle}, Path) ->
 	Other ->
 	    Other
     end.
-
--spec id(geef_object()) -> {ok, geef_oid()} | {error, term()}.
-id(Obj = #geef_object{type=tree}) ->
-    geef_object:id(Obj).
 
 -spec lookup(pid(), geef_oid() | iolist()) -> {ok, geef_object()} | {error, term()}.
 lookup(Repo, Id) ->

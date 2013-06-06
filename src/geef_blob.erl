@@ -6,15 +6,11 @@
 
 -include("geef_records.hrl").
 
--export([lookup/2, id/1, size/1, content/1]).
+-export([lookup/2, size/1, content/1]).
 
 -spec lookup(pid(), geef_oid() | iolist()) -> geef_object().
 lookup(Repo, Id) ->
     geef_obj:lookup(Repo, Id, blob).
-
--spec id(geef_object()) -> geef_oid().
-id(Obj = #geef_object{type=blob}) ->
-    geef_obj:id(Obj).
 
 size(#geef_object{type=blob, handle=Handle}) ->
     geef_nif:blob_size(Handle).
