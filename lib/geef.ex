@@ -7,6 +7,7 @@ defmodule Geef do
       alias Geef.Object
       alias Geef.Commit
       alias Geef.Tree
+      alias Geef.TreeEntry
       alias Geef.Blob
       alias Geef.Tag
     end
