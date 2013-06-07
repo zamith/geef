@@ -5,7 +5,8 @@
 
 repo_test_() ->
     {foreach, fun start/0, fun stop/1, [fun bare_test/1, fun odb_write_test/1,
-					fun create_ref_test/1, fun index_add_test/1]}.
+					fun create_ref_test/1, fun index_add_test/1,
+					fun dwim_ref_test/1]}.
 
 start() ->
     {A, B, C} = now(),
@@ -44,6 +45,15 @@ create_ref_test(Repo) ->
     {ok, Ref1} = geef_ref:lookup(Repo, "refs/heads/other"),
     [?_assertEqual(Ref0#geef_reference.target, Id),
      ?_assertEqual(Ref1#geef_reference.target, <<"refs/heads/branch">>)].
+
+dwim_ref_test(Repo) ->
+    odb_write_test(Repo),
+    Id = geef_oid:parse("c300118399f01fe52b316061b5d32beb27e0adfd"),
+    {ok, _} = geef_ref:create(Repo, "refs/heads/branch", Id, true),
+    {ok, Branch} = geef_ref:dwim(Repo, "branch"),
+    Actual = Branch#geef_reference.name,
+    Expected = <<"refs/heads/branch">>,
+    [?_assertEqual(Actual, Expected)].
 
 rm_r(Path) ->
     case filelib:is_dir(Path) of

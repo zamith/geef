@@ -37,4 +37,20 @@ defrecord Geef.Reference, Record.extract(:geef_reference, from: "src/geef_record
     end
   end
 
+  def dwim(repo, name) do
+    case :geef_ref.dwim(repo, name) do
+      {:ok, ref} ->
+        {:ok, Geef.Reference.new ref}
+      error ->
+        error
+    end
+  end
+
+  def dwim!(repo, name) do
+    case dwim(repo, name) do
+      {:ok, ref} -> ref
+      {:error, err} -> raise err
+    end
+  end
+
 end

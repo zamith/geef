@@ -62,6 +62,9 @@ reference_type(_Handle) ->
 reference_name(_Handle) ->
     nif_error(?LINE).
 
+reference_dwim(_Handle, _Name) ->
+    ?NIF_FN.
+
 odb_object_exists(_Val, _Val) ->
     nif_error(?LINE).
 

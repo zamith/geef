@@ -1,6 +1,6 @@
 -module(geef_ref).
 
--export([lookup/2, resolve/1, create/4]).
+-export([lookup/2, resolve/1, create/4, dwim/2]).
 
 -include("geef_records.hrl").
 
@@ -41,4 +41,14 @@ resolve(#geef_reference{handle=Handle}) ->
 	    {ok, new(Name, Ref)};
 	Other ->
 	    Other
+    end.
+
+-spec dwim(pid(), iolist()) -> {ok, geef_reference()} | {error, term()}.
+dwim(Repo, Name) ->
+    case geef_repo:reference_dwim(Repo, Name) of
+	{ok, Handle} ->
+	    {ok, FullName} = geef_nif:reference_name(Handle),
+	    {ok, new(FullName, Handle)};
+	Err ->
+	    Err
     end.

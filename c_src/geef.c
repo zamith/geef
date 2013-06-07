@@ -154,6 +154,7 @@ static ErlNifFunc geef_funcs[] =
 	{"reference_type", 1, geef_reference_type},
 	{"reference_name", 1, geef_reference_name},
 	{"reference_create", 5, geef_reference_create},
+	{"reference_dwim", 2,   geef_reference_dwim},
 	{"oid_fmt", 1, geef_oid_fmt},
 	{"oid_parse", 1, geef_oid_parse},
 	{"object_lookup", 2, geef_object_lookup},
