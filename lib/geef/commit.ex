@@ -1,5 +1,6 @@
 defmodule Geef.Commit do
   alias Geef.Object
+  import :macros, Object
 
   def lookup(repo, id) do
     case :geef_commit.lookup(repo, id) do
@@ -11,7 +12,7 @@ defmodule Geef.Commit do
   end
 
   def tree_id(commit = Object[type: :commit]) do
-    :geef_commit.tree_id(set_elem(commit, 0, :geef_object))
+    :geef_commit.tree_id(rebind(commit))
   end
 
 end

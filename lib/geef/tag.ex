@@ -1,8 +1,9 @@
 defmodule Geef.Tag do
   alias Geef.Object
+  import :macros, Object
 
   def peel(tag = Object[type: :tag]) do
-    case :geef_tag.peel(set_elem(tag, 0, :geef_object)) do
+    case :geef_tag.peel(rebind(tag)) do
       {:ok, peeled} ->
         {:ok, Object.new peeled}
       error ->

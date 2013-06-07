@@ -4,6 +4,8 @@ defmodule Geef.Tree do
   alias Geef.Object
   alias Geef.TreeEntry
 
+  import :macros, Geef.Object
+
   def lookup(repo, id) do
     case :geef_tree.lookup(repo, id) do
       {:ok, obj} ->
@@ -14,7 +16,7 @@ defmodule Geef.Tree do
   end
 
   def get(tree = Object[type: :tree], path) do
-    case :geef_tree.get(set_elem(tree, 0, :geef_object), path) do
+    case :geef_tree.get(rebind(tree), path) do
       {:ok, entry} ->
         {:ok, TreeEntry.new entry}
       error ->
