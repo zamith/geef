@@ -1,5 +1,6 @@
 defrecord Geef.Reference, Record.extract(:geef_reference, from: "src/geef_records.hrl") do
   alias Geef.Repository
+  alias Geef.Reference
 
   def lookup(repo, name) do
     case :geef_ref.lookup(repo, name) do
@@ -51,6 +52,13 @@ defrecord Geef.Reference, Record.extract(:geef_reference, from: "src/geef_record
       {:ok, ref} -> ref
       {:error, err} -> raise err
     end
+  end
+
+  def shorthand(Reference[name: name]) do
+    :geef_ref.shorthand(name)
+  end
+  def shorthane(name) do
+    :geef_ref.shorthand(name)
   end
 
 end

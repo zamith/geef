@@ -44,7 +44,8 @@ create_ref_test(Repo) ->
     {ok, Ref0} = geef_ref:lookup(Repo, "refs/heads/branch"),
     {ok, Ref1} = geef_ref:lookup(Repo, "refs/heads/other"),
     [?_assertEqual(Ref0#geef_reference.target, Id),
-     ?_assertEqual(Ref1#geef_reference.target, <<"refs/heads/branch">>)].
+     ?_assertEqual(Ref1#geef_reference.target, <<"refs/heads/branch">>),
+     ?_assertEqual(<<"branch">>, geef_ref:shorthand(Ref0))].
 
 dwim_ref_test(Repo) ->
     odb_write_test(Repo),

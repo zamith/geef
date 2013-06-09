@@ -1,6 +1,6 @@
 -module(geef_ref).
 
--export([lookup/2, resolve/1, create/4, dwim/2]).
+-export([lookup/2, resolve/1, create/4, dwim/2, shorthand/1]).
 
 -include("geef_records.hrl").
 
@@ -52,3 +52,16 @@ dwim(Repo, Name) ->
 	Err ->
 	    Err
     end.
+
+%% @doc Get the shorthand name for a particular reference
+-spec shorthand(geef_reference() | binary()) -> binary().
+shorthand(<<"refs/heads/", Rest/binary>>) ->
+    Rest;
+shorthand(<<"refs/tags/", Rest/binary>>) ->
+    Rest;
+shorthand(<<"refs/remotess/", Rest/binary>>) ->
+    Rest;
+shorthand(<<"refs/", Rest/binary>>) ->
+    Rest;
+shorthand(#geef_reference{name=Name}) ->
+    shorthand(iolist_to_binary(Name)).
