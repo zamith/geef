@@ -5,8 +5,7 @@
 
 repo_test_() ->
     {foreach, fun start/0, fun stop/1, [fun bare_test/1, fun odb_write_test/1,
-					fun create_ref_test/1, fun index_add_test/1,
-					fun dwim_ref_test/1]}.
+					fun ref_test/1, fun index_add_test/1]}.
 
 start() ->
     {A, B, C} = now(),
@@ -36,25 +35,18 @@ index_add_test(Repo) ->
     Expected = geef_oid:parse("5a20bbbf65ea75ad4d9f995d179156824ccca3a1"),
     [?_assertEqual(Expected, TreeId)].
 
-create_ref_test(Repo) ->
+ref_test(Repo) ->
     odb_write_test(Repo),
     Id = geef_oid:parse("c300118399f01fe52b316061b5d32beb27e0adfd"),
     {ok, _} = geef_ref:create(Repo, "refs/heads/branch", Id, true),
     {ok, _} = geef_ref:create(Repo, "refs/heads/other", "refs/heads/branch", true),
     {ok, Ref0} = geef_ref:lookup(Repo, "refs/heads/branch"),
     {ok, Ref1} = geef_ref:lookup(Repo, "refs/heads/other"),
+    {ok, Dwimed} = geef_ref:dwim(Repo, "branch"),
     [?_assertEqual(Ref0#geef_reference.target, Id),
      ?_assertEqual(Ref1#geef_reference.target, <<"refs/heads/branch">>),
-     ?_assertEqual(<<"branch">>, geef_ref:shorthand(Ref0))].
-
-dwim_ref_test(Repo) ->
-    odb_write_test(Repo),
-    Id = geef_oid:parse("c300118399f01fe52b316061b5d32beb27e0adfd"),
-    {ok, _} = geef_ref:create(Repo, "refs/heads/branch", Id, true),
-    {ok, Branch} = geef_ref:dwim(Repo, "branch"),
-    Actual = Branch#geef_reference.name,
-    Expected = <<"refs/heads/branch">>,
-    [?_assertEqual(Actual, Expected)].
+     ?_assertEqual(<<"branch">>, geef_ref:shorthand(Ref0)),
+     ?_assertEqual(Ref0, Dwimed)].
 
 rm_r(Path) ->
     case filelib:is_dir(Path) of
