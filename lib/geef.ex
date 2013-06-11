@@ -13,4 +13,7 @@ defmodule Geef do
     end
   end
 
+  def assert_ok({:ok, ref}), do: ref
+  def assert_ok({:error, error}), do: raise error
+
 end

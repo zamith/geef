@@ -1,6 +1,7 @@
 defmodule Geef.Tag do
   alias Geef.Object
   import :macros, Object
+  import Geef
 
   def peel(tag = Object[type: :tag]) do
     case :geef_tag.peel(rebind(tag)) do
@@ -11,11 +12,6 @@ defmodule Geef.Tag do
     end
   end
 
-  def peel!(tag = Object[type: :tag]) do
-    case peel(tag) do
-      {:ok, peeled} -> peeled
-      {:error, err} -> raise err
-    end
-  end
+  def peel!(tag = Object[type: :tag]), do: peel(tag) |> assert_ok
 
 end
