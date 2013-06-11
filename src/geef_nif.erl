@@ -148,6 +148,12 @@ index_add(_Handle, _Entry) ->
 index_clear(_Handle) ->
     ?NIF_FN.
 
+signature_new(_Name, _Email) ->
+    ?NIF_FN.
+
+signature_new(_Name, _Email, _Time) ->
+    ?NIF_FN.
+
 nif_error(Line) ->
     erlang:nif_error({nif_not_loaded,module,?MODULE,line,Line}).
 

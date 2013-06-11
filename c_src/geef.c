@@ -10,6 +10,7 @@
 #include "library.h"
 #include "revwalk.h"
 #include "index.h"
+#include "signature.h"
 #include "geef.h"
 #include <stdio.h>
 #include <string.h>
@@ -178,6 +179,8 @@ static ErlNifFunc geef_funcs[] =
 	{"index_add",        2, geef_index_add},
 	{"index_clear",      1, geef_index_clear},
 	{"index_read_tree",  2, geef_index_read_tree},
+	{"signature_new", 2, geef_signature_new},
+	{"signature_new", 3, geef_signature_new},
 };
 
 ERL_NIF_INIT(geef_nif, geef_funcs, load, NULL, upgrade, unload)
