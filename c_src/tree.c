@@ -59,3 +59,24 @@ geef_tree_bypath(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	enif_release_binary(&bin);
 	return tree_entry_to_term(env, entry);
 }
+
+ERL_NIF_TERM
+geef_tree_nth(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
+{
+	geef_object *obj;
+	const git_tree_entry *entry;
+	unsigned int nth;
+
+	if (!enif_get_resource(env, argv[0], geef_object_type, (void **) &obj))
+		return enif_make_badarg(env);
+
+	if (!enif_get_uint(env, argv[1], &nth))
+		return enif_make_badarg(env);
+
+	entry = git_tree_entry_byindex((git_tree *)obj->obj, nth);
+
+	if (!entry)
+		return geef_error(env);
+
+	return tree_entry_to_term(env, entry);
+}

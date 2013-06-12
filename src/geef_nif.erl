@@ -96,6 +96,10 @@ commit_tree(_Handle) ->
 tree_bypath(_TreeHandle, _Path) ->
     nif_error(?LINE).
 
+-spec tree_nth(term, non_neg_integer()) -> term().
+tree_nth(_TreeHandle, _Nth) ->
+    ?NIF_FN.
+
 -spec blob_size(term) -> {ok, integer()} | error.
 blob_size(_ObjHandle) ->
     nif_error(?LINE).
