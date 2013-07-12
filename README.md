@@ -33,23 +33,24 @@ Workdir = geef_repo:workdir(Repo).
 Elixir
 ======
 
-There are wrappers for elixir which make use of some elixir-specific
+Most functions are available from the elixir modules so you can make use of some elixir-specific
 things, like `Repository.open!`, or `Reference.resolve!`.
 
 ```elixir
 alias Geef.Repository
 alias Geef.Reference
 repo = Repository.open!(".")
-ref = Reference.lookup!(repo. "HEAD") |> Reference.resolve!
+ref = Reference.lookup!(repo, "HEAD") |> Reference.resolve!
 ```
 
-Of course, you could also do
+references, objects, etc are elixir records. Trees implement the Access protocol
 
 ```elixir
-ref = Repository.open! "." |> Reference.lookup! "HEAD" |> Reference.resolve!
+Reference[name: name] = Reference.lookup!(repo, "refs/heads/master")
+IO.puts name
+{:ok, tree} = Tree.lookup(repo, "abcde...")
+IO.inspect tree["src/geef_pkt.erl"]
 ```
-
-but then you would leak the repository process.
 
 CONTRIBUTING
 ==============
@@ -61,8 +62,8 @@ for the topic), send a pull request.
 AUTHORS 
 ==============
 
-Scott Chacon <schacon@gmail.com>
-Carlos Martín Nieto <cmn@dwim.me>
+* Carlos Martín Nieto <cmn@dwim.me>
+* Scott Chacon <schacon@gmail.com>
 
 
 LICENSE
