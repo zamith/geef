@@ -68,13 +68,14 @@ reference_dwim(_Handle, _Name) ->
 odb_object_exists(_Val, _Val) ->
     nif_error(?LINE).
 
--spec odb_write(term, iolist(), atom()) -> term.
+-spec odb_write(term(), iolist(), atom()) -> term().
 odb_write(_Handle, _Contents, _Type) ->
     nif_error(?LINE).
 
 oid_fmt(_Oid) ->
     nif_error(?LINE).
 
+-spec oid_parse(iolist()) -> binary().
 oid_parse(_Sha) ->
     nif_error(?LINE).
 
@@ -108,7 +109,7 @@ blob_size(_ObjHandle) ->
 blob_content(_ObjHandle) ->
     nif_error(?LINE).
 
--spec tag_peel(term()) -> {ok, atom(), term()} | {error, term()}.
+-spec tag_peel(term()) -> {ok, atom(), binary(), term()} | {error, term()}.
 tag_peel(_Tag) ->
     ?NIF_FN.
 

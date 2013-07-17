@@ -88,7 +88,7 @@ exists(Pid, Sha) ->
     #geef_oid{oid=Oid} = geef_oid:parse(Sha),
     gen_server:call(Pid, {exists, Oid}).
 
--spec write(pid(), iolist(), atom()) -> {ok, geef_oid()} | {error, term}.
+-spec write(pid(), iolist(), atom()) -> {ok, geef_oid()} | {error, term()}.
 write(Pid, Contents, Type) ->
     gen_server:call(Pid, {write, Contents, Type}).
 

@@ -24,7 +24,7 @@ parse(In) ->
 	    parse_pkt(Rest, Len)
     end.
 
--spec parse_request(iolist()) -> geef_request().
+-spec parse_request(iolist()) -> {ok, geef_request()} | {error, ebufs}.
 parse_request(In) ->
     case unpack(In) of
 	Err = {error, ebufs} ->
@@ -37,6 +37,7 @@ parse_request(In) ->
 	    {ok, #geef_request{service=Service, path=Path, host=Host}}
     end.
 
+-spec service_path(binary()) -> {atom(), binary()}.
 service_path(<<"git-upload-pack ", Path/binary>>) ->
     {upload_pack, Path};
 service_path(<<"git-receive-pack ", Path/binary>>) ->
@@ -55,6 +56,7 @@ do_unpack(Len, Rest) when Len - 4 > size(Rest) ->
 do_unpack(Len, Rest) ->
     {Len - 4, Rest}.
 
+-spec parse_pkt(binary(), non_neg_integer()) -> {{want | have}, geef_oid(), binary()} | {done, binary()} | {flush, binary()}.
 parse_pkt(In, 0) ->
     {flush, In};
 parse_pkt(In, Len) ->

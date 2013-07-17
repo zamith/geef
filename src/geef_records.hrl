@@ -10,7 +10,7 @@
 	 flags, flags_extended,
 	 path :: iolist()}).
 
--record(geef_request, {service :: atom, path :: binary(), host :: binary()}).
+-record(geef_request, {service :: atom(), path :: binary(), host :: binary()}).
 -record(geef_tree_entry, {mode, type, id, name}).
 -record(geef_signature, {name :: iolist(), email :: iolist(), time :: geef_time()}).
 
