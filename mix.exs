@@ -1,8 +1,29 @@
-defmodule Mix.Tasks.Compile.Rebar do
-  @shortdoc "Runs `rebar compile` so we build the NIF"
+defmodule Mix.Tasks.Compile.Nif do
+  @shortdoc "Compile a NIF"
 
   def run(_) do
-    Mix.shell.info System.cmd("rebar compile")
+    config = Keyword.fetch!(Mix.project, :nif)
+
+    file = Keyword.fetch!(config, :file)
+    paths = Keyword.fetch!(config, :paths)
+    flags = Keyword.fetch!(config, :flags)
+    exts = Keyword.fetch!(config, :exts)
+
+    # Create the directory (e.g. "priv/")
+    file |> Path.dirname |> File.mkdir_p!
+
+    # Figure out whether we should compile the NIF. Compare the source
+    # files with the target binary. If the target is newer, recompile.
+    to_compile = Mix.Utils.extract_files(paths, exts)
+    stale = Mix.Utils.extract_stale(to_compile, [file])
+    case stale do
+      [] ->
+        :noop
+      _ ->
+        filesarg = Enum.join(to_compile, " ")
+        cmd = "gcc -shared -fpic -o #{file} #{filesarg} #{flags}"
+        IO.puts System.cmd(cmd)
+    end
   end
 end
 
@@ -12,8 +33,16 @@ defmodule Geef.Mixfile do
   def project do
     [ app: :geef,
       version: "0.0.1",
-      compilers: [:rebar, :elixir, :app],
+      compilers: [:nif, :elixir, :app],
+      nif: nif,
       deps: deps ]
+  end
+
+  def nif do
+    [ paths: ["c_src"],
+      exts: [:c],
+      file: "priv/geef.so",
+      flags: "-lgit2" ]
   end
 
   # Configuration for the OTP application
