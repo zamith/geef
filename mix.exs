@@ -8,6 +8,9 @@ defmodule Mix.Tasks.Compile.Nif do
     paths = Keyword.fetch!(config, :paths)
     flags = Keyword.fetch!(config, :flags)
     exts = Keyword.fetch!(config, :exts)
+    compiler =
+      Keyword.get(config, :compilers, ["cc", "gcc", "clang"])
+      |> find_compiler
 
     # Create the directory (e.g. "priv/")
     file |> Path.dirname |> File.mkdir_p!
@@ -15,16 +18,29 @@ defmodule Mix.Tasks.Compile.Nif do
     # Figure out whether we should compile the NIF. Compare the source
     # files with the target binary. If the target is newer, recompile.
     to_compile = Mix.Utils.extract_files(paths, exts)
-    stale = Mix.Utils.extract_stale(to_compile, [file])
-    case stale do
+
+    case Mix.Utils.extract_stale(to_compile, [file]) do
       [] ->
         :noop
       _ ->
-        filesarg = Enum.join(to_compile, " ")
-        cmd = "gcc -shared -fpic -o #{file} #{filesarg} #{flags}"
+        cmd =
+          [compiler, "-shared", "-fpic", "-o #{file}", to_compile, flags]
+          |> List.flatten
+          |> Enum.join(" ")
+
         IO.puts System.cmd(cmd)
     end
   end
+
+  defp find_compiler([compiler | tail]) do
+    case System.find_executable(compiler) do
+      nil ->
+        find_compiler(tail)
+      path ->
+        path
+    end
+  end
+
 end
 
 defmodule Geef.Mixfile do
