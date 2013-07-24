@@ -4,7 +4,7 @@
 -include_lib("eunit/include/eunit.hrl").
 -endif.
 
--export([get/2, nth/2, lookup/2]).
+-export([get/2, nth/2, count/1, lookup/2]).
 
 -include("geef_records.hrl").
 
@@ -20,6 +20,10 @@ get(#geef_object{type=tree,handle=Handle}, Path) ->
 -spec nth(geef_object(), non_neg_integer()) -> {ok, geef_tree_entry()} | {error, term()}.
 nth(#geef_object{type=tree,handle=Handle}, Nth) ->
     from_nif(geef_nif:tree_nth(Handle, Nth)).
+
+-spec count(geef_object()) -> non_neg_integer().
+count(#geef_object{type=tree,handle=Handle}) ->
+    geef_nif:tree_count(Handle).
 
 -spec lookup(pid(), geef_oid() | iolist()) -> {ok, geef_object()} | {error, term()}.
 lookup(Repo, Id) ->

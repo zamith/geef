@@ -80,3 +80,14 @@ geef_tree_nth(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 
 	return tree_entry_to_term(env, entry);
 }
+
+ERL_NIF_TERM
+geef_tree_count(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
+{
+	geef_object *obj;
+
+	if (!enif_get_resource(env, argv[0], geef_object_type, (void **) &obj))
+		return enif_make_badarg(env);
+
+	return enif_make_uint64(env, git_tree_entrycount((git_tree *) obj->obj));
+}

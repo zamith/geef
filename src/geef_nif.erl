@@ -101,6 +101,10 @@ tree_bypath(_TreeHandle, _Path) ->
 tree_nth(_TreeHandle, _Nth) ->
     ?NIF_FN.
 
+-spec tree_count(term) -> non_neg_integer().
+tree_count(_Treehandle) ->
+    ?NIF_FN.
+
 -spec blob_size(term) -> {ok, integer()} | error.
 blob_size(_ObjHandle) ->
     nif_error(?LINE).
