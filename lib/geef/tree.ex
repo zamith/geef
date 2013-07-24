@@ -21,6 +21,8 @@ defrecord Geef.Tree, Record.extract(:geef_object, from: "src/geef_records.hrl") 
   def get(tree, path), do: :geef_tree.get(rebind(tree), path) |> maybe_entry
   def nth(tree, pos), do: :geef_tree.nth(rebind(tree), pos) |> maybe_entry
 
+  def count(tree), do: :geef_tree.count(rebind(tree))
+
 end
 
 defimpl Access, for: Geef.Tree do
@@ -38,6 +40,35 @@ defimpl Access, for: Geef.Tree do
       {:ok, entry} -> entry
       {:error, _} -> nil
     end
+  end
+
+end
+
+defimpl Enumerable, for: Geef.Tree do
+  alias Geef.Tree
+
+  def count(tree) do
+    Tree.count(tree)
+  end
+
+  def member?(tree, key) do
+    case Tree.get(tree, key) do
+      {:ok, _} -> true
+      _ -> false
+    end
+  end
+
+  def reduce(tree, acc, fun) do
+    reduce(tree, 0, Tree.count(tree), acc, fun)
+  end
+
+  # We're done when the index is equal to the number of entries
+  defp reduce(_, idx, idx, acc, _), do: acc
+
+  # Call the user-passed function and recurse with the next index
+  defp reduce(tree, idx, count, acc, fun) do
+    cur = Tree.nth(tree, idx)
+    reduce(tree, idx + 1, count, fun.(cur, acc), fun)
   end
 
 end
