@@ -6,8 +6,8 @@ defmodule Mix.Tasks.Compile.Nif do
 
     file = Keyword.fetch!(config, :file)
     paths = Keyword.fetch!(config, :paths)
-    flags = Keyword.fetch!(config, :flags)
-    exts = Keyword.fetch!(config, :exts)
+    flags = Keyword.get(config, :flags, [])
+    exts = Keyword.get(config, :exts, [:c, :cpp])
     compiler =
       Keyword.get(config, :compilers, ["cc", "gcc", "clang"])
       |> find_compiler
@@ -23,12 +23,14 @@ defmodule Mix.Tasks.Compile.Nif do
       [] ->
         :noop
       _ ->
-        cmd =
-          [compiler, "-shared", "-fpic", "-o #{file}", to_compile, flags]
-          |> List.flatten
-          |> Enum.join(" ")
-
-        IO.puts System.cmd(cmd)
+        Mix.shell.info("* Compiling #{file}")
+        args = ["-shared", "-fpic", "-o", file, to_compile, flags] |> List.flatten
+        port = Port.open({:spawn_executable, compiler},
+                         [:stream, :binary, :use_stdio, :stderr_to_stdout, :hide,
+                          :exit_status, {:args, args}])
+        if do_cmd(port) != 0 do
+          raise Mix.Error, message: "Error compiling #{file}"
+        end
     end
   end
 
@@ -38,6 +40,16 @@ defmodule Mix.Tasks.Compile.Nif do
         find_compiler(tail)
       path ->
         path
+    end
+  end
+
+  defp do_cmd(port) do
+    receive do
+      {^port, {:data, data}} ->
+        IO.write(data)
+        do_cmd(port)
+      {^port, {:exit_status, status}} ->
+        status
     end
   end
 
