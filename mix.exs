@@ -2,24 +2,32 @@ defmodule Mix.Tasks.Compile.Nif do
   @shortdoc "Compile a NIF"
 
   def run(_) do
-    config = Keyword.fetch!(Mix.project, :nif)
+    project = Mix.Project.get!
 
+    if function_exported?(project, :nif, 0) do
+      do_run(project.nif)
+    else
+      :noop
+    end
+  end
+
+  def do_run(config) do
     file = Keyword.fetch!(config, :file)
     paths = Keyword.fetch!(config, :paths)
     flags = Keyword.get(config, :flags, [])
     exts = Keyword.get(config, :exts, [:c, :cpp])
-    compiler =
-      Keyword.get(config, :compilers, ["cc", "gcc", "clang"])
-      |> find_compiler
+    compiler = Keyword.get(config, :compilers, ["cc", "gcc", "clang"]) |> find_compiler
 
     # Create the directory (e.g. "priv/")
-    file |> Path.dirname |> File.mkdir_p!
+    File.mkdir_p!(Path.dirname(file))
 
     # Figure out whether we should compile the NIF. Compare the source
-    # files with the target binary. If the target is newer, recompile.
+    # files and header timestamps with the target binary. If the
+    # target is older than any source file, recompile.
     to_compile = Mix.Utils.extract_files(paths, exts)
+    to_check = Mix.Utils.extract_files(paths, [:h | exts])
 
-    case Mix.Utils.extract_stale(to_compile, [file]) do
+    case Mix.Utils.extract_stale(to_check, [file]) do
       [] ->
         :noop
       _ ->
@@ -31,6 +39,7 @@ defmodule Mix.Tasks.Compile.Nif do
         if do_cmd(port) != 0 do
           raise Mix.Error, message: "Error compiling #{file}"
         end
+        :ok
     end
   end
 
@@ -62,7 +71,6 @@ defmodule Geef.Mixfile do
     [ app: :geef,
       version: "0.0.1",
       compilers: [:nif, :elixir, :app],
-      nif: nif,
       deps: deps ]
   end
 
