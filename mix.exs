@@ -1,5 +1,38 @@
 defmodule Mix.Tasks.Compile.Nif do
-  @shortdoc "Compile a NIF"
+  @moduledoc """
+  A task to compile C code into a NIF.
+
+  To use, define a function in your project called `nif`.
+
+  ## Configuration
+
+  * `:paths` - directories to find source files. Defaults to
+    `["c_src"]`. Can be configured as:
+
+    ````
+    [ptahs: ["c_src", "vendor/src"]]
+    ````
+
+  * `:exts` - extensions of the source files. Defaults to `[:c]`, can
+    be configured as:
+
+    ```
+    [exts: [:c, :cpp]]
+    ```
+
+  * `:file` - path of the shared object to compile to. Can be configured as:
+
+    ````
+    [file: "priv/fancy.so"]
+    ````
+
+  * `:flags` - flags to pass to the compiler. Can be configured as:
+
+     ````
+     [flags: ["-lfancy", "-DDEBUG"]]
+     ````
+
+  """
 
   def run(_) do
     project = Mix.Project.get!
@@ -13,9 +46,9 @@ defmodule Mix.Tasks.Compile.Nif do
 
   def do_run(config) do
     file = Keyword.fetch!(config, :file)
-    paths = Keyword.fetch!(config, :paths)
+    paths = Keyword.get(config, :paths, ["c_src"])
     flags = Keyword.get(config, :flags, [])
-    exts = Keyword.get(config, :exts, [:c, :cpp])
+    exts = Keyword.get(config, :exts, [:c])
     compiler = Keyword.get(config, :compilers, ["cc", "gcc", "clang"]) |> find_compiler
 
     # Create the directory (e.g. "priv/")
@@ -75,9 +108,7 @@ defmodule Geef.Mixfile do
   end
 
   def nif do
-    [ paths: ["c_src"],
-      exts: [:c],
-      file: "priv/geef.so",
+    [ file: "priv/geef.so",
       flags: "-lgit2" ]
   end
 
