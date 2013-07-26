@@ -103,7 +103,7 @@ defmodule Geef.Mixfile do
   def project do
     [ app: :geef,
       version: "0.0.1",
-      compilers: [:nif, :elixir, :app],
+      compilers: [:nif, :erlang, :elixir, :app],
       deps: deps ]
   end
 
