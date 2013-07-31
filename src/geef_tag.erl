@@ -10,7 +10,7 @@
 
 -spec lookup(pid(), geef_oid() | iolist()) -> {ok, geef_object()} | {error, term()}.
 lookup(Repo, Id) ->
-    geef_object:lookup(Repo, Id, tag).
+    geef_obj:lookup(Repo, Id, tag).
 
 -spec peel(geef_object()) -> {ok, geef_object()} | {error, term()}.
 peel(#geef_object{type=tag, handle=Handle}) ->

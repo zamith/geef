@@ -27,7 +27,7 @@
 
 %% @doc Create a new index. This index is empty and not associated to
 %% any repository.
--spec new() -> pid().
+-spec new() -> {ok, pid()} | ignore | {error, term()}.
 new() ->
     {ok, Handle} = geef_nif:index_new(),
     start_link(Handle).
@@ -66,6 +66,7 @@ stop(Pid) ->
     gen_server:call(Pid, stop).
 
 %% @private
+-spec start_link(term()) -> {ok, pid()} | ignore | {error, term()}.
 start_link(Handle) ->
     gen_server:start_link(?MODULE, Handle, []).
 

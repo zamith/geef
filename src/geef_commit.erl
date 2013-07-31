@@ -16,6 +16,6 @@ tree(#geef_object{type=commit,handle=Handle}) ->
 	    Other
     end.
 
--spec lookup(pid(), geef_oid() | iolist()) -> geef_object().
+-spec lookup(pid(), geef_oid() | iolist()) -> {ok, geef_object()} | {error, term()}.
 lookup(Repo, Id) ->
     geef_obj:lookup(Repo, Id, commit).

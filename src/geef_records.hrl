@@ -1,5 +1,5 @@
--record(geef_reference, {handle, name :: binary(), type :: atom(), target :: binary() | geef_oid()}).
--record(geef_oid, {oid}).
+-record(geef_reference, {handle, name :: binary(), type :: oid | symbolic, target :: binary() | geef_oid()}).
+-record(geef_oid, {oid :: binary()}).
 -record(geef_object, {type :: atom(), id :: geef_oid(), handle}).
 -record(geef_index_entry,
 	{ctime :: non_neg_integer(), mtime :: non_neg_integer(),
@@ -14,8 +14,8 @@
 -record(geef_tree_entry, {mode, type, id, name}).
 -record(geef_signature, {name :: iolist(), email :: iolist(), time :: geef_time()}).
 
--type geef_reference() :: #geef_reference{}.
--type geef_oid() :: #geef_oid{}.
+-type geef_reference() :: #geef_reference{name :: binary(), target :: binary() | geef_oid()}.
+-type geef_oid() :: #geef_oid{oid :: binary()}.
 -type geef_object() :: #geef_object{}.
 -type geef_index_entry() :: #geef_index_entry{}.
 -type geef_request() :: #geef_request{}.

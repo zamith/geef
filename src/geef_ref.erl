@@ -18,8 +18,12 @@ new(Name, Handle) ->
 
 -spec create(pid(), iolist(), geef_oid() | binary(), boolean()) -> {ok, geef_reference()} | {error, term()}.
 create(Repo, Refname, Target, Force) ->
-    {ok, Ref} = geef_repo:create_reference(Repo, Refname, Target, Force),
-    {ok, new(Refname, Ref)}.
+    case geef_repo:create_reference(Repo, Refname, Target, Force) of
+        {ok, Ref} ->
+            {ok, new(Refname, Ref)};
+        Err = {error, _} ->
+            Err
+    end.
 
 -spec lookup(pid(), iolist()) -> {ok, geef_reference()} | {error, term()}.
 lookup(Repo, Refname) ->

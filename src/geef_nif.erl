@@ -75,7 +75,6 @@ odb_write(_Handle, _Contents, _Type) ->
 oid_fmt(_Oid) ->
     nif_error(?LINE).
 
--spec oid_parse(iolist()) -> binary().
 oid_parse(_Sha) ->
     nif_error(?LINE).
 

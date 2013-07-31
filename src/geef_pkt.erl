@@ -56,7 +56,7 @@ do_unpack(Len, Rest) when Len - 4 > size(Rest) ->
 do_unpack(Len, Rest) ->
     {Len - 4, Rest}.
 
--spec parse_pkt(binary(), non_neg_integer()) -> {{want | have}, geef_oid(), binary()} | {done, binary()} | {flush, binary()}.
+-spec parse_pkt(binary(), non_neg_integer()) -> {{want | have, geef_oid()}, binary()} | {done, binary()} | {flush, binary()}.
 parse_pkt(In, 0) ->
     {flush, In};
 parse_pkt(In, Len) ->
@@ -72,6 +72,7 @@ parse_pkt(In, Len) ->
     <<_:LenLF/binary, Rest/binary>> = Rest1,
     {Pkt, Rest}.
 
+-spec pkt_type(binary()) -> {have | want | done, non_neg_integer(), binary()}.
 pkt_type(<<"have ", Rest/binary>>) ->
     {have, 5 + ?SHA_LEN, Rest};
 pkt_type(<<"want ", Rest/binary>>) ->
