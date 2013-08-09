@@ -74,6 +74,82 @@ geef_reference_lookup(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 }
 
 ERL_NIF_TERM
+geef_reference_iterator(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
+{
+	ErlNifBinary bin;
+	int globbing, error;
+	geef_repository *repo;
+	ERL_NIF_TERM term_iter;
+	geef_ref_iter *res_iter;
+	git_reference_iterator *iter;
+
+	if (!enif_get_resource(env, argv[0], geef_repository_type, (void **) &repo))
+		return enif_make_badarg(env);
+
+
+	if (enif_is_identical(argv[1], atoms.undefined)) {
+		globbing = 0;
+	} else if (enif_inspect_iolist_as_binary(env, argv[1], &bin)) {
+		globbing = 1;
+	} else {
+		return enif_make_badarg(env);
+	}
+
+	if (globbing && !geef_terminate_binary(&bin))
+	    return atoms.error;
+
+	if (globbing)
+		error = git_reference_iterator_glob_new(&iter, repo->repo, (char *) bin.data);
+	else
+		error = git_reference_iterator_new(&iter, repo->repo);
+
+	if (error < 0)
+		return geef_error(env);
+
+	res_iter = enif_alloc_resource(geef_ref_iter_type, sizeof(geef_ref_iter));
+	res_iter->iter = iter;
+	res_iter->repo = repo;
+	enif_keep_resource(repo);
+	term_iter = enif_make_resource(env, res_iter);
+	enif_release_resource(res_iter);
+
+	return enif_make_tuple2(env, atoms.ok, term_iter);
+}
+
+ERL_NIF_TERM
+geef_reference_next(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
+{
+	int error;
+	geef_ref *res_ref;
+	git_reference *ref;
+	geef_ref_iter *iter;
+	ERL_NIF_TERM term_ref;
+
+	if (!enif_get_resource(env, argv[0], geef_ref_iter_type, (void **) &iter))
+		return enif_make_badarg(env);
+
+	error = git_reference_next(&ref, iter->iter);
+	if (error == GIT_ITEROVER)
+		return enif_make_tuple2(env, atoms.error, atoms.iterover);
+	if (error < 0)
+		return geef_error(env);
+
+	res_ref = enif_alloc_resource(geef_ref_type, sizeof(geef_ref));
+	res_ref->ref = ref;
+	term_ref = enif_make_resource(env, res_ref);
+	enif_release_resource(res_ref);
+
+	return enif_make_tuple2(env, atoms.ok, term_ref);
+}
+
+void geef_ref_iter_free(ErlNifEnv *env, void *cd)
+{
+	geef_ref_iter *ref = (geef_ref_iter *) cd;
+	git_reference_iterator_free(ref->iter);
+	enif_release_resource(ref->repo);
+}
+
+ERL_NIF_TERM
 geef_reference_resolve(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 {
 	geef_ref *in_ref, *res_ref;

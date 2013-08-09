@@ -19,6 +19,7 @@
 ErlNifResourceType *geef_repository_type;
 ErlNifResourceType *geef_odb_type;
 ErlNifResourceType *geef_ref_type;
+ErlNifResourceType *geef_ref_iter_type;
 ErlNifResourceType *geef_object_type;
 ErlNifResourceType *geef_revwalk_type;
 ErlNifResourceType *geef_index_type;
@@ -42,9 +43,15 @@ static int load(ErlNifEnv *env, void **priv, ERL_NIF_TERM load_info)
 		return -1;
 
 	geef_ref_type = enif_open_resource_type(env, NULL,
-					      "ref_type", geef_ref_free, ERL_NIF_RT_CREATE, NULL);
+		    "ref_type", geef_ref_free, ERL_NIF_RT_CREATE, NULL);
 
 	if (geef_ref_type == NULL)
+		return -1;
+
+	geef_ref_iter_type = enif_open_resource_type(env, NULL,
+		    "ref_iter_type", geef_ref_iter_free, ERL_NIF_RT_CREATE, NULL);
+
+	if (geef_ref_iter_type == NULL)
 		return -1;
 
 	geef_object_type = enif_open_resource_type(env, NULL,
@@ -70,6 +77,7 @@ static int load(ErlNifEnv *env, void **priv, ERL_NIF_TERM load_info)
 	atoms.tree = enif_make_atom(env, "tree");
 	atoms.blob = enif_make_atom(env, "blob");
 	atoms.tag = enif_make_atom(env, "tag");
+	atoms.undefined = enif_make_atom(env, "undefined");
 	/* Revwalk */
 	atoms.toposort    = enif_make_atom(env, "sort_topo");
 	atoms.timesort    = enif_make_atom(env, "sort_time");
@@ -150,6 +158,8 @@ static ErlNifFunc geef_funcs[] =
 	{"reference_to_id", 2, geef_reference_to_id},
 	{"reference_glob", 2, geef_reference_glob},
 	{"reference_lookup", 2, geef_reference_lookup},
+	{"reference_iterator", 2, geef_reference_iterator},
+	{"reference_next",     1, geef_reference_next},
 	{"reference_resolve", 1, geef_reference_resolve},
 	{"reference_target", 1, geef_reference_target},
 	{"reference_type", 1, geef_reference_type},

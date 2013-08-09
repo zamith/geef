@@ -13,6 +13,7 @@
 -record(geef_request, {service :: atom(), path :: binary(), host :: binary()}).
 -record(geef_tree_entry, {mode, type, id, name}).
 -record(geef_signature, {name :: iolist(), email :: iolist(), time :: geef_time()}).
+-record(geef_iterator, {type :: atom(), handle}).
 
 -type geef_reference() :: #geef_reference{name :: binary(), target :: binary() | geef_oid()}.
 -type geef_oid() :: #geef_oid{oid :: binary()}.
@@ -22,3 +23,4 @@
 -type geef_tree_entry() :: #geef_tree_entry{}.
 -type geef_signature() :: #geef_signature{}.
 -type geef_time() :: {erlang:timestamp(), non_neg_integer()}.
+-type geef_iterator() :: #geef_iterator{}.

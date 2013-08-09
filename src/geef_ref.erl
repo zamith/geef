@@ -1,6 +1,6 @@
 -module(geef_ref).
 
--export([lookup/2, resolve/1, create/4, dwim/2, shorthand/1]).
+-export([lookup/2, iterator/1, iterator/2, next/1, resolve/1, create/4, dwim/2, shorthand/1]).
 
 -include("geef_records.hrl").
 
@@ -31,6 +31,28 @@ lookup(Repo, Refname) ->
     case geef_repo:lookup_reference(Repo, Name) of
 	{ok, Ref} ->
 	    {ok, new(Name, Ref)};
+	Other ->
+	    Other
+    end.
+
+-spec iterator(pid(), iolist() | undefined) -> {ok, geef_iterator()} | {error, term()}.
+iterator(Repo, Regexp) ->
+    case geef_repo:iterator(Repo, Regexp) of
+	{ok, Handle} ->
+	    {ok, #geef_iterator{type=ref, handle=Handle}};
+	Other ->
+	    Other
+    end.
+
+-spec iterator(pid()) -> {ok, geef_iterator()} | {error, term()}.
+iterator(Repo) ->
+    iterator(Repo, undefined).
+
+next(#geef_iterator{type=ref, handle=Handle}) ->
+    case geef_nif:reference_next(Handle) of
+	{ok, RefHandle} ->
+	    {ok, Name} = geef_nif:reference_name(RefHandle),
+	    {ok, new(Name, RefHandle)};
 	Other ->
 	    Other
     end.

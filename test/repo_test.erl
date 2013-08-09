@@ -5,7 +5,8 @@
 
 repo_test_() ->
     {foreach, fun start/0, fun stop/1, [fun bare_test/1, fun odb_write_test/1,
-					fun ref_test/1, fun index_add_test/1]}.
+					fun ref_test/1, fun index_add_test/1,
+					fun ref_iter_test/1]}.
 
 start() ->
     {A, B, C} = now(),
@@ -47,6 +48,24 @@ ref_test(Repo) ->
      ?_assertEqual(Ref1#geef_reference.target, <<"refs/heads/branch">>),
      ?_assertEqual(<<"branch">>, geef_ref:shorthand(Ref0)),
      ?_assertEqual(Ref0, Dwimed)].
+
+ref_iter_test(Repo) ->
+    odb_write_test(Repo),
+    Id = geef_oid:parse("c300118399f01fe52b316061b5d32beb27e0adfd"),
+    {ok, _} = geef_ref:create(Repo, "refs/heads/branch", Id, true),
+    {ok, _} = geef_ref:create(Repo, "refs/heads/other", "refs/heads/branch", true),
+    {ok, Iter0} = geef_ref:iterator(Repo),
+    {ok, Ref0} = geef_ref:next(Iter0),
+    {ok, Ref1} = geef_ref:next(Iter0),
+    Res0 = geef_ref:next(Iter0),
+    {ok, Iter1} = geef_ref:iterator(Repo, "refs/heads/b*"),
+    {ok, Ref2} = geef_ref:next(Iter1),
+    Res1 = geef_ref:next(Iter1),
+    [?_assertEqual(Ref0#geef_reference.name, <<"refs/heads/branch">>),
+     ?_assertEqual(Ref1#geef_reference.name, <<"refs/heads/other">>),
+     ?_assertEqual(Res0, {error, iterover}),
+     ?_assertEqual(Ref2#geef_reference.name, <<"refs/heads/branch">>),
+     ?_assertEqual(Res1, {error, iterover})].
 
 rm_r(Path) ->
     case filelib:is_dir(Path) of

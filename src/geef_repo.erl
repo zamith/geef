@@ -17,7 +17,7 @@
 %% API
 -export([open/1, init/2, path/1, workdir/1, odb/1, is_bare/1, references/1, discover/1,
 	 lookup_object/2, lookup_reference/2, create_reference/4, revwalk/1, stop/1,
-	 reference_dwim/2, handle/1]).
+	 reference_dwim/2, handle/1, iterator/2]).
 
 -include("geef_records.hrl").
 -record(state, {handle}).
@@ -87,6 +87,11 @@ lookup_reference(Pid, Name) ->
     gen_server:call(Pid, {lookup_reference, Name}).
 
 %% @private
+-spec iterator(pid(), iolist() | undefined) -> {ok, geef_iterator()} | {error, term()}.
+iterator(Pid, Regexp) ->
+    gen_server:call(Pid, {iterator, Regexp}).
+
+%% @private
 reference_dwim(Pid, Name) ->
     gen_server:call(Pid, {dwim_reference, Name}).
 
@@ -135,6 +140,9 @@ handle_call({lookup_object, Oid}, _From, State = #state{handle=Handle}) ->
     {reply, Reply, State};
 handle_call({lookup_reference, Name}, _From, State = #state{handle=Handle}) ->
     Reply = geef_nif:reference_lookup(Handle, Name),
+    {reply, Reply, State};
+handle_call({iterator, Regexp}, _From, State = #state{handle=Handle}) ->
+    Reply = geef_nif:reference_iterator(Handle, Regexp),
     {reply, Reply, State};
 handle_call({dwim_reference, Name}, _From, State = #state{handle=Handle}) ->
     Reply = geef_nif:reference_dwim(Handle, Name),

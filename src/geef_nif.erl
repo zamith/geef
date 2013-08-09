@@ -4,6 +4,8 @@
 -module(geef_nif).
 -compile(export_all).
 
+-include("geef_records.hrl").
+
 -on_load(load_enif/0).
 
 -define(NIF_FN, nif_error(?LINE)).
@@ -48,6 +50,14 @@ reference_glob(_Repo, _Glob) ->
     nif_error(?LINE).
 
 reference_lookup(_Repo, _Refname) ->
+    nif_error(?LINE).
+
+-spec reference_iterator(term(), iolist() | undefined) -> {ok, geef_iterator()} | {error, term()}.
+reference_iterator(_Repo, _Regexp) ->
+    nif_error(?LINE).
+
+-spec reference_next(geef_iterator()) -> {ok, term()} | {error, iterover | term()}.
+reference_next(_Handle) ->
     nif_error(?LINE).
 
 reference_target(_Handle) ->
