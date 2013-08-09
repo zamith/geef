@@ -63,7 +63,7 @@ shorthand(<<"refs/heads/", Rest/binary>>) ->
     Rest;
 shorthand(<<"refs/tags/", Rest/binary>>) ->
     Rest;
-shorthand(<<"refs/remotess/", Rest/binary>>) ->
+shorthand(<<"refs/remotes/", Rest/binary>>) ->
     Rest;
 shorthand(<<"refs/", Rest/binary>>) ->
     Rest;
