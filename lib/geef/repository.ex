@@ -12,7 +12,7 @@ defmodule Geef.Repository do
   def odb(repo),  do: :geef_repo.odb(repo)
   def odb!(repo), do: :geef_repo.odb(repo) |> assert_ok
 
-  def discover(path), do: :geef_repo.disover(path)
+  def discover(path), do: :geef_repo.discover(path)
 
   def bare?(repo), do: :geef_repo.is_bare(repo)
   def workdir(repo), do: :geef_repo.workdir(repo)

@@ -11,7 +11,7 @@
 -behaviour(gen_server).
 
 %% API
--export([start_link/1, exists/2, write/3]).
+-export([start_link/1, exists/2, write/3, stop/1]).
 
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
@@ -24,6 +24,9 @@
 %%%===================================================================
 %%% API
 %%%===================================================================
+
+stop(Pid) ->
+    gen_server:call(Pid, stop).
 
 %% @doc
 %% Starts the server
