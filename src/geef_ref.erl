@@ -4,6 +4,11 @@
 
 -include("geef_records.hrl").
 
+-spec new(term()) -> geef_reference().
+new(Handle) ->
+    {ok, Name} = geef_nif:reference_name(Handle),
+    new(Name, Handle).
+
 -spec new(binary(), term()) -> geef_reference().
 new(Name, Handle) ->
     Type = geef_nif:reference_type(Handle),
@@ -51,8 +56,7 @@ iterator(Repo) ->
 next(#geef_iterator{type=ref, handle=Handle}) ->
     case geef_nif:reference_next(Handle) of
 	{ok, RefHandle} ->
-	    {ok, Name} = geef_nif:reference_name(RefHandle),
-	    {ok, new(Name, RefHandle)};
+	    {ok, new(RefHandle)};
 	Other ->
 	    Other
     end.
@@ -63,8 +67,7 @@ resolve(Ref = #geef_reference{type=oid}) ->
 resolve(#geef_reference{handle=Handle}) ->
     case geef_nif:reference_resolve(Handle) of
 	{ok, Ref} ->
-	    {ok, Name} = geef_nif:reference_name(Ref),
-	    {ok, new(Name, Ref)};
+	    {ok, new(Ref)};
 	Other ->
 	    Other
     end.
@@ -73,8 +76,7 @@ resolve(#geef_reference{handle=Handle}) ->
 dwim(Repo, Name) ->
     case geef_repo:reference_dwim(Repo, Name) of
 	{ok, Handle} ->
-	    {ok, FullName} = geef_nif:reference_name(Handle),
-	    {ok, new(FullName, Handle)};
+	    {ok, new(Handle)};
 	Err ->
 	    Err
     end.
