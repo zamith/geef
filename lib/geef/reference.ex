@@ -31,4 +31,13 @@ defrecord Geef.Reference, Record.extract(:geef_reference, from: "src/geef_record
     :geef_ref.shorthand(name)
   end
 
+  def iterator(repo, regexp // :undefined) do
+    case :geef_ref.iterator(repo, regexp) do
+      {:ok, iter} ->
+        {:ok, Geef.Iterator.new iter}
+      other ->
+        other
+    end
+  end
+
 end
