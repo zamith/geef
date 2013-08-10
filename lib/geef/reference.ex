@@ -8,6 +8,9 @@ defrecord Geef.Reference, Record.extract(:geef_reference, from: "src/geef_record
     end
   end
 
+  def new(ref) do
+    set_elem(ref, 0, Geef.Reference)
+  end
 
   defp maybe_ref({:ok, ref}), do: {:ok, Reference.new ref}
   defp maybe_ref(err = {:error, _}), do: err
