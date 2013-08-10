@@ -1,4 +1,8 @@
-defrecord Geef.TreeEntry, Record.extract(:geef_tree_entry, from: "src/geef_records.hrl")
+defrecord Geef.TreeEntry, Record.extract(:geef_tree_entry, from: "src/geef_records.hrl") do
+  def new(obj) do
+    set_elem(obj, 0, Geef.TreeEntry)
+  end
+end
 
 defrecord Geef.Tree, Record.extract(:geef_object, from: "src/geef_records.hrl") do
   alias Geef.Object
@@ -9,7 +13,7 @@ defrecord Geef.Tree, Record.extract(:geef_object, from: "src/geef_records.hrl") 
   def lookup(repo, id) do
     case :geef_tree.lookup(repo, id) do
       {:ok, obj} ->
-        {:ok, new obj}
+        {:ok, Object.new obj}
       error ->
         error
     end

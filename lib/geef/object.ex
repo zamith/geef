@@ -7,6 +7,18 @@ defrecord Geef.Object, Record.extract(:geef_object, from: "src/geef_records.hrl"
     end
   end
 
+  def new(obj) do
+    do_new(obj, elem(obj, 0))
+  end
+
+  defp do_new(obj, :geef_tree) do
+    set_elem(obj, 0, Geef.Tree)
+  end
+
+  defp do_new(obj, _) do
+    set_elem(obj, 0, Geef.Object)
+  end
+
   def lookup(repo, id) do
     case :geef_obj.lookup(repo, id) do
       {:ok, obj} ->
