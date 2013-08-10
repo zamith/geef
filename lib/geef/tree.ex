@@ -44,8 +44,15 @@ defimpl Access, for: Geef.Tree do
 
 end
 
+defexception Geef.TreeError, reason: nil do
+  def message(Geef.TreeError[reason: reason]) do
+    "tree error #{inspect reason}"
+  end
+end
+
 defimpl Enumerable, for: Geef.Tree do
   alias Geef.Tree
+  alias Geef.TreeError
 
   def count(tree) do
     Tree.count(tree)
@@ -67,8 +74,12 @@ defimpl Enumerable, for: Geef.Tree do
 
   # Call the user-passed function and recurse with the next index
   defp reduce(tree, idx, count, acc, fun) do
-    cur = Tree.nth(tree, idx)
-    reduce(tree, idx + 1, count, fun.(cur, acc), fun)
+    case Tree.nth(tree, idx) do
+      {:ok, entry} ->
+        reduce(tree, idx + 1, count, fun.(entry, acc), fun)
+      {:error, error} ->
+        raise TreeError, reason: error
+    end
   end
 
 end
