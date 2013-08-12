@@ -5,7 +5,7 @@ defmodule Geef.Blob do
   def lookup(repo, id) do
     case :geef_obj.lookup(repo, id) do
       {:ok, obj} ->
-        {:ok, Object.new obj}
+        {:ok, Object.from_erl obj}
       error ->
         error
     end

@@ -5,7 +5,7 @@ defmodule Geef.Commit do
   def lookup(repo, id) do
     case :geef_commit.lookup(repo, id) do
       {:ok, commit} ->
-        {:ok, Object.new commit}
+        {:ok, Object.from_erl commit}
       error ->
         error
     end

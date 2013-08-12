@@ -6,7 +6,7 @@ defmodule Geef.Tag do
   def peel(tag = Object[type: :tag]) do
     case :geef_tag.peel(rebind(tag)) do
       {:ok, peeled} ->
-        {:ok, Object.new peeled}
+        {:ok, Object.from_erl peeled}
       error ->
         error
     end

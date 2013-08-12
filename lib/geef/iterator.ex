@@ -9,7 +9,8 @@ defrecord Geef.Iterator, Record.extract(:geef_iterator, from: "src/geef_records.
     end
   end
 
-  def new(iterator) do
+  @spec from_erl(term()) :: t
+  def from_erl(iterator) do
     set_elem(iterator, 0, Geef.Iterator)
   end
 
@@ -17,7 +18,7 @@ defrecord Geef.Iterator, Record.extract(:geef_iterator, from: "src/geef_records.
     iter =
       case :geef_ref.iterator(repo, regexp) do
         {:ok, iter} ->
-          Iterator.new iter
+          Iterator.from_erl iter
         {:error, error} ->
           raise Geef.IteratorError, message: error
       end
@@ -27,7 +28,7 @@ defrecord Geef.Iterator, Record.extract(:geef_iterator, from: "src/geef_records.
   defp do_stream(iter = Iterator[type: :ref], acc, fun) do
     case :geef_ref.next(rebind(iter)) do
       {:ok, ref} ->
-        do_stream(iter, fun.(Reference.new(ref), acc), fun)
+        do_stream(iter, fun.(Reference.from_erl(ref), acc), fun)
       {:error, :iterover} ->
         acc
       {:error, error} ->

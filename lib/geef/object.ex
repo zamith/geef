@@ -7,22 +7,22 @@ defrecord Geef.Object, Record.extract(:geef_object, from: "src/geef_records.hrl"
     end
   end
 
-  def new(obj) do
-    do_new(obj, elem(obj, 0))
+  def from_erl(obj) do
+    do_from_erl(obj, elem(obj, 0))
   end
 
-  defp do_new(obj, :geef_tree) do
+  defp do_from_erl(obj, :geef_tree) do
     set_elem(obj, 0, Geef.Tree)
   end
 
-  defp do_new(obj, _) do
+  defp do_from_erl(obj, _) do
     set_elem(obj, 0, Geef.Object)
   end
 
   def lookup(repo, id) do
     case :geef_obj.lookup(repo, id) do
       {:ok, obj} ->
-        {:ok, Geef.Object.new obj}
+        {:ok, Geef.Object.from_erl obj}
       error ->
         error
     end

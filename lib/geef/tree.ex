@@ -1,5 +1,6 @@
 defrecord Geef.TreeEntry, Record.extract(:geef_tree_entry, from: "src/geef_records.hrl") do
-  def new(obj) do
+  @spec from_erl(term()) :: t
+  def from_erl(obj) do
     set_elem(obj, 0, Geef.TreeEntry)
   end
 end
@@ -13,13 +14,13 @@ defrecord Geef.Tree, Record.extract(:geef_object, from: "src/geef_records.hrl") 
   def lookup(repo, id) do
     case :geef_tree.lookup(repo, id) do
       {:ok, obj} ->
-        {:ok, Object.new obj}
+        {:ok, Object.from_erl obj}
       error ->
         error
     end
   end
 
-  defp maybe_entry({:ok, entry}), do: {:ok, TreeEntry.new entry}
+  defp maybe_entry({:ok, entry}), do: {:ok, TreeEntry.from_erl entry}
   defp maybe_entry(error = {:error, _}), do: error
 
   def get(tree, path), do: :geef_tree.get(rebind(tree), path) |> maybe_entry

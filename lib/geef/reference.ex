@@ -8,11 +8,11 @@ defrecord Geef.Reference, Record.extract(:geef_reference, from: "src/geef_record
     end
   end
 
-  def new(ref) do
+  def from_erl(ref) do
     set_elem(ref, 0, Geef.Reference)
   end
 
-  defp maybe_ref({:ok, ref}), do: {:ok, Reference.new ref}
+  defp maybe_ref({:ok, ref}), do: {:ok, Reference.from_erl ref}
   defp maybe_ref(err = {:error, _}), do: err
 
   def lookup(repo, name), do: :geef_ref.lookup(repo, name) |> maybe_ref
@@ -34,7 +34,7 @@ defrecord Geef.Reference, Record.extract(:geef_reference, from: "src/geef_record
   def iterator(repo, regexp // :undefined) do
     case :geef_ref.iterator(repo, regexp) do
       {:ok, iter} ->
-        {:ok, Geef.Iterator.new iter}
+        {:ok, Geef.Iterator.from_erl iter}
       other ->
         other
     end
