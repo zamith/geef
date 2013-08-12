@@ -13,7 +13,7 @@
 -record(geef_request, {service :: atom(), path :: binary(), host :: binary()}).
 -record(geef_tree_entry, {mode, type, id, name}).
 -record(geef_signature, {name :: iolist(), email :: iolist(), time :: geef_time()}).
--record(geef_iterator, {type :: atom(), handle}).
+-record(geef_iterator, {type :: atom(), repo :: pid(), regexp :: iolist(), handle}).
 
 -type geef_reference() :: #geef_reference{name :: binary(), target :: binary() | geef_oid()}.
 -type geef_oid() :: #geef_oid{oid :: binary()}.

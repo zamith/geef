@@ -44,7 +44,7 @@ lookup(Repo, Refname) ->
 iterator(Repo, Regexp) ->
     case geef_repo:iterator(Repo, Regexp) of
 	{ok, Handle} ->
-	    {ok, #geef_iterator{type=ref, handle=Handle}};
+	    {ok, #geef_iterator{type=ref, repo=Repo, regexp=Regexp, handle=Handle}};
 	Other ->
 	    Other
     end.

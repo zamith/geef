@@ -9,15 +9,25 @@ defrecord Geef.Iterator, Record.extract(:geef_iterator, from: "src/geef_records.
     end
   end
 
-
-  def stream(iter = Iterator[]) do
-    &stream(iter, &1, &2)
+  def new(iterator) do
+    set_elem(iterator, 0, Geef.Iterator)
   end
 
-  def stream(iter = Iterator[type: ref], acc, fun) do
+  def stream!(Iterator[type: :ref, repo: repo, regexp: regexp]) do
+    iter =
+      case :geef_ref.iterator(repo, regexp) do
+        {:ok, iter} ->
+          Iterator.new iter
+        {:error, error} ->
+          raise Geef.IteratorError, message: error
+      end
+    &do_stream(iter, &1, &2)
+  end
+
+  defp do_stream(iter = Iterator[type: :ref], acc, fun) do
     case :geef_ref.next(rebind(iter)) do
       {:ok, ref} ->
-        stream(iter, fun.(Reference.new(ref), acc), fun)
+        do_stream(iter, fun.(Reference.new(ref), acc), fun)
       {:error, :iterover} ->
         acc
       {:error, error} ->
