@@ -9,7 +9,7 @@ defrecord Geef.Tree, Record.extract(:geef_object, from: "src/geef_records.hrl") 
   alias Geef.Object
   alias Geef.TreeEntry
 
-  import :macros, Geef.Object
+  import Object, only: :macros
 
   def lookup(repo, id) do
     case :geef_tree.lookup(repo, id) do

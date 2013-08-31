@@ -1,6 +1,6 @@
 defmodule Geef.Blob do
   alias Geef.Object
-  import :macros, Object
+  import Object, only: :macros
 
   def lookup(repo, id) do
     case :geef_obj.lookup(repo, id) do

@@ -1,6 +1,6 @@
 defmodule Geef.Tag do
   alias Geef.Object
-  import :macros, Object
+  import Object, only: :macros
   import Geef
 
   def peel(tag = Object[type: :tag]) do

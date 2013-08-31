@@ -1,6 +1,6 @@
 defmodule Geef.Commit do
   alias Geef.Object
-  import :macros, Object
+  import Object, only: :macros
 
   def lookup(repo, id) do
     case :geef_commit.lookup(repo, id) do
