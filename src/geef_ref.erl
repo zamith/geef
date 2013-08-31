@@ -97,4 +97,4 @@ shorthand(<<"refs/remotes/", Rest/binary>>) ->
 shorthand(<<"refs/", Rest/binary>>) ->
     Rest;
 shorthand(#geef_reference{name=Name}) ->
-    shorthand(iolist_to_binary(Name)).
+    shorthand(Name).
