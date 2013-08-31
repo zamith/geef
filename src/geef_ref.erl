@@ -5,41 +5,46 @@
 -include("geef_records.hrl").
 
 -type iterator() :: #geef_iterator{type :: ref}.
+-type type() :: oid | symbolic.
+-type target() :: binary | geef_oid:oid().
 -type ref() :: #geef_reference{name :: binary()}.
 -export_type([reference/0, iterator/0]).
 
--spec new(term()) -> ref().
-new(Handle) ->
-    {ok, Name} = geef_nif:reference_name(Handle),
-    new(Name, Handle).
-
--spec new(binary(), term()) -> ref().
-new(Name, Handle) ->
-    Type = geef_nif:reference_type(Handle),
-    Bin = geef_nif:reference_target(Handle),
-    Target = case Type of
-		 symbolic ->
-		     Bin;
-		 oid ->
-		     #geef_oid{oid=Bin}
-	     end,
-    #geef_reference{handle=Handle, name=Name, type=Type, target=Target}.
-
--spec create(pid(), iolist(), geef_oid:oid() | binary(), boolean()) -> {ok, ref()} | {error, term()}.
+-spec create(pid(), iolist(), target(), boolean()) -> {ok, ref()} | {error, term()}.
 create(Repo, Refname, Target, Force) ->
-    case geef_repo:create_reference(Repo, Refname, Target, Force) of
-        {ok, Ref} ->
-            {ok, new(Refname, Ref)};
+    RepoHandle = geef_repo:handle(Repo),
+    case do_create(RepoHandle, Refname, Target, Force) of
+        ok ->
+	    {ok, make(Repo, Refname, Target)};
         Err = {error, _} ->
             Err
     end.
 
+-spec do_create(term(), binary(), target(), boolean()) -> ok | {error, term}.
+do_create(RepoHandle, Refname, #geef_oid{oid=Oid}, Force) ->
+     geef_nif:reference_create(RepoHandle, Refname, oid, Oid, Force);
+do_create(RepoHandle, Refname, Target, Force) ->
+    geef_nif:reference_create(RepoHandle, Refname, symbolic, Target, Force).
+
+-spec make(pid(), binary(), target()) -> ref().
+make(Repo, Name, Target = #geef_oid{}) ->
+    #geef_reference{repo=Repo, name=Name, type=oid, target=Target};
+make(Repo, Name, Target) ->
+    #geef_reference{repo=Repo, name=Name, type=symbolic, target=Target}.
+
+-spec make(pid(), binary(), type(), binary()) -> ref().
+make(Repo, Name, oid, Target) ->
+    #geef_reference{repo=Repo, name=Name, type=oid, target=#geef_oid{oid=Target}};
+make(Repo, Name, symbolic, Target) ->
+    #geef_reference{repo=Repo, name=Name, type=symbolic, target=Target}.
+
 -spec lookup(pid(), iolist()) -> {ok, ref()} | {error, term()}.
 lookup(Repo, Refname) ->
     Name = iolist_to_binary(Refname),
-    case geef_repo:lookup_reference(Repo, Name) of
-	{ok, Ref} ->
-	    {ok, new(Name, Ref)};
+    RepoHandle = geef_repo:handle(Repo),
+    case geef_nif:reference_lookup(RepoHandle, Name) of
+	{ok, Type, Target} ->
+	    {ok, make(Repo, Name, Type, Target)};
 	Other ->
 	    Other
     end.
@@ -58,10 +63,10 @@ iterator(Repo) ->
     iterator(Repo, undefined).
 
 -spec next(iterator()) -> {ok, ref()} | {error, term()}.
-next(#geef_iterator{type=ref, handle=Handle}) ->
+next(#geef_iterator{type=ref, repo=Repo, handle=Handle}) ->
     case geef_nif:reference_next(Handle) of
-	{ok, RefHandle} ->
-	    {ok, new(RefHandle)};
+	{ok, Name, Type, Target} ->
+	    {ok, make(Repo, Name, Type, Target)};
 	Other ->
 	    Other
     end.
@@ -69,20 +74,22 @@ next(#geef_iterator{type=ref, handle=Handle}) ->
 -spec resolve(ref()) -> {ok, ref()} | {error, term()}.
 resolve(Ref = #geef_reference{type=oid}) ->
     {ok, Ref}; % resolving an oid ref is a no-op, skip going into the NIF
-resolve(#geef_reference{type=symbolic, handle=Handle}) ->
-    case geef_nif:reference_resolve(Handle) of
-	{ok, Ref} ->
-	    {ok, new(Ref)};
+resolve(#geef_reference{repo=Repo, name=Name, type=symbolic}) ->
+    RepoHandle = geef_repo:handle(Repo),
+    case geef_nif:reference_resolve(RepoHandle, Name) of
+	{ok, Type, Target} ->
+	    {ok, make(Repo, Name, Type, Target)};
 	Other = {error, _} ->
 	    Other
     end.
 
 -spec dwim(pid(), iolist()) -> {ok, ref()} | {error, term()}.
 dwim(Repo, Name) ->
-    case geef_repo:reference_dwim(Repo, Name) of
-	{ok, Handle} ->
-	    {ok, new(Handle)};
-	Err ->
+    RepoHandle = geef_repo:handle(Repo),
+    case geef_nif:reference_dwim(RepoHandle, Name) of
+	{ok, RealName, Type, Target} ->
+	    {ok, make(Repo, RealName, Type, Target)};
+	Err = {error, _}->
 	    Err
     end.
 

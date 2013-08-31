@@ -1,4 +1,4 @@
--record(geef_reference, {handle, name :: binary(), type :: oid | symbolic, target :: binary() | geef_oid:oid()}).
+-record(geef_reference, {repo :: pid(), name :: binary(), type :: geef_ref:type(), target :: geef_ref:target()}).
 -record(geef_oid, {oid :: binary()}).
 -record(geef_object, {type :: atom(), id :: geef_oid:oid(), handle}).
 -record(geef_index_entry,
