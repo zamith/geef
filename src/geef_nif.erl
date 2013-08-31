@@ -52,11 +52,11 @@ reference_glob(_Repo, _Glob) ->
 reference_lookup(_Repo, _Refname) ->
     nif_error(?LINE).
 
--spec reference_iterator(term(), iolist() | undefined) -> {ok, geef_iterator()} | {error, term()}.
+-spec reference_iterator(term(), iolist() | undefined) -> {ok, geef_ref:iterator()} | {error, term()}.
 reference_iterator(_Repo, _Regexp) ->
     nif_error(?LINE).
 
--spec reference_next(geef_iterator()) -> {ok, term()} | {error, iterover | term()}.
+-spec reference_next(geef_ref:iterator()) -> {ok, term()} | {error, iterover | term()}.
 reference_next(_Handle) ->
     nif_error(?LINE).
 
@@ -69,6 +69,7 @@ reference_resolve(_Handle) ->
 reference_type(_Handle) ->
     nif_error(?LINE).
 
+-spec reference_name(term()) -> {ok, binary()} | {error, term()}.
 reference_name(_Handle) ->
     nif_error(?LINE).
 

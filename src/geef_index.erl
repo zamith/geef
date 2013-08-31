@@ -21,6 +21,9 @@
 -record(state, {handle}).
 -include("geef_records.hrl").
 
+-type entry() :: #geef_index_entry{}.
+-export_type([entry/0]).
+
 %%%===================================================================
 %%% API
 %%%===================================================================
@@ -39,12 +42,12 @@ write(Pid) ->
     gen_server:call(Pid, write).
 
 %% @doc Write out the index's contents to its the repository.
--spec write_tree(pid()) -> {ok, geef_oid()} | {error, term()}.
+-spec write_tree(pid()) -> {ok, geef_oid:oid()} | {error, term()}.
 write_tree(Pid) ->
     gen_server:call(Pid, write_tree).
 
 %% @doc Write out the index's contents to the given repository
--spec write_tree(pid(), pid()) -> {ok, geef_oid()} | {error, term()}.
+-spec write_tree(pid(), pid()) -> {ok, geef_oid:oid()} | {error, term()}.
 write_tree(Pid, Repo) ->
     gen_server:call(Pid, {write_tree, Repo}).
 
@@ -52,7 +55,7 @@ read_tree(Pid, #geef_object{type=tree, handle=TreeHandle}) ->
     gen_server:call(Pid, {read_tree, TreeHandle}).
 
 %% @doc Add an entry to the index
--spec add(pid(), geef_index_entry()) -> ok | {error, term()}.
+-spec add(pid(), entry()) -> ok | {error, term()}.
 add(Pid, Entry) ->
     gen_server:call(Pid, {add, Entry}).
 

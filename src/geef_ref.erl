@@ -4,12 +4,16 @@
 
 -include("geef_records.hrl").
 
--spec new(term()) -> geef_reference().
+-type iterator() :: #geef_iterator{type :: ref}.
+-type ref() :: #geef_reference{name :: binary()}.
+-export_type([reference/0, iterator/0]).
+
+-spec new(term()) -> ref().
 new(Handle) ->
     {ok, Name} = geef_nif:reference_name(Handle),
     new(Name, Handle).
 
--spec new(binary(), term()) -> geef_reference().
+-spec new(binary(), term()) -> ref().
 new(Name, Handle) ->
     Type = geef_nif:reference_type(Handle),
     Bin = geef_nif:reference_target(Handle),
@@ -21,7 +25,7 @@ new(Name, Handle) ->
 	     end,
     #geef_reference{handle=Handle, name=Name, type=Type, target=Target}.
 
--spec create(pid(), iolist(), geef_oid() | binary(), boolean()) -> {ok, geef_reference()} | {error, term()}.
+-spec create(pid(), iolist(), geef_oid:oid() | binary(), boolean()) -> {ok, ref()} | {error, term()}.
 create(Repo, Refname, Target, Force) ->
     case geef_repo:create_reference(Repo, Refname, Target, Force) of
         {ok, Ref} ->
@@ -30,7 +34,7 @@ create(Repo, Refname, Target, Force) ->
             Err
     end.
 
--spec lookup(pid(), iolist()) -> {ok, geef_reference()} | {error, term()}.
+-spec lookup(pid(), iolist()) -> {ok, ref()} | {error, term()}.
 lookup(Repo, Refname) ->
     Name = iolist_to_binary(Refname),
     case geef_repo:lookup_reference(Repo, Name) of
@@ -40,7 +44,7 @@ lookup(Repo, Refname) ->
 	    Other
     end.
 
--spec iterator(pid(), iolist() | undefined) -> {ok, geef_iterator()} | {error, term()}.
+-spec iterator(pid(), iolist() | undefined) -> {ok, iterator()} | {error, term()}.
 iterator(Repo, Regexp) ->
     case geef_repo:iterator(Repo, Regexp) of
 	{ok, Handle} ->
@@ -49,10 +53,11 @@ iterator(Repo, Regexp) ->
 	    Other
     end.
 
--spec iterator(pid()) -> {ok, geef_iterator()} | {error, term()}.
+-spec iterator(pid()) -> {ok, iterator()} | {error, term()}.
 iterator(Repo) ->
     iterator(Repo, undefined).
 
+-spec next(iterator()) -> {ok, ref()} | {error, term()}.
 next(#geef_iterator{type=ref, handle=Handle}) ->
     case geef_nif:reference_next(Handle) of
 	{ok, RefHandle} ->
@@ -61,18 +66,18 @@ next(#geef_iterator{type=ref, handle=Handle}) ->
 	    Other
     end.
 
--spec resolve(geef_reference()) -> {ok, geef_reference()} | {error, term()}.
+-spec resolve(ref()) -> {ok, ref()} | {error, term()}.
 resolve(Ref = #geef_reference{type=oid}) ->
     {ok, Ref}; % resolving an oid ref is a no-op, skip going into the NIF
-resolve(#geef_reference{handle=Handle}) ->
+resolve(#geef_reference{type=symbolic, handle=Handle}) ->
     case geef_nif:reference_resolve(Handle) of
 	{ok, Ref} ->
 	    {ok, new(Ref)};
-	Other ->
+	Other = {error, _} ->
 	    Other
     end.
 
--spec dwim(pid(), iolist()) -> {ok, geef_reference()} | {error, term()}.
+-spec dwim(pid(), iolist()) -> {ok, ref()} | {error, term()}.
 dwim(Repo, Name) ->
     case geef_repo:reference_dwim(Repo, Name) of
 	{ok, Handle} ->
@@ -82,7 +87,7 @@ dwim(Repo, Name) ->
     end.
 
 %% @doc Get the shorthand name for a particular reference
--spec shorthand(geef_reference() | binary()) -> binary().
+-spec shorthand(ref() | binary()) -> binary().
 shorthand(<<"refs/heads/", Rest/binary>>) ->
     Rest;
 shorthand(<<"refs/tags/", Rest/binary>>) ->

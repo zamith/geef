@@ -28,7 +28,7 @@
 %% @doc Push a commit. This commit and its parents will be included in
 %% the walk as long as they haven't been hidden. At least one commit
 %% must be pushed before starting a walk.
--spec push(pid(), geef_oid() | iolist()) -> ok | {error, binary()}.
+-spec push(pid(), geef_oid:oid() | iolist()) -> ok | {error, binary()}.
 push(Pid, #geef_oid{oid=Oid}) ->
     gen_server:call(Pid, {push, Oid});
 push(Pid, Id) ->
@@ -38,7 +38,7 @@ push(Pid, Id) ->
 
 %% @doc Hide a commit. Hide a commit and its parents. Any Parent of
 %% this commit won't be included in the walk.
--spec hide(pid(), geef_oid() | iolist()) -> ok | {error, binary()}.
+-spec hide(pid(), geef_oid:oid() | iolist()) -> ok | {error, binary()}.
 hide(Pid, #geef_oid{oid=Oid}) ->
     gen_server:call(Pid, {hide, Oid});
 hide(Pid, Id) ->

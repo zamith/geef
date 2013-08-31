@@ -8,24 +8,29 @@
 
 -include("geef_records.hrl").
 
+-type tree() :: geef_obj:object(tree).
+-type entry() :: #geef_tree_entry{}.
+-export_type([tree/0, entry/0]).
+
+
 from_nif({ok, Mode, Type, Oid, Name}) ->
     {ok, #geef_tree_entry{mode=Mode, type=Type, id=#geef_oid{oid=Oid}, name=Name}};
 from_nif(Err = {error, _}) ->
     Err.
 
--spec get(geef_object(), iolist()) -> {ok, geef_tree_entry()} | {error, term()}.
+-spec get(tree(), iolist()) -> {ok, entry()} | {error, term()}.
 get(#geef_object{type=tree,handle=Handle}, Path) ->
     from_nif(geef_nif:tree_bypath(Handle, Path)).
 
--spec nth(geef_object(), non_neg_integer()) -> {ok, geef_tree_entry()} | {error, term()}.
+-spec nth(tree(), non_neg_integer()) -> {ok, entry()} | {error, term()}.
 nth(#geef_object{type=tree,handle=Handle}, Nth) ->
     from_nif(geef_nif:tree_nth(Handle, Nth)).
 
--spec count(geef_object()) -> non_neg_integer().
+-spec count(tree()) -> non_neg_integer().
 count(#geef_object{type=tree,handle=Handle}) ->
     geef_nif:tree_count(Handle).
 
--spec lookup(pid(), geef_oid() | iolist()) -> {ok, geef_object()} | {error, term()}.
+-spec lookup(pid(), geef_oid:oid() | iolist()) -> {ok, tree()} | {error, term()}.
 lookup(Repo, Id) ->
     geef_obj:lookup(Repo, Id, tree).
 

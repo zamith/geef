@@ -84,14 +84,14 @@ code_change(_OldVsn, State, _Extra) ->
 -include_lib("eunit/include/eunit.hrl").
 -endif.
 
--spec exists(pid(), geef_oid() | iolist()) -> boolean().
+-spec exists(pid(), geef_oid:oid() | iolist()) -> boolean().
 exists(Pid, #geef_oid{oid=Oid}) ->
     gen_server:call(Pid, {exists, Oid});
 exists(Pid, Sha) ->
     #geef_oid{oid=Oid} = geef_oid:parse(Sha),
     gen_server:call(Pid, {exists, Oid}).
 
--spec write(pid(), iolist(), atom()) -> {ok, geef_oid()} | {error, term()}.
+-spec write(pid(), iolist(), atom()) -> {ok, geef_oid:oid()} | {error, term()}.
 write(Pid, Contents, Type) ->
     gen_server:call(Pid, {write, Contents, Type}).
 

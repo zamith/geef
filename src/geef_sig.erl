@@ -2,9 +2,13 @@
 
 -include("geef_records.hrl").
 
+-type time() :: {erlang:timestamp(), non_neg_integer()}.
+-type signature() :: #geef_signature{}.
+-export_type([time/0, signature/0]).
+
 -export([new/2, new/3]).
 
--spec new(iolist(), iolist()) -> {ok, geef_signature()} | {error, term()}.
+-spec new(iolist(), iolist()) -> {ok, signature()} | {error, term()}.
 new(Name0, Email0) ->
     case geef_nif:signature_new(Name0, Email0) of
         {ok, Name, Email, Time0, Offset} ->
@@ -14,7 +18,7 @@ new(Name0, Email0) ->
             Err
     end.
 
--spec new(iolist(), iolist(), geef_time()) ->  {ok, geef_signature()} | {error, term()}.
+-spec new(iolist(), iolist(), time()) ->  {ok, signature()} | {error, term()}.
 new(Name0, Email0, Time) ->
     case geef_nif:signature_new(Name0, Email0, 0) of
         {ok, Name, Email} ->

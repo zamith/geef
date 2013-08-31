@@ -6,9 +6,12 @@
 
 -include("geef_records.hrl").
 
+-type blob() :: geef_obj:object(blob).
+-export_type([blob/0]).
+
 -export([lookup/2, size/1, content/1]).
 
--spec lookup(pid(), geef_oid() | iolist()) -> {ok, geef_object()} | {error, term()}.
+-spec lookup(pid(), geef_oid:oid() | iolist()) -> {ok, blob()} | {error, term()}.
 lookup(Repo, Id) ->
     geef_obj:lookup(Repo, Id, blob).
 

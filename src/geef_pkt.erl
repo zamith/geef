@@ -15,7 +15,7 @@ line(Text) ->
     Prefix = io_lib:format("~4.16.0b", [Len]),
     [Prefix, Text, "\n"].
 
--spec parse(iolist()) -> {{want | have, geef_oid()}, binary()} | {error, ebufs}.
+-spec parse(iolist()) -> {{want | have, geef_oid:oid()}, binary()} | {error, ebufs}.
 parse(In) ->
     case unpack(In) of
 	Err = {error, ebufs} ->
@@ -56,7 +56,7 @@ do_unpack(Len, Rest) when Len - 4 > size(Rest) ->
 do_unpack(Len, Rest) ->
     {Len - 4, Rest}.
 
--spec parse_pkt(binary(), non_neg_integer()) -> {{want | have, geef_oid()}, binary()} | {done, binary()} | {flush, binary()}.
+-spec parse_pkt(binary(), non_neg_integer()) -> {{want | have, geef_oid:oid()}, binary()} | {done, binary()} | {flush, binary()}.
 parse_pkt(In, 0) ->
     {flush, In};
 parse_pkt(In, Len) ->

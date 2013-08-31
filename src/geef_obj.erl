@@ -6,9 +6,14 @@
 
 -include("geef_records.hrl").
 
+-type object() :: #geef_object{type :: blob | tree | commit | tag}.
+-type object(Type) :: #geef_object{type :: Type}.
+
+-export_type([object/0, object/1]).
+
 -export([lookup/2, lookup/3]).
 
--spec lookup(pid(), geef_oid() | iolist()) -> {ok, geef_object()} | {error, term()}.
+-spec lookup(pid(), geef_oid:oid() | iolist()) -> {ok, object()} | {error, term()}.
 lookup(Repo, Id = #geef_oid{oid=Oid}) ->
     case geef_repo:lookup_object(Repo, Oid) of
 	{ok, Type, Handle} ->
@@ -20,7 +25,7 @@ lookup(Repo, Id) ->
     lookup(Repo, geef_oid:parse(Id)).
 
 %% As lookup/2, but it asserts that the type is correct
--spec lookup(pid(), geef_oid() | iolist(), atom()) -> {ok, geef_object()} | {error, term()}.
+-spec lookup(pid(), geef_oid:oid() | iolist(), atom()) -> {ok, object()} | {error, term()}.
 lookup(Repo, Id, Type) ->
     case lookup(Repo, Id) of
 	{ok, Obj = #geef_object{type=Type}} ->

@@ -87,7 +87,7 @@ lookup_reference(Pid, Name) ->
     gen_server:call(Pid, {lookup_reference, Name}).
 
 %% @private
--spec iterator(pid(), iolist() | undefined) -> {ok, geef_iterator()} | {error, term()}.
+-spec iterator(pid(), iolist() | undefined) -> {ok, geef_ref:iterator()} | {error, term()}.
 iterator(Pid, Regexp) ->
     gen_server:call(Pid, {iterator, Regexp}).
 

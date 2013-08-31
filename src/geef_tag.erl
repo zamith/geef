@@ -8,11 +8,14 @@
 
 -include("geef_records.hrl").
 
--spec lookup(pid(), geef_oid() | iolist()) -> {ok, geef_object()} | {error, term()}.
+-type tag() :: geef_obj:object(tag).
+-export_type([tag/0]).
+
+-spec lookup(pid(), geef_oid:oid() | iolist()) -> {ok, tag()} | {error, term()}.
 lookup(Repo, Id) ->
     geef_obj:lookup(Repo, Id, tag).
 
--spec peel(geef_object()) -> {ok, geef_object()} | {error, term()}.
+-spec peel(tag()) -> {ok, geef_obj:object()} | {error, term()}.
 peel(#geef_object{type=tag, handle=Handle}) ->
     case geef_nif:tag_peel(Handle) of
         {ok, Type, Oid, PeeledHandle} ->
