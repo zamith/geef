@@ -49,28 +49,20 @@ reference_to_id(_Repo, _Refname) ->
 reference_glob(_Repo, _Glob) ->
     nif_error(?LINE).
 
-reference_lookup(_Repo, _Refname) ->
+-spec reference_lookup(term(), binary() | iolist()) -> {ok, geef_ref:ref_type(), geef_oid:oid()} | {error, term()}.
+reference_lookup(_RepoHandle, _Refname) ->
     nif_error(?LINE).
 
 -spec reference_iterator(term(), iolist() | undefined) -> {ok, geef_ref:iterator()} | {error, term()}.
 reference_iterator(_Repo, _Regexp) ->
     nif_error(?LINE).
 
--spec reference_next(geef_ref:iterator()) -> {ok, term()} | {error, iterover | term()}.
+-spec reference_next(geef_ref:iterator()) -> {ok, binary(), geef_ref:ref_type(), geef_oid:oid() | binary()} | {error, iterover | term()}.
 reference_next(_Handle) ->
     nif_error(?LINE).
 
-reference_target(_Handle) ->
-    nif_error(?LINE).
-
-reference_resolve(_Handle) ->
-    nif_error(?LINE).
-
-reference_type(_Handle) ->
-    nif_error(?LINE).
-
--spec reference_name(term()) -> {ok, binary()} | {error, term()}.
-reference_name(_Handle) ->
+-spec reference_resolve(term(), binary()) -> {ok, geef_oid:oid()} | {error, term()}.
+reference_resolve(_RepoHandle, _Name) ->
     nif_error(?LINE).
 
 reference_dwim(_Handle, _Name) ->

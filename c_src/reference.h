@@ -4,12 +4,7 @@
 #include "erl_nif.h"
 #include <git2.h>
 
-extern ErlNifResourceType *geef_ref_type;
 extern ErlNifResourceType *geef_ref_iter_type;
-
-typedef struct {
-    git_reference *ref;
-} geef_ref;
 
 typedef struct {
 	git_reference_iterator *iter;
@@ -21,15 +16,11 @@ ERL_NIF_TERM geef_reference_to_id(ErlNifEnv *env, int argc, const ERL_NIF_TERM a
 ERL_NIF_TERM geef_reference_glob(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
 ERL_NIF_TERM geef_reference_lookup(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
 ERL_NIF_TERM geef_reference_resolve(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
-ERL_NIF_TERM geef_reference_target(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
-ERL_NIF_TERM geef_reference_type(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
-ERL_NIF_TERM geef_reference_name(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
 ERL_NIF_TERM geef_reference_create(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
 ERL_NIF_TERM geef_reference_dwim(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
 ERL_NIF_TERM geef_reference_iterator(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
 ERL_NIF_TERM geef_reference_next(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
 
-void geef_ref_free(ErlNifEnv *env, void *cd);
 void geef_ref_iter_free(ErlNifEnv *env, void *cd);
 
 #endif

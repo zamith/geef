@@ -18,7 +18,6 @@
 
 ErlNifResourceType *geef_repository_type;
 ErlNifResourceType *geef_odb_type;
-ErlNifResourceType *geef_ref_type;
 ErlNifResourceType *geef_ref_iter_type;
 ErlNifResourceType *geef_object_type;
 ErlNifResourceType *geef_revwalk_type;
@@ -40,12 +39,6 @@ static int load(ErlNifEnv *env, void **priv, ERL_NIF_TERM load_info)
 					      "odb_type", geef_odb_free, ERL_NIF_RT_CREATE, NULL);
 
 	if (geef_odb_type == NULL)
-		return -1;
-
-	geef_ref_type = enif_open_resource_type(env, NULL,
-		    "ref_type", geef_ref_free, ERL_NIF_RT_CREATE, NULL);
-
-	if (geef_ref_type == NULL)
 		return -1;
 
 	geef_ref_iter_type = enif_open_resource_type(env, NULL,
@@ -160,10 +153,7 @@ static ErlNifFunc geef_funcs[] =
 	{"reference_lookup", 2, geef_reference_lookup},
 	{"reference_iterator", 2, geef_reference_iterator},
 	{"reference_next",     1, geef_reference_next},
-	{"reference_resolve", 1, geef_reference_resolve},
-	{"reference_target", 1, geef_reference_target},
-	{"reference_type", 1, geef_reference_type},
-	{"reference_name", 1, geef_reference_name},
+	{"reference_resolve", 2, geef_reference_resolve},
 	{"reference_create", 5, geef_reference_create},
 	{"reference_dwim", 2,   geef_reference_dwim},
 	{"oid_fmt", 1, geef_oid_fmt},
