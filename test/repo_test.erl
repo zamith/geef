@@ -34,7 +34,10 @@ index_add_test(Repo) ->
     ok = geef_index:add(Idx, Entry),
     {ok, TreeId} = geef_index:write_tree(Idx, Repo),
     Expected = geef_oid:parse("5a20bbbf65ea75ad4d9f995d179156824ccca3a1"),
-    [?_assertEqual(Expected, TreeId)].
+    {ok, Entry1} = geef_index:get(Idx, "README", 0),
+    [?_assertEqual(Expected, TreeId),
+     ?_assertEqual(BlobId, Entry1#geef_index_entry.id),
+     ?_assertEqual(geef_index:count(Idx), 1)].
 
 ref_test(Repo) ->
     odb_write_test(Repo),

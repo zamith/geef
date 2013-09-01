@@ -154,6 +154,18 @@ index_write_tree(_Handle, _RepoHandle) ->
 index_read_tree(_Handle, _TreeHandle) ->
     ?NIF_FN.
 
+-spec index_count(term()) -> non_neg_integer().
+index_count(_Handle) ->
+    ?NIF_FN.
+
+-spec index_nth(term(), non_neg_integer()) -> {ok, geef_index:entry()} | {error, term()}.
+index_nth(_Handle, _Nth) ->
+    ?NIF_FN.
+
+-spec index_get(term(), iolist(), non_neg_integer()) -> {ok, geef_index:entry()} | {error, term()}.
+index_get(_Handle, _Path, _Stage) ->
+    ?NIF_FN.
+
 index_add(_Handle, _Entry) ->
     ?NIF_FN.
 

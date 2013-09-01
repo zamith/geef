@@ -12,7 +12,7 @@
 
 %% API
 -export([start_link/1]).
--export([new/0, write/1, write_tree/1, write_tree/2, clear/1, stop/1, read_tree/2, add/2]).
+-export([new/0, write/1, write_tree/1, write_tree/2, clear/1, stop/1, read_tree/2, add/2, count/1, get/3, nth/2]).
 
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
@@ -59,6 +59,27 @@ read_tree(Pid, #geef_object{type=tree, handle=TreeHandle}) ->
 add(Pid, Entry) ->
     gen_server:call(Pid, {add, Entry}).
 
+-spec count(pid()) -> non_neg_integer().
+count(Pid) ->
+    gen_server:call(Pid, count).
+
+%% @doc Retrieve an entry with a particular path and stage.
+-spec get(pid(), iolist(), non_neg_integer()) -> {ok, entry()} | {error, term()}.
+get(Pid, Path, Stage) ->
+    maybe_entry(gen_server:call(Pid, {get, Path, Stage})).
+
+%% @doc Retrieve an entry by index. Different stages of a path are
+%% considered different entries.
+-spec nth(pid(), non_neg_integer()) -> {ok, entry()} | {error, term()}.
+nth(Pid, Nth) ->
+    maybe_entry(gen_server:call(Pid, {nth, Nth})).
+
+maybe_entry({ok, Path, Id, Mode}) ->
+    {ok, #geef_index_entry{path=Path, id=#geef_oid{oid=Id}, mode=Mode}};
+maybe_entry(Error = {error, _}) ->
+    Error.
+
+
 %% @doc Clear the contents of the index.
 -spec clear(pid()) -> ok.
 clear(Pid) ->
@@ -102,6 +123,19 @@ handle_call(stop, _From, State) ->
 handle_call({read_tree, TreeHandle}, _From, State = #state{handle=Handle}) ->
     Reply = geef_nif:index_read_tree(Handle, TreeHandle),
     {reply, Reply, State};
+
+handle_call(count, _From, State = #state{handle=Handle}) ->
+    Reply = geef_nif:index_count(Handle),
+    {reply, Reply, State};
+
+handle_call({nth, Nth}, _From, State = #state{handle=Handle}) ->
+    Reply = geef_nif:index_nth(Handle, Nth),
+    {reply, Reply, State};
+
+handle_call({get, Path, Stage}, _From, State = #state{handle=Handle}) ->
+    Reply = geef_nif:index_get(Handle, Path, Stage),
+    {reply, Reply, State};
+
 handle_call({add, Entry}, _From, State = #state{handle=Handle}) ->
     Reply = geef_nif:index_add(Handle, Entry),
     {reply, Reply, State}.

@@ -139,6 +139,89 @@ geef_index_add(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 }
 
 ERL_NIF_TERM
+geef_index_count(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
+{
+	geef_index *index;
+
+	if (!enif_get_resource(env, argv[0], geef_index_type, (void **) &index))
+		return enif_make_badarg(env);
+
+	return enif_make_uint(env, git_index_entrycount(index->index));
+}
+
+ERL_NIF_TERM entry_to_term(ErlNifEnv *env, const git_index_entry *entry)
+{
+	ErlNifBinary id, path;
+	ERL_NIF_TERM mode;
+	size_t len;
+
+	if (geef_oid_bin(&id, &entry->oid) < 0)
+		return geef_oom(env);
+
+	len = strlen(entry->path);
+	if (!enif_alloc_binary(len, &path)) {
+		enif_release_binary(&id);
+		return geef_oom(env);
+	}
+	memcpy(path.data, entry->path, len);
+
+	mode = enif_make_uint(env, entry->mode);
+
+	return enif_make_tuple4(env, atoms.ok, enif_make_binary(env, &path), enif_make_binary(env, &id),
+				mode);
+}
+
+ERL_NIF_TERM
+geef_index_nth(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
+{
+	size_t nth;
+	geef_index *index;
+	const git_index_entry *entry;
+
+	if (!enif_get_resource(env, argv[0], geef_index_type, (void **) &index))
+		return enif_make_badarg(env);
+
+	if (!enif_get_ulong(env, argv[1], &nth))
+		return enif_make_badarg(env);
+
+	entry = git_index_get_byindex(index->index, nth);
+	if (entry == NULL)
+		return geef_error(env);
+
+	return entry_to_term(env, entry);
+}
+
+ERL_NIF_TERM
+geef_index_get(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
+{
+	unsigned int stage;
+	ErlNifBinary path;
+	geef_index *index;
+	const git_index_entry *entry;
+
+	if (!enif_get_resource(env, argv[0], geef_index_type, (void **) &index))
+		return enif_make_badarg(env);
+
+	if (!enif_get_uint(env, argv[2], &stage))
+		return enif_make_badarg(env);
+
+	if (!enif_inspect_iolist_as_binary(env, argv[1], &path))
+		return enif_make_badarg(env);
+
+	if (geef_terminate_binary(&path) < 0) {
+		enif_release_binary(&path);
+		return geef_oom(env);
+	}
+
+	entry = git_index_get_bypath(index->index, (char *) path.data, stage);
+	enif_release_binary(&path);
+	if (entry == NULL)
+		return geef_error(env);
+
+	return entry_to_term(env, entry);
+}
+
+ERL_NIF_TERM
 geef_index_clear(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 {
 	geef_index *index;
