@@ -5,7 +5,7 @@
 	{ctime :: non_neg_integer(), mtime :: non_neg_integer(),
 	 dev :: non_neg_integer(), ino :: non_neg_integer(),
 	 mode :: non_neg_integer(), uid :: non_neg_integer(), gid :: non_neg_integer(),
-	 size :: non_neg_integer(),
+	 size = 0 :: non_neg_integer(),
 	 id :: geef_oid:oid(),
 	 flags, flags_extended,
 	 path :: iolist()}).

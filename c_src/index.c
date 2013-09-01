@@ -107,13 +107,12 @@ geef_index_add(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	if (!enif_get_tuple(env, argv[1], &arity, &eentry))
 		return enif_make_badarg(env);
 
-	if (arity != 13)
-		return enif_make_badarg(env);
-
-	/* TODO: check for the 'tree_entry' tag */
 	memset(&entry, 0, sizeof(entry));
 
 	if (!enif_get_uint(env, eentry[5], &entry.mode))
+		return enif_make_badarg(env);
+
+	if (!enif_get_int64(env, eentry[8], &entry.file_size))
 		return enif_make_badarg(env);
 
 	if (!enif_inspect_iolist_as_binary(env, eentry[12], &path))
@@ -152,7 +151,7 @@ geef_index_count(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 ERL_NIF_TERM entry_to_term(ErlNifEnv *env, const git_index_entry *entry)
 {
 	ErlNifBinary id, path;
-	ERL_NIF_TERM mode;
+	ERL_NIF_TERM mode, file_size;
 	size_t len;
 
 	if (geef_oid_bin(&id, &entry->oid) < 0)
@@ -166,9 +165,10 @@ ERL_NIF_TERM entry_to_term(ErlNifEnv *env, const git_index_entry *entry)
 	memcpy(path.data, entry->path, len);
 
 	mode = enif_make_uint(env, entry->mode);
+	file_size = enif_make_int64(env, entry->file_size);
 
-	return enif_make_tuple4(env, atoms.ok, enif_make_binary(env, &path), enif_make_binary(env, &id),
-				mode);
+	return enif_make_tuple5(env, atoms.ok, enif_make_binary(env, &path), enif_make_binary(env, &id),
+				mode, file_size);
 }
 
 ERL_NIF_TERM

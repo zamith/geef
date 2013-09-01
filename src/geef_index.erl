@@ -74,8 +74,8 @@ get(Pid, Path, Stage) ->
 nth(Pid, Nth) ->
     maybe_entry(gen_server:call(Pid, {nth, Nth})).
 
-maybe_entry({ok, Path, Id, Mode}) ->
-    {ok, #geef_index_entry{path=Path, id=#geef_oid{oid=Id}, mode=Mode}};
+maybe_entry({ok, Path, Id, Mode, Size}) ->
+    {ok, #geef_index_entry{path=Path, id=#geef_oid{oid=Id}, mode=Mode, size=Size}};
 maybe_entry(Error = {error, _}) ->
     Error.
 
@@ -136,7 +136,7 @@ handle_call({get, Path, Stage}, _From, State = #state{handle=Handle}) ->
     Reply = geef_nif:index_get(Handle, Path, Stage),
     {reply, Reply, State};
 
-handle_call({add, Entry}, _From, State = #state{handle=Handle}) ->
+handle_call({add, Entry = #geef_index_entry{}}, _From, State = #state{handle=Handle}) ->
     Reply = geef_nif:index_add(Handle, Entry),
     {reply, Reply, State}.
 
