@@ -74,11 +74,11 @@ next(#geef_iterator{type=ref, repo=Repo, handle=Handle}) ->
 -spec resolve(ref()) -> {ok, ref()} | {error, term()}.
 resolve(Ref = #geef_reference{type=oid}) ->
     {ok, Ref}; % resolving an oid ref is a no-op, skip going into the NIF
-resolve(#geef_reference{repo=Repo, name=Name, type=symbolic}) ->
+resolve(#geef_reference{repo=Repo, type=symbolic, target=Name}) ->
     RepoHandle = geef_repo:handle(Repo),
     case geef_nif:reference_resolve(RepoHandle, Name) of
-	{ok, Type, Target} ->
-	    {ok, make(Repo, Name, Type, Target)};
+	{ok, ResolvedName, Target} ->
+	    {ok, make(Repo, ResolvedName, oid, Target)};
 	Other = {error, _} ->
 	    Other
     end.
