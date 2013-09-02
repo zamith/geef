@@ -3,6 +3,7 @@ defmodule Geef do
   defmacro __using__(_) do
     quote do
       alias Geef.Repository
+      alias Geef.Odb
       alias Geef.Reference
       alias Geef.Object
       alias Geef.Commit
