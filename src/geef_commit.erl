@@ -8,8 +8,7 @@
 
 -spec tree_id(commit()) -> geef_oid:oid().
 tree_id(#geef_object{type=commit,handle=Handle}) ->
-    Oid = geef_nif:commit_tree_id(Handle),
-    #geef_oid{oid=Oid}.
+    geef_nif:commit_tree_id(Handle).
 
 -spec tree(commit()) -> {ok, geef_tree:tree()} | {error, term()}.
 tree(#geef_object{type=commit,handle=Handle}) ->
@@ -20,6 +19,6 @@ tree(#geef_object{type=commit,handle=Handle}) ->
 	    Other
     end.
 
--spec lookup(pid(), geef_oid:oid() | iolist()) -> {ok, commit()} | {error, term()}.
+-spec lookup(pid(), geef_oid:oid()) -> {ok, commit()} | {error, term()}.
 lookup(Repo, Id) ->
     geef_obj:lookup(Repo, Id, commit).

@@ -48,12 +48,7 @@ handle_call({exists, Oid}, _From, State = #state{handle=Handle}) ->
     {reply, Reply, State};
 
 handle_call({write, Content, Type}, _From, State = #state{handle=Handle}) ->
-    Reply = case geef_nif:odb_write(Handle, Content, Type) of
-		{ok, Oid} ->
-		    {ok, #geef_oid{oid=Oid}};
-		Other ->
-		    Other
-	    end,
+    Reply = geef_nif:odb_write(Handle, Content, Type),
     {reply, Reply, State};
 
 handle_call(stop, _From, State) ->
@@ -84,12 +79,9 @@ code_change(_OldVsn, State, _Extra) ->
 -include_lib("eunit/include/eunit.hrl").
 -endif.
 
--spec exists(pid(), geef_oid:oid() | iolist()) -> boolean().
-exists(Pid, #geef_oid{oid=Oid}) ->
-    gen_server:call(Pid, {exists, Oid});
-exists(Pid, Sha) ->
-    #geef_oid{oid=Oid} = geef_oid:parse(Sha),
-    gen_server:call(Pid, {exists, Oid}).
+-spec exists(pid(), geef_oid:oid()) -> boolean().
+exists(Pid, Id) ->
+    gen_server:call(Pid, {exists, Id}).
 
 -spec write(pid(), iolist(), atom()) -> {ok, geef_oid:oid()} | {error, term()}.
 write(Pid, Contents, Type) ->
@@ -100,7 +92,6 @@ write(Pid, Contents, Type) ->
 exists_test() ->
     {ok, Repo} = geef_repo:open(".."),
     {ok, Odb} = geef_repo:odb(Repo),
-    ?assert(exists(Odb, "80d5c15a040c93a4f98f4496a05ebf30cdd58650")),
     ?assert(exists(Odb, geef_oid:parse("80d5c15a040c93a4f98f4496a05ebf30cdd58650"))).
 
 -endif.

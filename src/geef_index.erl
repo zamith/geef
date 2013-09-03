@@ -75,7 +75,7 @@ nth(Pid, Nth) ->
     maybe_entry(gen_server:call(Pid, {nth, Nth})).
 
 maybe_entry({ok, Path, Id, Mode, Size}) ->
-    {ok, #geef_index_entry{path=Path, id=#geef_oid{oid=Id}, mode=Mode, size=Size}};
+    {ok, #geef_index_entry{path=Path, id=Id, mode=Mode, size=Size}};
 maybe_entry(Error = {error, _}) ->
     Error.
 
@@ -107,13 +107,11 @@ handle_call(write, _From, State = #state{handle=Handle}) ->
     Reply = geef_nif:index_write(Handle),
     {reply, Reply, State};
 handle_call(write_tree, _From, State = #state{handle=Handle}) ->
-    {ok, Oid} = geef_nif:index_write_tree(Handle),
-    Reply = #geef_oid{oid=Oid},
+    Reply = geef_nif:index_write_tree(Handle),
     {reply, Reply, State};
 handle_call({write_tree, Repo}, _From, State = #state{handle=Handle}) ->
     RepoHandle = geef_repo:handle(Repo),
-    {ok, Oid} = geef_nif:index_write_tree(Handle, RepoHandle),
-    Reply = {ok, #geef_oid{oid=Oid}},
+    Reply = geef_nif:index_write_tree(Handle, RepoHandle),
     {reply, Reply, State};
 handle_call(clear, _From, State = #state{handle=Handle}) ->
     Reply = geef_nif:index_clear(Handle),

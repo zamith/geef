@@ -16,7 +16,7 @@
 
 %% API
 -export([open/1, init/2, path/1, workdir/1, odb/1, is_bare/1, references/1, discover/1,
-	 lookup_object/2, lookup_reference/2, create_reference/4, revwalk/1, stop/1,
+	 lookup_object/2, lookup_reference/2, revwalk/1, stop/1,
 	 reference_dwim/2, handle/1, iterator/2]).
 
 -include("geef_records.hrl").
@@ -95,10 +95,6 @@ iterator(Pid, Regexp) ->
 reference_dwim(Pid, Name) ->
     gen_server:call(Pid, {dwim_reference, Name}).
 
-%% @private
-create_reference(Pid, Name, Target, Force) ->
-    gen_server:call(Pid, {create_reference, Name, Target, Force}).
-
 %% @doc Create a revision walker for the given repository.
 revwalk(Pid) ->
     gen_server:call(Pid, revwalk).
@@ -146,9 +142,6 @@ handle_call({iterator, Regexp}, _From, State = #state{handle=Handle}) ->
     {reply, Reply, State};
 handle_call({dwim_reference, Name}, _From, State = #state{handle=Handle}) ->
     Reply = geef_nif:reference_dwim(Handle, Name),
-    {reply, Reply, State};
-handle_call({create_reference, Name, Target, Force}, _From, State = #state{handle=Handle}) ->
-    Reply = handle_create_reference(Handle, Name, Target, Force),
     {reply, Reply, State};
 handle_call(stop, _From, State) ->
     {stop, normal, ok, State};
@@ -204,8 +197,3 @@ handle_revwalk(Handle) ->
 	Error ->
 	    Error
     end.
-
-handle_create_reference(Repo, Refname, #geef_oid{oid=Oid}, Force) ->
-     geef_nif:reference_create(Repo, Refname, oid, Oid, Force);
-handle_create_reference(Repo, Refname, Target, Force) ->
-    geef_nif:reference_create(Repo, Refname, symbolic, Target, Force).

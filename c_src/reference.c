@@ -376,7 +376,7 @@ geef_reference_create(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	geef_repository *repo;
 	ErlNifBinary name, target;
 	int error, force;
-	git_reference *ref;
+	git_reference *ref = NULL;
 	const char *pname, *ptarget;
 
 	if (!enif_get_resource(env, argv[0], geef_repository_type, (void **) &repo))

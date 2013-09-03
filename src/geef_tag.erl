@@ -18,8 +18,8 @@ lookup(Repo, Id) ->
 -spec peel(tag()) -> {ok, geef_obj:object()} | {error, term()}.
 peel(#geef_object{type=tag, handle=Handle}) ->
     case geef_nif:tag_peel(Handle) of
-        {ok, Type, Oid, PeeledHandle} ->
-	    {ok, #geef_object{type=Type, id=#geef_oid{oid=Oid}, handle=PeeledHandle}};
+        {ok, Type, Id, PeeledHandle} ->
+	    {ok, #geef_object{type=Type, id=Id, handle=PeeledHandle}};
 	Err = {error, _} ->
 	    Err
     end.

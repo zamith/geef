@@ -96,7 +96,7 @@ ERL_NIF_TERM
 geef_index_add(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 {
 	geef_index *index;
-	const ERL_NIF_TERM *eentry, *oid;
+	const ERL_NIF_TERM *eentry;
 	int arity;
 	ErlNifBinary path, id;
 	git_index_entry entry;
@@ -122,11 +122,8 @@ geef_index_add(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 		return geef_oom(env);
 
 	entry.path = (char *) path.data;
-	/* Extract the oid from the tuple */
-	if (!enif_get_tuple(env, eentry[9], &arity, &oid))
-		return enif_make_badarg(env);
 
-	if (!enif_inspect_binary(env, oid[1], &id))
+	if (!enif_inspect_binary(env, eentry[9], &id))
 		return enif_make_badarg(env);
 
 	git_oid_fromraw(&entry.oid, id.data);

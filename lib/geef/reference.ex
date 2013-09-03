@@ -1,22 +1,9 @@
 defrecord Geef.Reference, Record.extract(:geef_reference, from: "src/geef_records.hrl") do
   import Geef
   alias Geef.Reference
-  alias Geef.Oid
-  import Oid, only: :macros
 
-  def from_erl(ref) do
-    case set_elem(ref, 0, Geef.Reference) do
-      ref = Reference[type: :symbolic] -> ref
-      ref = Reference[type: :oid, target: oid] -> ref.target(set_elem(oid, 0, Geef.Oid))
-    end
-  end
-
-  def to_erl(ref = Reference[type: :symbolic]) do
-    set_elem(ref, 0, :geef_reference)
-  end
-  def to_erl(ref = Reference[type: :oid, target: oid]) do
-    ref |> set_elem(0, :geef_reference) |> set_elem(4, set_elem(oid, 0, :geef_oid))
-  end
+  def from_erl(ref), do: set_elem(ref, 0, Geef.Reference)
+  def to_erl(ref), do: set_elem(ref, 0, :geef_reference)
 
   defp maybe_ref({:ok, ref}), do: {:ok, Reference.from_erl ref}
   defp maybe_ref(err = {:error, _}), do: err

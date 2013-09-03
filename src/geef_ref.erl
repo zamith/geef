@@ -1,6 +1,6 @@
 -module(geef_ref).
 
--export([lookup/2, iterator/1, iterator/2, next/1, resolve/1, create/4, dwim/2, shorthand/1]).
+-export([lookup/2, iterator/1, iterator/2, next/1, resolve/1, create/4, create_symbolic/4, dwim/2, shorthand/1]).
 
 -include("geef_records.hrl").
 
@@ -10,31 +10,29 @@
 -type ref() :: #geef_reference{name :: binary()}.
 -export_type([reference/0, type/0, target/0, iterator/0]).
 
--spec create(pid(), iolist(), target(), boolean()) -> {ok, ref()} | {error, term()}.
+-spec create(pid(), iolist(), geef_oid:oid(), boolean()) -> {ok, ref()} | {error, term()}.
 create(Repo, Refname, Target, Force) ->
     RepoHandle = geef_repo:handle(Repo),
-    case do_create(RepoHandle, Refname, Target, Force) of
+    case geef_nif:reference_create(RepoHandle, Refname, oid, Target, Force) of
         ok ->
-	    {ok, make(Repo, iolist_to_binary(Refname), Target)};
+	    {ok, make(Repo, iolist_to_binary(Refname), oid, Target)};
         Err = {error, _} ->
             Err
     end.
 
--spec do_create(term(), iolist(), target(), boolean()) -> ok | {error, term()}.
-do_create(RepoHandle, Refname, #geef_oid{oid=Oid}, Force) ->
-     geef_nif:reference_create(RepoHandle, Refname, oid, Oid, Force);
-do_create(RepoHandle, Refname, Target, Force) ->
-    geef_nif:reference_create(RepoHandle, Refname, symbolic, Target, Force).
+-spec create_symbolic(pid(), iolist(), iolist(), boolean()) -> {ok, ref()} | {error, term()}.
+create_symbolic(Repo, Refname, Target, Force) ->
+    RepoHandle = geef_repo:handle(Repo),
+    case geef_nif:reference_create(RepoHandle, Refname, symbolic, Target, Force) of
+        ok ->
+	    {ok, make(Repo, iolist_to_binary(Refname), symbolic, iolist_to_binary(Target))};
+        Err = {error, _} ->
+            Err
+    end.
 
--spec make(pid(), binary(), target()) -> ref().
-make(Repo, Name, #geef_oid{oid=Oid}) ->
-    make(Repo, Name, oid, Oid);
-make(Repo, Name, Target) ->
-    make(Repo, Name, symbolic, Target).
-
--spec make(pid(), binary(), type(), binary()) -> ref().
+-spec make(pid(), binary(), type(), target()) -> ref().
 make(Repo, Name, oid, Target) ->
-    #geef_reference{repo=Repo, name=Name, type=oid, target=#geef_oid{oid=Target}};
+    #geef_reference{repo=Repo, name=Name, type=oid, target=Target};
 make(Repo, Name, symbolic, Target) ->
     #geef_reference{repo=Repo, name=Name, type=symbolic, target=Target}.
 

@@ -13,8 +13,8 @@
 -export_type([tree/0, entry/0]).
 
 
-from_nif({ok, Mode, Type, Oid, Name}) ->
-    {ok, #geef_tree_entry{mode=Mode, type=Type, id=#geef_oid{oid=Oid}, name=Name}};
+from_nif({ok, Mode, Type, Id, Name}) ->
+    {ok, #geef_tree_entry{mode=Mode, type=Type, id=Id, name=Name}};
 from_nif(Err = {error, _}) ->
     Err.
 

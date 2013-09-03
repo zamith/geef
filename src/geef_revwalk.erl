@@ -28,22 +28,15 @@
 %% @doc Push a commit. This commit and its parents will be included in
 %% the walk as long as they haven't been hidden. At least one commit
 %% must be pushed before starting a walk.
--spec push(pid(), geef_oid:oid() | iolist()) -> ok | {error, binary()}.
-push(Pid, #geef_oid{oid=Oid}) ->
-    gen_server:call(Pid, {push, Oid});
+-spec push(pid(), geef_oid:oid()) -> ok | {error, binary()}.
 push(Pid, Id) ->
-    #geef_oid{oid=Oid} = geef_oid:parse(Id),
-    gen_server:call(Pid, {push, Oid}).
-
+    gen_server:call(Pid, {push, Id}).
 
 %% @doc Hide a commit. Hide a commit and its parents. Any Parent of
 %% this commit won't be included in the walk.
--spec hide(pid(), geef_oid:oid() | iolist()) -> ok | {error, binary()}.
-hide(Pid, #geef_oid{oid=Oid}) ->
-    gen_server:call(Pid, {hide, Oid});
+-spec hide(pid(), geef_oid:oid()) -> ok | {error, binary()}.
 hide(Pid, Id) ->
-    #geef_oid{oid=Oid} = geef_oid:parse(Id),
-    gen_server:call(Pid, {hide, Oid}).
+    gen_server:call(Pid, {hide, Id}).
 
 
 %% @doc Select the sorting method
@@ -90,7 +83,7 @@ handle_call({hide, Oid}, _From, State = #state{handle=Handle}) ->
     Reply = geef_nif:revwalk_push(Handle, Oid, true),
     {reply, Reply, State};
 handle_call(next, _From, State = #state{handle=Handle}) ->
-    Reply = handle_next(Handle),
+    Reply = geef_nif:revwalk_next(Handle),
     {reply, Reply, State};
 handle_call(stop, _From, State) ->
     {stop, normal, ok, State}.
@@ -114,11 +107,3 @@ code_change(_OldVsn, State, _Extra) ->
 %%%===================================================================
 %%% Internal functions
 %%%===================================================================
-
-handle_next(Handle) ->
-    case geef_nif:revwalk_next(Handle) of
-	{ok, Oid} ->
-	    {ok, #geef_oid{oid=Oid}};
-	Other ->
-	    Other
-    end.

@@ -40,7 +40,7 @@ repository_discover(_Path) ->
 reference_list(_Repo) ->
     nif_error(?LINE).
 
--spec reference_create(term(), iolist(), geef_ref:type(), binary(), boolean()) -> ok | {error, term()}.
+-spec reference_create(term(), iolist(), geef_ref:type(), iolist() | geef_oid:oid(), boolean()) -> ok | {error, term()}.
 reference_create(_Repo, _Refname, _Type, _Target, _Force) ->
     ?NIF_FN.
 
@@ -62,7 +62,7 @@ reference_iterator(_Repo, _Regexp) ->
 reference_next(_Handle) ->
     nif_error(?LINE).
 
--spec reference_resolve(term(), binary()) -> {ok, geef_ref:type(), binary()} | {error, term()}.
+-spec reference_resolve(term(), binary()) -> {ok, binary(), binary()} | {error, term()}.
 reference_resolve(_RepoHandle, _Name) ->
     nif_error(?LINE).
 
