@@ -4,6 +4,7 @@ defmodule Geef do
     quote do
       alias Geef.Repository
       alias Geef.Odb
+      alias Geef.Oid
       alias Geef.Reference
       alias Geef.Object
       alias Geef.Commit
