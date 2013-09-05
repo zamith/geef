@@ -178,6 +178,10 @@ signature_new(_Name, _Email) ->
 signature_new(_Name, _Email, _Time) ->
     ?NIF_FN.
 
+-spec revparse_single(term(), iolist()) -> {ok, term(), atom(), geef_oid:oid()} | {error, term()}.
+revparse_single(_Handle, _Str) ->
+    ?NIF_FN.
+
 nif_error(Line) ->
     erlang:nif_error({nif_not_loaded,module,?MODULE,line,Line}).
 

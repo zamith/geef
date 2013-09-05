@@ -6,7 +6,7 @@
 repo_test_() ->
     {foreach, fun start/0, fun stop/1, [fun bare_test/1, fun odb_write_test/1,
 					fun ref_test/1, fun index_add_test/1,
-					fun ref_iter_test/1]}.
+					fun ref_iter_test/1, fun revparse_test/1]}.
 
 start() ->
     {A, B, C} = now(),
@@ -24,6 +24,12 @@ odb_write_test(Repo) ->
     {ok, Actual} = geef_odb:write(Odb, Data, blob),
     Expected = geef_oid:parse("c300118399f01fe52b316061b5d32beb27e0adfd"),
     [?_assertEqual(Actual, Expected)].
+
+revparse_test(Repo) ->
+    odb_write_test(Repo),
+    {ok, Obj} = geef_revparse:single(Repo, "c300118399"),
+    [?_assertEqual(Obj#geef_object.type, blob),
+     ?_assertEqual(Obj#geef_object.id, geef_oid:parse("c300118399f01fe52b316061b5d32beb27e0adfd"))].
 
 index_add_test(Repo) ->
     Data = <<"This is some text that will go in a file">>,
