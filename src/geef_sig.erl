@@ -6,23 +6,29 @@
 -type signature() :: #geef_signature{}.
 -export_type([time/0, signature/0]).
 
--export([new/2, new/3]).
+-export([default/1, now/2]).
 
--spec new(iolist(), iolist()) -> {ok, signature()} | {error, term()}.
-new(Name0, Email0) ->
-    case geef_nif:signature_new(Name0, Email0) of
-        {ok, Name, Email, Time0, Offset} ->
-            Time = {{Time0 div 1000000, Time0 rem 1000000, 0}, Offset},
-            {ok, #geef_signature{name=Name, email=Email, time=Time}};
-        Err ->
+%% @doc Create a signature for the repository's configured username and
+%% email, with a timestamp of now.
+-spec default(pid()) -> {ok, signature()} | {error, term()}.
+default(Repo) ->
+    RepoHandle = geef_repo:handle(Repo),
+    case geef_nif:signature_default(RepoHandle) of
+        {ok, Name, Email, Timestamp, Offset} ->
+            Time = {{Timestamp div 1000000, Timestamp rem 1000000, 0}, Offset},
+            Sig = #geef_signature{name=Name, email=Email, time=Time},
+            {ok, Sig};
+        Err = {error, _} ->
             Err
     end.
 
--spec new(iolist(), iolist(), time()) ->  {ok, signature()} | {error, term()}.
-new(Name0, Email0, Time) ->
-    case geef_nif:signature_new(Name0, Email0, 0) of
-        {ok, Name, Email} ->
-            {ok, #geef_signature{name=Name, email=Email, time=Time}};
-        Err ->
-            Err
-    end.
+%% @doc Create a signature with the specified username and email, with
+%% a timestamp of now
+now(Name, Email) ->
+    Now = now(),
+    %% We ask two questions "what's the time here?" and "what's the
+    %% time in UTC-Land?". The difference in minutes is our offset.
+    Local = calendar:datetime_to_gregorian_seconds(calendar:now_to_local_time(Now)),
+    UTC = calendar:datetime_to_gregorian_seconds(calendar:now_to_universal_time(Now)),
+    Offset = (Local - UTC) div 60,
+    #geef_signature{name=Name, email=Email, time={Now, Offset}}.

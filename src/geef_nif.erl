@@ -172,6 +172,10 @@ index_add(_Handle, _Entry) ->
 index_clear(_Handle) ->
     ?NIF_FN.
 
+-spec signature_default(term()) -> {ok, geef_sig:signature()} | {error, term()}.
+signature_default(_Repo) ->
+    ?NIF_FN.
+
 signature_new(_Name, _Email) ->
     ?NIF_FN.
 

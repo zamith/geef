@@ -1,6 +1,52 @@
 #include "geef.h"
+#include "repository.h"
 #include <string.h>
 #include <git2.h>
+
+static int geef_string_to_bin(ErlNifBinary *bin, const char *str)
+{
+	size_t len;
+
+	len = strlen(str);
+	if (!enif_alloc_binary(len, bin))
+		return -1;
+
+	memcpy(bin->data, str, len);
+	return 0;
+}
+
+ERL_NIF_TERM
+geef_signature_default(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
+{
+	git_signature *sig;
+	geef_repository *repo;
+	ErlNifBinary name, email;
+
+	if (!enif_get_resource(env, argv[0], geef_repository_type, (void **) &repo))
+		return enif_make_badarg(env);
+
+	memset(&name, 0, sizeof(ErlNifBinary));
+	memset(&email, 0, sizeof(ErlNifBinary));
+
+	if (git_signature_default(&sig, repo->repo) < 0)
+		return geef_error(env);
+
+	if (geef_string_to_bin(&name, sig->name) < 0)
+		goto oom;
+
+	if (geef_string_to_bin(&email, sig->email) < 0)
+		goto oom;
+
+	return enif_make_tuple5(env, atoms.ok,
+	         enif_make_binary(env, &name), enif_make_binary(env, &email),
+		 enif_make_ulong(env, sig->when.time), enif_make_uint(env, sig->when.offset));
+oom:
+	git_signature_free(sig);
+	enif_release_binary(&name);
+	enif_release_binary(&email);
+
+	return geef_oom(env);
+}
 
 ERL_NIF_TERM
 geef_signature_new(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])

@@ -1,9 +1,12 @@
 defrecord Geef.Signature, Record.extract(:geef_signature, from: "src/geef_records.hrl") do
 
-  def new(name, email), do: :geef_sig.new(name, email) |> maybe_sig
-  def new(name, email, time), do: :geef_sig.new(name, email, time) |> maybe_sig
+  def now(name, email), do: :geef_sig.now(name, email) |> from_erl
 
-  defp maybe_sig({:ok, sig}), do: Geef.Signature.new(sig)
-  defp maybe_sig({:error, error}), do: raise error
+  def default(repo), do: :geef_sig.default(repo) |> maybe_sig
+
+  defp maybe_sig({:ok, sig}), do: from_erl(sig)
+  defp maybe_sig(error = {:error, _}), do: error
+
+  defp from_erl(sig), do: set_elem(sig, 0, Geef.Signature)
 
 end

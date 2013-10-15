@@ -184,8 +184,7 @@ static ErlNifFunc geef_funcs[] =
 	{"index_nth",        2, geef_index_nth},
 	{"index_clear",      1, geef_index_clear},
 	{"index_read_tree",  2, geef_index_read_tree},
-	{"signature_new", 2, geef_signature_new},
-	{"signature_new", 3, geef_signature_new},
+	{"signature_default", 1, geef_signature_default},
 };
 
 ERL_NIF_INIT(geef_nif, geef_funcs, load, NULL, upgrade, unload)
