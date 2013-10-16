@@ -36,7 +36,9 @@ index_add_test(Repo) ->
     {ok, Odb} = geef_repo:odb(Repo),
     {ok, BlobId} = geef_odb:write(Odb, Data, blob),
     {ok, Idx} = geef_index:new(),
-    Entry = #geef_index_entry{mode=8#100644, id=BlobId, path="README", size=size(Data)},
+    {NowMega, NowSecs, _} = os:timestamp(),
+    Time = NowMega * 1000000 + NowSecs,
+    Entry = #geef_index_entry{mode=8#100644, id=BlobId, path="README", size=size(Data), mtime=Time},
     ok = geef_index:add(Idx, Entry),
     {ok, TreeId} = geef_index:write_tree(Idx, Repo),
     Expected = geef_oid:parse("5a20bbbf65ea75ad4d9f995d179156824ccca3a1"),
@@ -44,6 +46,7 @@ index_add_test(Repo) ->
     [?_assertEqual(Expected, TreeId),
      ?_assertEqual(BlobId, Entry1#geef_index_entry.id),
      ?_assertEqual(size(Data), Entry1#geef_index_entry.size),
+     ?_assertEqual(Time, Entry1#geef_index_entry.mtime),
      ?_assertEqual(geef_index:count(Idx), 1)].
 
 ref_test(Repo) ->

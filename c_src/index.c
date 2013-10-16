@@ -98,6 +98,7 @@ geef_index_add(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	geef_index *index;
 	const ERL_NIF_TERM *eentry;
 	int arity;
+	unsigned int tmp;
 	ErlNifBinary path, id;
 	git_index_entry entry;
 
@@ -109,11 +110,47 @@ geef_index_add(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 
 	memset(&entry, 0, sizeof(entry));
 
+	if (enif_compare(eentry[1], atoms.undefined) &&
+	    !enif_get_int64(env, eentry[1], &entry.ctime.seconds))
+		return enif_make_badarg(env);
+
+	if (enif_compare(eentry[2], atoms.undefined) &&
+	    !enif_get_int64(env, eentry[2], &entry.mtime.seconds))
+		return enif_make_badarg(env);
+
+	if (enif_compare(eentry[3], atoms.undefined) &&
+	    !enif_get_uint(env, eentry[3], &entry.dev))
+		return enif_make_badarg(env);
+
+	if (enif_compare(eentry[4], atoms.undefined) &&
+	    !enif_get_uint(env, eentry[4], &entry.ino))
+		return enif_make_badarg(env);
+
 	if (!enif_get_uint(env, eentry[5], &entry.mode))
+		return enif_make_badarg(env);
+
+	if (enif_compare(eentry[6], atoms.undefined) &&
+	    !enif_get_uint(env, eentry[6], &entry.uid))
+		return enif_make_badarg(env);
+
+	if (enif_compare(eentry[7], atoms.undefined) &&
+	    !enif_get_uint(env, eentry[7], &entry.gid))
 		return enif_make_badarg(env);
 
 	if (!enif_get_int64(env, eentry[8], &entry.file_size))
 		return enif_make_badarg(env);
+
+	/* [9] comes later */
+
+	if (enif_compare(eentry[10], atoms.undefined) &&
+	    !enif_get_uint(env, eentry[10], &tmp))
+		return enif_make_badarg(env);
+	entry.flags = tmp;
+
+	if (enif_compare(eentry[11], atoms.undefined) &&
+	    !enif_get_uint(env, eentry[11], &tmp))
+		return enif_make_badarg(env);
+	entry.flags_extended = tmp;
 
 	if (!enif_inspect_iolist_as_binary(env, eentry[12], &path))
 		return enif_make_badarg(env);
