@@ -74,8 +74,9 @@ get(Pid, Path, Stage) ->
 nth(Pid, Nth) ->
     maybe_entry(gen_server:call(Pid, {nth, Nth})).
 
-maybe_entry({ok, Path, Id, Mode, Size}) ->
-    {ok, #geef_index_entry{path=Path, id=Id, mode=Mode, size=Size}};
+maybe_entry({ok, Ctime, Mtime, Dev, Ino, Mode, Uid, Gid, Size, Id, Flags, FlagsExtended, Path}) ->
+    {ok, #geef_index_entry{ctime=Ctime, mtime=Mtime, dev=Dev, ino=Ino, mode=Mode, uid=Uid, gid=Gid,
+			   size=Size, id=Id, flags=Flags, flags_extended=FlagsExtended, path=Path}};
 maybe_entry(Error = {error, _}) ->
     Error.
 

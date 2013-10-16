@@ -148,7 +148,6 @@ geef_index_count(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 ERL_NIF_TERM entry_to_term(ErlNifEnv *env, const git_index_entry *entry)
 {
 	ErlNifBinary id, path;
-	ERL_NIF_TERM mode, file_size;
 	size_t len;
 
 	if (geef_oid_bin(&id, &entry->oid) < 0)
@@ -161,11 +160,19 @@ ERL_NIF_TERM entry_to_term(ErlNifEnv *env, const git_index_entry *entry)
 	}
 	memcpy(path.data, entry->path, len);
 
-	mode = enif_make_uint(env, entry->mode);
-	file_size = enif_make_int64(env, entry->file_size);
-
-	return enif_make_tuple5(env, atoms.ok, enif_make_binary(env, &path), enif_make_binary(env, &id),
-				mode, file_size);
+	return enif_make_tuple(env, 13, atoms.ok,
+			       enif_make_int64(env, entry->ctime.seconds),
+			       enif_make_int64(env, entry->mtime.seconds),
+			       enif_make_uint(env, entry->dev),
+			       enif_make_uint(env, entry->ino),
+			       enif_make_uint(env, entry->mode),
+			       enif_make_uint(env, entry->uid),
+			       enif_make_uint(env, entry->gid),
+			       enif_make_int64(env, entry->file_size),
+			       enif_make_binary(env, &id),
+			       enif_make_uint(env, entry->flags),
+			       enif_make_uint(env, entry->flags_extended),
+			       enif_make_binary(env, &path));
 }
 
 ERL_NIF_TERM
