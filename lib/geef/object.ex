@@ -7,15 +7,11 @@ defrecord Geef.Object, Record.extract(:geef_object, from: "src/geef_records.hrl"
     end
   end
 
-  def from_erl(obj) do
-    do_from_erl(obj, elem(obj, 0))
-  end
-
-  defp do_from_erl(obj, :geef_tree) do
+  def from_erl(obj) when elem(obj, 1) == :tree do
     set_elem(obj, 0, Geef.Tree)
   end
 
-  defp do_from_erl(obj, _) do
+  def rom_erl(obj) do
     set_elem(obj, 0, Geef.Object)
   end
 

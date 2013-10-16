@@ -71,7 +71,6 @@ geef_object_lookup(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 		return geef_error(env);
 	}
 
-
 	term_obj = enif_make_resource(env, obj);
 	enif_release_resource(obj);
 

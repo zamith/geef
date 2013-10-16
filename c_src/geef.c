@@ -11,6 +11,7 @@
 #include "revwalk.h"
 #include "index.h"
 #include "signature.h"
+#include "revparse.h"
 #include "geef.h"
 #include <stdio.h>
 #include <string.h>
@@ -185,6 +186,7 @@ static ErlNifFunc geef_funcs[] =
 	{"index_clear",      1, geef_index_clear},
 	{"index_read_tree",  2, geef_index_read_tree},
 	{"signature_default", 1, geef_signature_default},
+	{"revparse_single", 2, geef_revparse_single},
 };
 
 ERL_NIF_INIT(geef_nif, geef_funcs, load, NULL, upgrade, unload)
