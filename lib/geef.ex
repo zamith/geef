@@ -12,6 +12,7 @@ defmodule Geef do
       alias Geef.TreeEntry
       alias Geef.Blob
       alias Geef.Tag
+      alias Geef.Signature
     end
   end
 
