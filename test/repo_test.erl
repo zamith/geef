@@ -6,7 +6,8 @@
 repo_test_() ->
     {foreach, fun start/0, fun stop/1, [fun bare_test/1, fun odb_write_test/1,
 					fun ref_test/1, fun index_add_test/1,
-					fun ref_iter_test/1, fun revparse_test/1]}.
+					fun ref_iter_test/1, fun revparse_test/1,
+					fun commit_create_test/1]}.
 
 start() ->
     {A, B, C} = now(),
@@ -81,6 +82,16 @@ ref_iter_test(Repo) ->
      ?_assertEqual(Res0, {error, iterover}),
      ?_assertEqual(Ref2#geef_reference.name, <<"refs/heads/branch">>),
      ?_assertEqual(Res1, {error, iterover})].
+
+commit_create_test(Repo) ->
+    odb_write_test(Repo),
+    index_add_test(Repo),
+    TreeId = geef_oid:parse("5a20bbbf65ea75ad4d9f995d179156824ccca3a1"),
+    CommitId = geef_oid:parse("bf968373f95f8fed2a24f9d25ebf06521359c6bc"),
+    Sig = #geef_signature{name= <<"foo">>, email= <<"bar">>, time={{1381,949139,0}, 120}},
+    Message = <<"Commit message">>,
+    Resp = geef_commit:create(Repo, Sig, Message, TreeId, []),
+    [?_assertMatch({ok, CommitId}, Resp)].
 
 rm_r(Path) ->
     case filelib:is_dir(Path) of
