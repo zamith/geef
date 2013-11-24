@@ -11,6 +11,8 @@ defrecord Geef.Tree, Record.extract(:geef_object, from: "src/geef_records.hrl") 
 
   import Object, only: :macros
 
+  @type t :: Object[type: :commit]
+
   def lookup(repo, id) do
     case :geef_tree.lookup(repo, id) do
       {:ok, obj} ->
