@@ -9,4 +9,7 @@ defrecord Geef.Signature, Record.extract(:geef_signature, from: "src/geef_record
 
   defp from_erl(sig), do: set_elem(sig, 0, Geef.Signature)
 
+  @spec to_erl(t) :: :geef_sig.signature
+  def to_erl(sig), do: set_elem(sig, 0, :geef_signature)
+
 end

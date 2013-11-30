@@ -1,7 +1,5 @@
 defmodule Geef.Commit do
-  alias Geef.Object
-  alias Geef.Signature
-  alias Geef.Oid
+  use Geef
   import Object, only: :macros
 
   @type t :: Object[type: :commit]
@@ -33,9 +31,9 @@ defmodule Geef.Commit do
   @spec tree!(t) :: Tree.t
   def tree!(commit = Object[type: :commit]), do: tree(commit) |> Geef.assert_ok
 
-  @type create(pid, Signature.t, Signature.t, iolist, Tree.t, Commit.t, [atom]) :: {:ok, Oid.t} | {:error, term}
+  @spec create(pid, Signature.t, Signature.t, iolist, Oid.t, [Oid.t], [:proplists.property()]) :: {:ok, Oid.t} | {:error, term}
   def create(repo, author = Signature[], committer = Signature[], message, tree, parents, opts // []) do
-    :geef_commit.create(repo, author, committer, message, tree, parents, opts)
+    :geef_commit.create(repo, Signature.to_erl(author), Signature.to_erl(committer), message, tree, parents, opts)
   end
 
 end

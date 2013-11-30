@@ -34,11 +34,15 @@ create(Repo, Ref, Author = #geef_signature{}, Committer = #geef_signature{}, Enc
     geef_nif:commit_create(Handle, Ref, Author, Committer, Encoding, Message, Tree, Parents).
 
 % Common version, accepts ref and encoding as options
+-spec create(pid(), geef_sig:signature(), geef_sig:signature(), iolist(), geef_oid:oid(), [geef_oid:oid()],
+	     [proplists:property()]) -> {ok, geef_oid:oid()} | {error, term()}.
 create(Repo, Author = #geef_signature{}, Committer = #geef_signature{}, Message, Tree, Parents, Opts) ->
     Ref = proplists:get_value(update_ref, Opts, undefined),
     Encoding = proplists:get_value(encoding, Opts, undefined),
     create(Repo, Ref, Author, Committer, Encoding, Message, Tree, Parents).
 
+-spec create(pid(), geef_sig:signature(), geef_sig:signature(), iolist(), geef_oid:oid(), [geef_oid:oid()])
+	    -> {ok, geef_oid:oid()} | {error, term()}.
 create(Repo, Author = #geef_signature{}, Committer = #geef_signature{}, Message, Tree, Parents) ->
     create(Repo, Author, Committer, Message, Tree, Parents, []);
 
