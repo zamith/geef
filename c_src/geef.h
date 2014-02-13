@@ -32,5 +32,7 @@ extern geef_atoms atoms;
 
 /** NUL-terminate a binary */
 int geef_terminate_binary(ErlNifBinary *bin);
+/** Copy a string into a binary */
+int geef_string_to_bin(ErlNifBinary *bin, const char *str);
 
 #endif

@@ -137,6 +137,18 @@ int geef_terminate_binary(ErlNifBinary *bin)
 	return 1;
 }
 
+int geef_string_to_bin(ErlNifBinary *bin, const char *str)
+{
+	size_t len;
+
+	len = strlen(str);
+	if (!enif_alloc_binary(len, bin))
+		return -1;
+
+	memcpy(bin->data, str, len);
+	return 0;
+}
+
 static ErlNifFunc geef_funcs[] =
 {
 	{"repository_init", 2, geef_repository_init},

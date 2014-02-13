@@ -90,18 +90,6 @@ on_oom:
 
 }
 
-static int geef_string_to_bin(ErlNifBinary *bin, const char *str)
-{
-	size_t len;
-
-	len = strlen(str);
-	if (!enif_alloc_binary(len, bin))
-		return -1;
-
-	memcpy(bin->data, str, len);
-	return 0;
-}
-
 int geef_signature_to_erl(ERL_NIF_TERM *out, ErlNifEnv *env, git_signature *sig)
 {
 	ErlNifBinary name, email;
