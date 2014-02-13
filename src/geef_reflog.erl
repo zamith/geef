@@ -3,13 +3,12 @@
 -module(geef_reflog).
 
 -include("geef_records.hrl").
--include_lib("eunit/include/eunit.hrl").
 
 -type entry() :: #geef_reflog_entry{}.
 -export_type([entry/0]).
 
 %% API
--export([read/2]).
+-export([read/2, delete/2]).
 
 to_entry({Name, Email, Timestamp, Offset, IdOld, IdNew, Message}) ->
     Sig = geef_sig:convert(Name, Email, Timestamp, Offset),
@@ -24,3 +23,6 @@ read(Repo, Name) ->
         Other ->
             Other
     end.
+
+delete(Repo, Name) ->
+    geef_repo:reflog_delete(Repo, Name).

@@ -177,6 +177,7 @@ static ErlNifFunc geef_funcs[] =
 	{"reference_dwim", 2,   geef_reference_dwim},
 	{"reference_has_log", 2, geef_reference_has_log},
 	{"reflog_read",       2, geef_reflog_read},
+	{"reflog_delete",     2, geef_reflog_delete},
 	{"oid_fmt", 1, geef_oid_fmt},
 	{"oid_parse", 1, geef_oid_parse},
 	{"object_lookup", 2, geef_object_lookup},

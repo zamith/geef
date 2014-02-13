@@ -14,7 +14,7 @@
 	 lookup_object/2, revwalk/1, stop/1,
 	 reference_dwim/2, handle/1, iterator/2]).
 -export([reference_has_log/2]).
--export([reflog_read/2]).
+-export([reflog_read/2, reflog_delete/2]).
 
 -include("geef_records.hrl").
 -record(state, {handle}).
@@ -100,6 +100,10 @@ reference_has_log(Pid, Name) ->
 reflog_read(Pid, Name) ->
     gen_server:call(Pid, {reflog_read, Name}).
 
+%% @private
+reflog_delete(Pid, Name) ->
+    gen_server:call(Pid, {reflog_delete, Name}).
+
 stop(Pid) ->
     gen_server:call(Pid, stop).
 
@@ -148,6 +152,10 @@ handle_call({has_log, Name}, _From, State = #state{handle=Handle}) ->
 
 handle_call({reflog_read, Name}, _From, State = #state{handle=Handle}) ->
     Reply = geef_nif:reflog_read(Handle, Name),
+    {reply, Reply, State};
+
+handle_call({reflog_delete, Name}, _From, State = #state{handle=Handle}) ->
+    Reply = geef_nif:reflog_delete(Handle, Name),
     {reply, Reply, State};
 
 handle_call(stop, _From, State) ->

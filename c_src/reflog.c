@@ -65,3 +65,26 @@ on_oom:
 	git_reflog_free(reflog);
 	return geef_oom(env);
 }
+
+ERL_NIF_TERM
+geef_reflog_delete(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
+{
+	geef_repository *repo;
+	ErlNifBinary bin;
+	int error;
+
+	if (!enif_get_resource(env, argv[0], geef_repository_type, (void **) &repo))
+		return enif_make_badarg(env);
+
+	if (!enif_inspect_iolist_as_binary(env, argv[1], &bin))
+		return enif_make_badarg(env);
+
+	if (!geef_terminate_binary(&bin))
+		return geef_oom(env);
+
+	error = git_reflog_delete(repo->repo, (char *) bin.data);
+
+	enif_release_binary(&bin);
+
+	return error ? geef_error(env) : atoms.ok;
+}
