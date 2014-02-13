@@ -90,7 +90,7 @@ on_oom:
 
 }
 
-int geef_signature_to_erl(ERL_NIF_TERM *out, ErlNifEnv *env, git_signature *sig)
+int geef_signature_to_erl(ERL_NIF_TERM *out, ErlNifEnv *env, const git_signature *sig)
 {
 	ErlNifBinary name, email;
 

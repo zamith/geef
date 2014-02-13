@@ -73,6 +73,10 @@ reference_dwim(_Handle, _Name) ->
 reference_has_log(_Handle, _Name) ->
     ?NIF_FN.
 
+-spec reflog_read(term(), iolist()) -> {ok, geef_reflog:reflog()} | {error, term()}.
+reflog_read(_Handle, _Name) ->
+    ?NIF_FN.
+
 odb_object_exists(_Val, _Val) ->
     nif_error(?LINE).
 

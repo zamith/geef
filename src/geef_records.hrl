@@ -14,4 +14,8 @@
 -record(geef_signature, {name :: iolist(), email :: iolist(), time :: geef_sig:time()}).
 -record(geef_iterator, {type :: atom(), repo :: pid(), regexp :: iolist(), handle}).
 
+-record(geef_reflog_entry, {committer :: geef_sig:signature(),
+			    id_old :: geef_oid:oid(), id_new :: geef_oid:oid(),
+			    message :: iolist()}).
+
 -type geef_request() :: #geef_request{}.

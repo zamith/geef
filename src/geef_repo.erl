@@ -1,11 +1,6 @@
-%%%-------------------------------------------------------------------
-%%% @author Carlos Martín Nieto <cmn@dwim.me>
-%%% @copyright (C) 2013, Carlos Martín Nieto
-%%% @doc
-%%%
-%%% @end
-%%% Created :  6 Apr 2013 by Carlos Martín Nieto <cmn@dwim.me>
-%%%-------------------------------------------------------------------
+%% -*- erlang-indent-level: 4; indent-tabs-mode: nil -*-
+%%% @copyright (C) 2013-2014, Carlos Martín Nieto <cmn@dwim.me>
+
 -module(geef_repo).
 
 -behaviour(gen_server).
@@ -19,6 +14,7 @@
 	 lookup_object/2, revwalk/1, stop/1,
 	 reference_dwim/2, handle/1, iterator/2]).
 -export([reference_has_log/2]).
+-export([reflog_read/2]).
 
 -include("geef_records.hrl").
 -record(state, {handle}).
@@ -100,6 +96,10 @@ revwalk(Pid) ->
 reference_has_log(Pid, Name) ->
     gen_server:call(Pid, {has_log, Name}).
 
+%% @private
+reflog_read(Pid, Name) ->
+    gen_server:call(Pid, {reflog_read, Name}).
+
 stop(Pid) ->
     gen_server:call(Pid, stop).
 
@@ -144,6 +144,10 @@ handle_call({dwim_reference, Name}, _From, State = #state{handle=Handle}) ->
 
 handle_call({has_log, Name}, _From, State = #state{handle=Handle}) ->
     Reply = geef_nif:reference_has_log(Handle, Name),
+    {reply, Reply, State};
+
+handle_call({reflog_read, Name}, _From, State = #state{handle=Handle}) ->
+    Reply = geef_nif:reflog_read(Handle, Name),
     {reply, Reply, State};
 
 handle_call(stop, _From, State) ->

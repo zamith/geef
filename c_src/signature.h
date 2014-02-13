@@ -7,6 +7,6 @@ ERL_NIF_TERM geef_signature_new(ErlNifEnv *env, int argc, const ERL_NIF_TERM arg
 ERL_NIF_TERM geef_signature_default(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
 int geef_signature_from_erl(git_signature **out, ErlNifEnv *env, ERL_NIF_TERM *err, ERL_NIF_TERM term);
 
-int geef_signature_to_erl(ERL_NIF_TERM *out, ErlNifEnv *env, git_signature *sig);
+int geef_signature_to_erl(ERL_NIF_TERM *out, ErlNifEnv *env, const git_signature *sig);
 
 #endif

@@ -23,6 +23,7 @@ typedef struct {
 	ERL_NIF_TERM timesort;
 	ERL_NIF_TERM reversesort;
 	ERL_NIF_TERM iterover;
+	ERL_NIF_TERM reflog_entry;
 
 	ERL_NIF_TERM enomem;
 	ERL_NIF_TERM eunknown;

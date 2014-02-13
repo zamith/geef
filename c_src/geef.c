@@ -12,6 +12,7 @@
 #include "index.h"
 #include "signature.h"
 #include "revparse.h"
+#include "reflog.h"
 #include "geef.h"
 #include <stdio.h>
 #include <string.h>
@@ -72,6 +73,7 @@ static int load(ErlNifEnv *env, void **priv, ERL_NIF_TERM load_info)
 	atoms.blob = enif_make_atom(env, "blob");
 	atoms.tag = enif_make_atom(env, "tag");
 	atoms.undefined = enif_make_atom(env, "undefined");
+	atoms.reflog_entry = enif_make_atom(env, "geef_reflog_entry");
 	/* Revwalk */
 	atoms.toposort    = enif_make_atom(env, "sort_topo");
 	atoms.timesort    = enif_make_atom(env, "sort_time");
@@ -141,7 +143,11 @@ int geef_string_to_bin(ErlNifBinary *bin, const char *str)
 {
 	size_t len;
 
-	len = strlen(str);
+	if (str == NULL)
+		len = 0;
+	else
+		len = strlen(str);
+
 	if (!enif_alloc_binary(len, bin))
 		return -1;
 
@@ -170,6 +176,7 @@ static ErlNifFunc geef_funcs[] =
 	{"reference_create", 5, geef_reference_create},
 	{"reference_dwim", 2,   geef_reference_dwim},
 	{"reference_has_log", 2, geef_reference_has_log},
+	{"reflog_read",       2, geef_reflog_read},
 	{"oid_fmt", 1, geef_oid_fmt},
 	{"oid_parse", 1, geef_oid_parse},
 	{"object_lookup", 2, geef_object_lookup},
