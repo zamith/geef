@@ -102,21 +102,12 @@ static int geef_string_to_bin(ErlNifBinary *bin, const char *str)
 	return 0;
 }
 
-ERL_NIF_TERM
-geef_signature_default(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
+int geef_signature_to_erl(ERL_NIF_TERM *out, ErlNifEnv *env, git_signature *sig)
 {
-	git_signature *sig;
-	geef_repository *repo;
 	ErlNifBinary name, email;
-
-	if (!enif_get_resource(env, argv[0], geef_repository_type, (void **) &repo))
-		return enif_make_badarg(env);
 
 	memset(&name, 0, sizeof(ErlNifBinary));
 	memset(&email, 0, sizeof(ErlNifBinary));
-
-	if (git_signature_default(&sig, repo->repo) < 0)
-		return geef_error(env);
 
 	if (geef_string_to_bin(&name, sig->name) < 0)
 		goto oom;
@@ -124,15 +115,39 @@ geef_signature_default(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	if (geef_string_to_bin(&email, sig->email) < 0)
 		goto oom;
 
-	return enif_make_tuple5(env, atoms.ok,
+	*out = enif_make_tuple5(env, atoms.ok,
 	         enif_make_binary(env, &name), enif_make_binary(env, &email),
 		 enif_make_ulong(env, sig->when.time), enif_make_uint(env, sig->when.offset));
+
+	return 0;
+
 oom:
-	git_signature_free(sig);
 	enif_release_binary(&name);
 	enif_release_binary(&email);
+	return -1;
+}
 
-	return geef_oom(env);
+ERL_NIF_TERM
+geef_signature_default(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
+{
+	git_signature *sig;
+	geef_repository *repo;
+	ERL_NIF_TERM term_sig;
+	int error;
+
+	if (!enif_get_resource(env, argv[0], geef_repository_type, (void **) &repo))
+		return enif_make_badarg(env);
+
+	if (git_signature_default(&sig, repo->repo) < 0)
+		return geef_error(env);
+	
+	error = geef_signature_to_erl(&term_sig, env, sig);
+	git_signature_free(sig);
+	
+	if (error < 0)
+		return geef_oom(env);
+
+	return term_sig;
 }
 
 ERL_NIF_TERM
