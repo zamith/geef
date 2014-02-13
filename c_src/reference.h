@@ -20,6 +20,7 @@ ERL_NIF_TERM geef_reference_create(ErlNifEnv *env, int argc, const ERL_NIF_TERM 
 ERL_NIF_TERM geef_reference_dwim(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
 ERL_NIF_TERM geef_reference_iterator(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
 ERL_NIF_TERM geef_reference_next(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
+ERL_NIF_TERM geef_reference_has_log(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
 
 void geef_ref_iter_free(ErlNifEnv *env, void *cd);
 

@@ -418,3 +418,34 @@ geef_reference_create(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 
 	return atoms.ok;
 }
+
+ERL_NIF_TERM
+geef_reference_has_log(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
+{
+	geef_repository *repo;
+	ErlNifBinary name;
+	int error;
+	const char *pname;
+	ERL_NIF_TERM ret;
+
+	if (!enif_get_resource(env, argv[0], geef_repository_type, (void **) &repo))
+		return enif_make_badarg(env);
+
+	if (!enif_inspect_iolist_as_binary(env, argv[1], &name))
+		return enif_make_badarg(env);
+
+	if (!geef_terminate_binary(&name))
+		return geef_oom(env);
+
+	pname = (char *) name.data;
+	error = git_reference_has_log(repo->repo, pname);
+
+	enif_release_binary(&name);
+
+	if (error < 0)
+		return geef_error(env);
+
+	ret = error ? atoms.true : atoms.false;
+
+	return enif_make_tuple2(env, atoms.ok, ret);
+}

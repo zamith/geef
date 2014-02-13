@@ -63,6 +63,7 @@ ref_test(Repo) ->
      ?_assertEqual(Ref1#geef_reference.target, <<"refs/heads/branch">>),
      ?_assertEqual(<<"branch">>, geef_ref:shorthand(Ref0)),
      ?_assertEqual(Ref2#geef_reference.target, Id),
+     ?_assertEqual({ok, true}, geef_ref:has_log(Ref0)),
      ?_assertEqual(Ref0, Dwimed)].
 
 ref_iter_test(Repo) ->
