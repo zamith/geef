@@ -123,7 +123,7 @@ geef_commit_create(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 		i++;
 	}
 
-	if (git_commit_create_from_oids(&commit_id, repo->repo, ref, author, committer, encoding, message,
+	if (git_commit_create_from_ids(&commit_id, repo->repo, ref, author, committer, encoding, message,
 			      &tree, parents_len, parents_ids_ptrs) < 0)
 		return geef_error(env);
 

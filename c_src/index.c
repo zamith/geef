@@ -165,7 +165,7 @@ geef_index_add(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	if (!enif_inspect_binary(env, eentry[9], &id))
 		return enif_make_badarg(env);
 
-	git_oid_fromraw(&entry.oid, id.data);
+	git_oid_fromraw(&entry.id, id.data);
 
 	if (git_index_add(index->index, &entry) < 0)
 		return geef_error(env);
@@ -189,7 +189,7 @@ ERL_NIF_TERM entry_to_term(ErlNifEnv *env, const git_index_entry *entry)
 	ErlNifBinary id, path;
 	size_t len;
 
-	if (geef_oid_bin(&id, &entry->oid) < 0)
+	if (geef_oid_bin(&id, &entry->id) < 0)
 		return geef_oom(env);
 
 	len = strlen(entry->path);
