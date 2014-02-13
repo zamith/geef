@@ -90,7 +90,7 @@ on_oom:
 
 }
 
-int geef_signature_to_erl(ERL_NIF_TERM *out, ErlNifEnv *env, const git_signature *sig)
+int geef_signature_to_erl(ERL_NIF_TERM *out_name, ERL_NIF_TERM *out_email, ERL_NIF_TERM *out_time, ERL_NIF_TERM *out_offset, ErlNifEnv *env, const git_signature *sig)
 {
 	ErlNifBinary name, email;
 
@@ -103,9 +103,10 @@ int geef_signature_to_erl(ERL_NIF_TERM *out, ErlNifEnv *env, const git_signature
 	if (geef_string_to_bin(&email, sig->email) < 0)
 		goto oom;
 
-	*out = enif_make_tuple5(env, atoms.ok,
-	         enif_make_binary(env, &name), enif_make_binary(env, &email),
-		 enif_make_ulong(env, sig->when.time), enif_make_uint(env, sig->when.offset));
+	*out_name   = enif_make_binary(env, &name);
+	*out_email  = enif_make_binary(env, &email);
+	*out_time   = enif_make_ulong(env, sig->when.time);
+	*out_offset = enif_make_uint(env, sig->when.offset);
 
 	return 0;
 
@@ -120,7 +121,7 @@ geef_signature_default(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 {
 	git_signature *sig;
 	geef_repository *repo;
-	ERL_NIF_TERM term_sig;
+	ERL_NIF_TERM name, email, time, offset;
 	int error;
 
 	if (!enif_get_resource(env, argv[0], geef_repository_type, (void **) &repo))
@@ -129,13 +130,13 @@ geef_signature_default(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	if (git_signature_default(&sig, repo->repo) < 0)
 		return geef_error(env);
 	
-	error = geef_signature_to_erl(&term_sig, env, sig);
+	error = geef_signature_to_erl(&name, &email, &time, &offset, env, sig);
 	git_signature_free(sig);
 	
 	if (error < 0)
 		return geef_oom(env);
 
-	return term_sig;
+	return enif_make_tuple5(env, atoms.ok, name, email, time, offset);
 }
 
 ERL_NIF_TERM

@@ -73,7 +73,7 @@ reference_dwim(_Handle, _Name) ->
 reference_has_log(_Handle, _Name) ->
     ?NIF_FN.
 
--spec reflog_read(term(), iolist()) -> {ok, geef_reflog:reflog()} | {error, term()}.
+-spec reflog_read(term(), iolist()) -> {ok, binary(), binary(), non_neg_integer(), non_neg_integer()} | {error, term()}.
 reflog_read(_Handle, _Name) ->
     ?NIF_FN.
 

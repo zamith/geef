@@ -59,7 +59,7 @@ ref_test(Repo) ->
     {ok, Ref1} = geef_ref:lookup(Repo, "refs/heads/other"),
     {ok, Ref2} = geef_ref:resolve(Ref0),
     {ok, Dwimed} = geef_ref:dwim(Repo, "branch"),
-    {ok, Reflog} = geef_reflog:read(Repo, "refs/heads/branch"),
+    {ok, Reflog} = ?debugVal(geef_reflog:read(Repo, "refs/heads/branch")),
     [?_assertEqual(Ref0#geef_reference.target, Id),
      ?_assertEqual(Ref1#geef_reference.target, <<"refs/heads/branch">>),
      ?_assertEqual(<<"branch">>, geef_ref:shorthand(Ref0)),

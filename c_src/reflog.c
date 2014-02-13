@@ -33,7 +33,7 @@ geef_reflog_read(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 
 	for (i = count; i > 0; i--) {
 		ErlNifBinary id_old, id_new, message;
-		ERL_NIF_TERM committer, tentry;
+		ERL_NIF_TERM tentry, name, email, time, offset;
 		const git_reflog_entry *entry;
 
 		entry = git_reflog_entry_byindex(reflog, i-1);
@@ -44,13 +44,14 @@ geef_reflog_read(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 		if (geef_oid_bin(&id_new, git_reflog_entry_id_new(entry)))
 			goto on_oom;
 
-		if (geef_signature_to_erl(&committer, env, git_reflog_entry_committer(entry)))
+		if (geef_signature_to_erl(&name, &email, &time, &offset,
+					  env, git_reflog_entry_committer(entry)))
 			goto on_oom;
 
 		if (geef_string_to_bin(&message, git_reflog_entry_message(entry)))
 			goto on_oom;
 
-		tentry = enif_make_tuple5(env, atoms.reflog_entry, committer,
+		tentry = enif_make_tuple7(env, name, email, time, offset,
 					  enif_make_binary(env, &id_old),
 					  enif_make_binary(env, &id_new),
 					  enif_make_binary(env, &message));
