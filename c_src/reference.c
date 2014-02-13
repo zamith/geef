@@ -396,13 +396,13 @@ geef_reference_create(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	pname = (const char *) name.data;
 	if (enif_is_identical(argv[2], atoms.oid)) {
 		const git_oid *oid = (const git_oid *) target.data;
-		error = git_reference_create(&ref, repo->repo, pname, oid, force);
+		error = git_reference_create(&ref, repo->repo, pname, oid, force, NULL, NULL);
 	} else if (enif_is_identical(argv[2], atoms.symbolic)) {
 		if (!geef_terminate_binary(&target))
 			return geef_oom(env);
 
 		ptarget = (const char *) target.data;
-		error = git_reference_symbolic_create(&ref, repo->repo, pname, ptarget, force);
+		error = git_reference_symbolic_create(&ref, repo->repo, pname, ptarget, force, NULL, NULL);
 		enif_release_binary(&target);
 	} else {
 		enif_release_binary(&target);
