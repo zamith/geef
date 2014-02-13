@@ -142,11 +142,13 @@ geef_index_add(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 
 	/* [9] comes later */
 
+	tmp = 0;
 	if (enif_compare(eentry[10], atoms.undefined) &&
 	    !enif_get_uint(env, eentry[10], &tmp))
 		return enif_make_badarg(env);
 	entry.flags = tmp;
 
+	tmp = 0;
 	if (enif_compare(eentry[11], atoms.undefined) &&
 	    !enif_get_uint(env, eentry[11], &tmp))
 		return enif_make_badarg(env);
