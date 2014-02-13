@@ -18,7 +18,7 @@ hex(Oid) ->
     geef_nif:oid_fmt(Oid).
 
 %% @doc Parse an iolist as a hash
--spec parse(iolist()) -> geef_oid:oid().
+-spec parse(iolist() | binary()) -> geef_oid:oid().
 parse(Sha) ->
     geef_nif:oid_parse(Sha).
 

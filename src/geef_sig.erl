@@ -34,7 +34,7 @@ now(Name, Email) ->
 
 %% @private
 %% @doc convert the return from the NIF to a signature
--spec convert(binary(), binary(), non_neg_integer(), non_neg_integer()) -> signature().
+-spec convert(iolist(), iolist(), non_neg_integer(), non_neg_integer()) -> signature().
 convert(Name, Email, Timestamp, Offset) ->
             Time = {{Timestamp div 1000000, Timestamp rem 1000000, 0}, Offset},
             #geef_signature{name=Name, email=Email, time=Time}.

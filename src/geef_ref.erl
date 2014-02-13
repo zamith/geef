@@ -8,7 +8,7 @@
 -type iterator() :: #geef_iterator{type :: ref}.
 -type type() :: oid | symbolic.
 -type target() :: binary() | geef_oid:oid().
--type ref() :: #geef_reference{name :: binary()}.
+-type ref() :: #geef_reference{repo :: pid(), name :: binary()}.
 -export_type([reference/0, type/0, target/0, iterator/0]).
 
 -spec create(pid(), iolist(), geef_oid:oid(), boolean()) -> {ok, ref()} | {error, term()}.
@@ -106,10 +106,10 @@ shorthand(#geef_reference{name=Name}) ->
     shorthand(Name).
 
 %% @doc Return whether the reference has a reflog
--spec has_log(pid(), iolist()) -> {ok, boolean()} | {error, term()}.
+-spec has_log(pid(), iolist() | binary()) -> {ok, boolean()} | {error, term()}.
 has_log(Repo, Name) ->
     geef_repo:reference_has_log(Repo, Name).
 
--spec has_log(ref()) -> boolean() | {ok, boolean()} | {error | term()}.
+-spec has_log(ref()) -> {ok, boolean()} | {error, term()}.
 has_log(#geef_reference{repo=Repo, name=Name}) ->
     has_log(Repo, Name).
