@@ -6,8 +6,10 @@
 
 int geef_oid_bin(ErlNifBinary *bin, const git_oid *id)
 {
-	if (!enif_alloc_binary(GIT_OID_RAWSZ, bin))
+	if (!enif_alloc_binary(GIT_OID_RAWSZ, bin)) {
+		printf("cannot alloc an id!\n");
 		return -1;
+	}
 
 	memcpy(bin->data, id, GIT_OID_RAWSZ);
 	return 0;

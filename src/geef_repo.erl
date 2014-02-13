@@ -1,11 +1,6 @@
-%%%-------------------------------------------------------------------
-%%% @author Carlos Martín Nieto <cmn@dwim.me>
-%%% @copyright (C) 2013, Carlos Martín Nieto
-%%% @doc
-%%%
-%%% @end
-%%% Created :  6 Apr 2013 by Carlos Martín Nieto <cmn@dwim.me>
-%%%-------------------------------------------------------------------
+%% -*- erlang-indent-level: 4; indent-tabs-mode: nil -*-
+%%% @copyright (C) 2013-2014, Carlos Martín Nieto <cmn@dwim.me>
+
 -module(geef_repo).
 
 -behaviour(gen_server).
@@ -18,6 +13,8 @@
 -export([open/1, init/2, path/1, workdir/1, odb/1, is_bare/1, references/1, discover/1,
 	 lookup_object/2, revwalk/1, stop/1,
 	 reference_dwim/2, handle/1, iterator/2]).
+-export([reference_has_log/2]).
+-export([reflog_read/2, reflog_delete/2]).
 
 -include("geef_records.hrl").
 -record(state, {handle}).
@@ -95,11 +92,23 @@ reference_dwim(Pid, Name) ->
 revwalk(Pid) ->
     gen_server:call(Pid, revwalk).
 
+%% @private
+reference_has_log(Pid, Name) ->
+    gen_server:call(Pid, {has_log, Name}).
+
+%% @private
+reflog_read(Pid, Name) ->
+    gen_server:call(Pid, {reflog_read, Name}).
+
+%% @private
+reflog_delete(Pid, Name) ->
+    gen_server:call(Pid, {reflog_delete, Name}).
+
 stop(Pid) ->
     gen_server:call(Pid, stop).
 
 %% @private
-%% @doc Get the underlying repo resource6
+%% @doc Get the underlying repo resource
 handle(Pid) ->
     gen_server:call(Pid, handle).
 
@@ -136,6 +145,19 @@ handle_call({iterator, Regexp}, _From, State = #state{handle=Handle}) ->
 handle_call({dwim_reference, Name}, _From, State = #state{handle=Handle}) ->
     Reply = geef_nif:reference_dwim(Handle, Name),
     {reply, Reply, State};
+
+handle_call({has_log, Name}, _From, State = #state{handle=Handle}) ->
+    Reply = geef_nif:reference_has_log(Handle, Name),
+    {reply, Reply, State};
+
+handle_call({reflog_read, Name}, _From, State = #state{handle=Handle}) ->
+    Reply = geef_nif:reflog_read(Handle, Name),
+    {reply, Reply, State};
+
+handle_call({reflog_delete, Name}, _From, State = #state{handle=Handle}) ->
+    Reply = geef_nif:reflog_delete(Handle, Name),
+    {reply, Reply, State};
+
 handle_call(stop, _From, State) ->
     {stop, normal, ok, State};
 handle_call(revwalk, _From, State = #state{handle=Handle}) ->

@@ -90,33 +90,12 @@ on_oom:
 
 }
 
-static int geef_string_to_bin(ErlNifBinary *bin, const char *str)
+int geef_signature_to_erl(ERL_NIF_TERM *out_name, ERL_NIF_TERM *out_email, ERL_NIF_TERM *out_time, ERL_NIF_TERM *out_offset, ErlNifEnv *env, const git_signature *sig)
 {
-	size_t len;
-
-	len = strlen(str);
-	if (!enif_alloc_binary(len, bin))
-		return -1;
-
-	memcpy(bin->data, str, len);
-	return 0;
-}
-
-ERL_NIF_TERM
-geef_signature_default(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
-{
-	git_signature *sig;
-	geef_repository *repo;
 	ErlNifBinary name, email;
-
-	if (!enif_get_resource(env, argv[0], geef_repository_type, (void **) &repo))
-		return enif_make_badarg(env);
 
 	memset(&name, 0, sizeof(ErlNifBinary));
 	memset(&email, 0, sizeof(ErlNifBinary));
-
-	if (git_signature_default(&sig, repo->repo) < 0)
-		return geef_error(env);
 
 	if (geef_string_to_bin(&name, sig->name) < 0)
 		goto oom;
@@ -124,15 +103,40 @@ geef_signature_default(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	if (geef_string_to_bin(&email, sig->email) < 0)
 		goto oom;
 
-	return enif_make_tuple5(env, atoms.ok,
-	         enif_make_binary(env, &name), enif_make_binary(env, &email),
-		 enif_make_ulong(env, sig->when.time), enif_make_uint(env, sig->when.offset));
+	*out_name   = enif_make_binary(env, &name);
+	*out_email  = enif_make_binary(env, &email);
+	*out_time   = enif_make_ulong(env, sig->when.time);
+	*out_offset = enif_make_uint(env, sig->when.offset);
+
+	return 0;
+
 oom:
-	git_signature_free(sig);
 	enif_release_binary(&name);
 	enif_release_binary(&email);
+	return -1;
+}
 
-	return geef_oom(env);
+ERL_NIF_TERM
+geef_signature_default(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
+{
+	git_signature *sig;
+	geef_repository *repo;
+	ERL_NIF_TERM name, email, time, offset;
+	int error;
+
+	if (!enif_get_resource(env, argv[0], geef_repository_type, (void **) &repo))
+		return enif_make_badarg(env);
+
+	if (git_signature_default(&sig, repo->repo) < 0)
+		return geef_error(env);
+	
+	error = geef_signature_to_erl(&name, &email, &time, &offset, env, sig);
+	git_signature_free(sig);
+	
+	if (error < 0)
+		return geef_oom(env);
+
+	return enif_make_tuple5(env, atoms.ok, name, email, time, offset);
 }
 
 ERL_NIF_TERM

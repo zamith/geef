@@ -69,6 +69,18 @@ reference_resolve(_RepoHandle, _Name) ->
 reference_dwim(_Handle, _Name) ->
     ?NIF_FN.
 
+-spec reference_has_log(term(), iolist()) -> {ok, boolean()} | {error, term()}.
+reference_has_log(_Handle, _Name) ->
+    ?NIF_FN.
+
+-spec reflog_read(term(), iolist()) -> {ok, binary(), binary(), non_neg_integer(), non_neg_integer()} | {error, term()}.
+reflog_read(_Handle, _Name) ->
+    ?NIF_FN.
+
+-spec reflog_delete(term(), iolist()) -> ok | {error, term()}.
+reflog_delete(_Handle, _Name) ->
+    ?NIF_FN.
+
 odb_object_exists(_Val, _Val) ->
     nif_error(?LINE).
 

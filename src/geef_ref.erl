@@ -1,6 +1,7 @@
 -module(geef_ref).
 
 -export([lookup/2, iterator/1, iterator/2, next/1, resolve/1, create/4, create_symbolic/4, dwim/2, shorthand/1]).
+-export([has_log/1, has_log/2]).
 
 -include("geef_records.hrl").
 
@@ -103,3 +104,12 @@ shorthand(<<"refs/", Rest/binary>>) ->
     Rest;
 shorthand(#geef_reference{name=Name}) ->
     shorthand(Name).
+
+%% @doc Return whether the reference has a reflog
+-spec has_log(pid(), iolist()) -> {ok, boolean()} | {error, term()}.
+has_log(Repo, Name) ->
+    geef_repo:reference_has_log(Repo, Name).
+
+-spec has_log(ref()) -> boolean() | {ok, boolean()} | {error | term()}.
+has_log(#geef_reference{repo=Repo, name=Name}) ->
+    has_log(Repo, Name).
