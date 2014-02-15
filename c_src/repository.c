@@ -88,7 +88,7 @@ geef_repository_discover(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	if (error < 0)
 		return geef_error(env);
 
-	if (!enif_alloc_binary(&path, strlen(buf.ptr)))
+	if (!enif_alloc_binary(strlen(buf.ptr), &path))
 		return geef_oom(env);
 
 	memcpy(path.data, buf.ptr, path.size);
