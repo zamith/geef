@@ -2,6 +2,7 @@
 
 -export([lookup/2, iterator/1, iterator/2, next/1, resolve/1, create/4, create_symbolic/4, dwim/2, shorthand/1]).
 -export([has_log/1, has_log/2]).
+-export([is_branch/1, is_tag/1, is_note/1, is_remote/1]).
 
 -include("geef_records.hrl").
 
@@ -113,3 +114,18 @@ has_log(Repo, Name) ->
 -spec has_log(ref()) -> {ok, boolean()} | {error, term()}.
 has_log(#geef_reference{repo=Repo, name=Name}) ->
     has_log(Repo, Name).
+
+-define(assert_prefix(FunctionName, Prefix),
+FunctionName(<<Prefix, _/binary>>) ->
+    true;
+FunctionName(#geef_reference{name=Name}) ->
+    FunctionName(Name);
+FunctionName(Name) when is_list(Name) ->
+    FunctionName(iolist_to_binary(Name));
+FunctionName(_) ->
+    false).
+
+?assert_prefix(is_branch, "refs/heads/").
+?assert_prefix(is_tag, "refs/tags/").
+?assert_prefix(is_note, "refs/notes/").
+?assert_prefix(is_remote, "refs/remotes/").
