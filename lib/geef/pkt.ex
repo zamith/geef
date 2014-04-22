@@ -1,3 +1,5 @@
+require Record
+
 defrecord Geef.Request, Record.extract(:geef_request, from: "src/geef_records.hrl")
 
 defmodule Geef.Pkt do

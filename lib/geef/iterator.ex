@@ -1,3 +1,5 @@
+require Record
+
 defrecord Geef.Iterator, Record.extract(:geef_iterator, from: "src/geef_records.hrl") do
   alias Geef.Iterator
   alias Geef.Reference

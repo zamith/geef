@@ -1,3 +1,5 @@
+require Record
+
 defrecord Geef.Reference, Record.extract(:geef_reference, from: "src/geef_records.hrl") do
   import Geef
   alias Geef.Reference
@@ -8,16 +10,16 @@ defrecord Geef.Reference, Record.extract(:geef_reference, from: "src/geef_record
   defp maybe_ref({:ok, ref}), do: {:ok, Reference.from_erl ref}
   defp maybe_ref(err = {:error, _}), do: err
 
-  def create(repo, name, target, force // :false) do
+  def create(repo, name, target, force \\ :false) do
     :geef_ref.create(repo, name, target, force) |> maybe_ref
   end
-  def create!(repo, name, target, force // :false) do
+  def create!(repo, name, target, force \\ :false) do
     create(repo, name, target, force) |> assert_ok
   end
-  def create_symbolic(repo, name, target, force // :false) do
+  def create_symbolic(repo, name, target, force \\ :false) do
     :geef_ref.create(repo, name, target, force) |> maybe_ref
   end
-  def create_symbolic!(repo, name, target, force // :false) do
+  def create_symbolic!(repo, name, target, force \\ :false) do
     create(repo, name, target, force) |> assert_ok
   end
 
@@ -37,7 +39,7 @@ defrecord Geef.Reference, Record.extract(:geef_reference, from: "src/geef_record
     :geef_ref.shorthand(name)
   end
 
-  def iterator(repo, regexp // :undefined) do
+  def iterator(repo, regexp \\ :undefined) do
     case :geef_ref.iterator(repo, regexp) do
       {:ok, iter} ->
         {:ok, Geef.Iterator.from_erl iter}

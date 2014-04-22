@@ -1,3 +1,5 @@
+require Record
+
 defrecord Geef.Signature, Record.extract(:geef_signature, from: "src/geef_records.hrl") do
 
   def now(name, email), do: :geef_sig.now(name, email) |> from_erl

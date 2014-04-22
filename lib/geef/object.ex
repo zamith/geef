@@ -1,3 +1,5 @@
+require Record
+
 defrecord Geef.Object, Record.extract(:geef_object, from: "src/geef_records.hrl") do
 
   @doc false
