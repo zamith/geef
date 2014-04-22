@@ -32,7 +32,7 @@ defmodule Geef.Commit do
   def tree!(commit = Object[type: :commit]), do: tree(commit) |> Geef.assert_ok
 
   @spec create(pid, Signature.t, Signature.t, iolist, Oid.t, [Oid.t], [:proplists.property()]) :: {:ok, Oid.t} | {:error, term}
-  def create(repo, author = Signature[], committer = Signature[], message, tree, parents, opts // []) do
+  def create(repo, author = Signature[], committer = Signature[], message, tree, parents, opts \\ []) do
     :geef_commit.create(repo, Signature.to_erl(author), Signature.to_erl(committer), message, tree, parents, opts)
   end
 

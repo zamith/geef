@@ -1,3 +1,5 @@
+require Record
+
 defrecord Geef.TreeEntry, Record.extract(:geef_tree_entry, from: "src/geef_records.hrl") do
   @spec from_erl(term()) :: t
   def from_erl(obj) do

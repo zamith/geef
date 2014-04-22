@@ -1,6 +1,7 @@
+require Record
+
 defmodule Geef.Index do
   use Geef
-  alias Geef.Index
   alias Geef.Index.Entry
 
   defmacrop to_erl(entry) do
