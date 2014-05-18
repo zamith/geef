@@ -15,6 +15,7 @@
 	 reference_dwim/2, handle/1, iterator/2]).
 -export([reference_has_log/2]).
 -export([reflog_read/2, reflog_delete/2]).
+-export([config/1]).
 
 -include("geef_records.hrl").
 -record(state, {handle}).
@@ -78,6 +79,10 @@ references(Pid) ->
 
 lookup_object(Pid, Oid) ->
     gen_server:call(Pid, {lookup_object, Oid}).
+
+%% @doc Get the repository's configuration
+config(Pid) ->
+    gen_server:call(Pid, config).
 
 %% @private
 -spec iterator(pid(), iolist() | undefined) -> {ok, geef_ref:iterator()} | {error, term()}.
@@ -158,6 +163,11 @@ handle_call({reflog_delete, Name}, _From, State = #state{handle=Handle}) ->
     Reply = geef_nif:reflog_delete(Handle, Name),
     {reply, Reply, State};
 
+
+handle_call(config, _From, State = #state{handle=Handle}) ->
+    Reply = handle_config(Handle),
+    {reply, Reply, State};
+
 handle_call(stop, _From, State) ->
     {stop, normal, ok, State};
 handle_call(revwalk, _From, State = #state{handle=Handle}) ->
@@ -211,4 +221,12 @@ handle_revwalk(Handle) ->
 	    geef_revwalk:start_link(WalkHandle);
 	Error ->
 	    Error
+    end.
+
+handle_config(Handle) ->
+    case geef_nif:repository_get_config(Handle) of
+        {ok, ConfigHandle} ->
+            geef_config:start_link(ConfigHandle);
+        Error ->
+            Error
     end.

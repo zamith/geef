@@ -50,8 +50,13 @@ index_add_test(Repo) ->
      ?_assertEqual(Time, Entry1#geef_index_entry.mtime),
      ?_assertEqual(geef_index:count(Idx), 1)].
 
+set_logallrefupdates(Repo) ->
+    {ok, Config} = geef_repo:config(Repo),
+    ok = geef_config:set(Config, "core.logallrefupdates", true).
+
 ref_test(Repo) ->
     odb_write_test(Repo),
+    set_logallrefupdates(Repo),
     Id = geef_oid:parse("c300118399f01fe52b316061b5d32beb27e0adfd"),
     {ok, _} = geef_ref:create(Repo, "refs/heads/branch", Id, true),
     {ok, _} = geef_ref:create_symbolic(Repo, "refs/heads/other", "refs/heads/branch", true),
@@ -67,9 +72,7 @@ ref_test(Repo) ->
      ?_assertEqual(<<"branch">>, geef_ref:shorthand(Ref0)),
      ?_assertEqual(Ref2#geef_reference.target, Id),
      ?_assertEqual({ok, true}, geef_ref:has_log(Ref0)),
-     %% temporarily removed as we we're in a bare repo and libgit2 recently started
-     %% caring about the log append rules
-     %% ?_assertEqual(1, length(Reflog0)),
+     ?_assertEqual(1, length(Reflog0)),
      ?_assertEqual(0, length(Reflog1)),
      ?_assertEqual(Ref0, Dwimed)].
 

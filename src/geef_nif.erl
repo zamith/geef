@@ -29,6 +29,10 @@ repository_get_workdir(_Handle) ->
 repository_get_odb(_Val) ->
     nif_error(?LINE).
 
+-spec repository_get_config(term()) -> {ok, term()} | {error, term()}.
+repository_get_config(_Val) ->
+    nif_error(?LINE).
+
 -spec repository_init(iolist(), boolean()) -> term().
 repository_init(_Path, _Bare) ->
     nif_error(?LINE).
@@ -199,6 +203,10 @@ signature_new(_Name, _Email, _Time) ->
 
 -spec revparse_single(term(), iolist()) -> {ok, term(), atom(), geef_oid:oid()} | {error, term()}.
 revparse_single(_Handle, _Str) ->
+    ?NIF_FN.
+
+-spec config_set_bool(term(), iolist(), boolean()) -> ok | {error, term()}.
+config_set_bool(_Handle, _Name, _Val) ->
     ?NIF_FN.
 
 nif_error(Line) ->

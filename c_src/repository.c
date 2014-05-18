@@ -1,6 +1,7 @@
 #include "repository.h"
 #include "object.h"
 #include "oid.h"
+#include "config.h"
 #include "geef.h"
 #include <string.h>
 #include <git2.h>
@@ -158,6 +159,26 @@ geef_repository_is_bare(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 
 	return atoms.false;
 
+}
+
+ERL_NIF_TERM
+geef_repository_config(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
+{
+	geef_repository *repo;
+	geef_config *cfg;
+	ERL_NIF_TERM term_cfg;
+
+	if (!enif_get_resource(env, argv[0], geef_repository_type, (void **) &repo))
+		return enif_make_badarg(env);
+
+	cfg = enif_alloc_resource(geef_config_type, sizeof(geef_config));
+	if (git_repository_config(&cfg->config, repo->repo) < 0)
+		return geef_error(env);
+
+	term_cfg = enif_make_resource(env, cfg);
+	enif_release_resource(cfg);
+
+	return enif_make_tuple2(env, atoms.ok, term_cfg);
 }
 
 ERL_NIF_TERM

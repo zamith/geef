@@ -13,6 +13,7 @@
 #include "signature.h"
 #include "revparse.h"
 #include "reflog.h"
+#include "config.h"
 #include "geef.h"
 #include <stdio.h>
 #include <string.h>
@@ -24,6 +25,7 @@ ErlNifResourceType *geef_ref_iter_type;
 ErlNifResourceType *geef_object_type;
 ErlNifResourceType *geef_revwalk_type;
 ErlNifResourceType *geef_index_type;
+ErlNifResourceType *geef_config_type;
 
 geef_atoms atoms;
 
@@ -57,6 +59,10 @@ static int load(ErlNifEnv *env, void **priv, ERL_NIF_TERM load_info)
 
 	geef_index_type = enif_open_resource_type(env, NULL,
 		  "index_type", geef_index_free, ERL_NIF_RT_CREATE, NULL);
+
+	geef_config_type = enif_open_resource_type(env, NULL,
+		  "config_type", geef_config_free, ERL_NIF_RT_CREATE, NULL);
+
 
 	if (geef_repository_type == NULL)
 		return -1;
@@ -164,6 +170,7 @@ static ErlNifFunc geef_funcs[] =
 	{"repository_get_path", 1, geef_repository_path},
 	{"repository_get_workdir", 1, geef_repository_workdir},
 	{"repository_get_odb", 1, geef_repository_odb},
+	{"repository_get_config", 1, geef_repository_config},
 	{"odb_object_exists", 2, geef_odb_exists},
 	{"odb_write", 3, geef_odb_write},
 	{"reference_list", 1, geef_reference_list},
@@ -209,6 +216,7 @@ static ErlNifFunc geef_funcs[] =
 	{"index_read_tree",  2, geef_index_read_tree},
 	{"signature_default", 1, geef_signature_default},
 	{"revparse_single", 2, geef_revparse_single},
+	{"config_set_bool", 3, geef_config_set_bool},
 };
 
 ERL_NIF_INIT(geef_nif, geef_funcs, load, NULL, upgrade, unload)
