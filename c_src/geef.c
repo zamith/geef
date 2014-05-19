@@ -217,6 +217,7 @@ static ErlNifFunc geef_funcs[] =
 	{"signature_default", 1, geef_signature_default},
 	{"revparse_single", 2, geef_revparse_single},
 	{"config_set_bool", 3, geef_config_set_bool},
+	{"config_get_bool", 2, geef_config_get_bool},
 };
 
 ERL_NIF_INIT(geef_nif, geef_funcs, load, NULL, upgrade, unload)

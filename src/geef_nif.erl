@@ -209,6 +209,10 @@ revparse_single(_Handle, _Str) ->
 config_set_bool(_Handle, _Name, _Val) ->
     ?NIF_FN.
 
+-spec config_get_bool(term(), iolist()) -> {ok, boolean()} | {error, term()}.
+config_get_bool(_Handle, _Name) ->
+    ?NIF_FN.
+
 nif_error(Line) ->
     erlang:nif_error({nif_not_loaded,module,?MODULE,line,Line}).
 
