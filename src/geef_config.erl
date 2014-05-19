@@ -15,7 +15,7 @@
 -export([open/1]).
 -export([set/3]).
 -export([get_bool/2]).
-
+-export([get_string/2]).
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
 	 terminate/2, code_change/3]).
@@ -50,10 +50,15 @@ open(Path) ->
 
 %% @doc Set a value in the configuration
 set(Pid, Name, Val) when is_boolean(Val) ->
-    gen_server:call(Pid, {set_bool, Name, Val}).
+    gen_server:call(Pid, {set_bool, Name, Val});
+set(Pid, Name, Val) when is_list(Val) or is_binary(Val) ->
+    gen_server:call(Pid, {set_string, Name, Val}).
 
 get_bool(Pid, Name) ->
     gen_server:call(Pid, {get_bool, Name}).
+
+get_string(Pid, Name) ->
+    gen_server:call(Pid, {get_string, Name}).
 
 %%%===================================================================
 %%% gen_server callbacks
@@ -83,6 +88,14 @@ handle_call({set_bool, Name, Val}, _From, State = #state{handle=Handle}) ->
 
 handle_call({get_bool, Name}, _From, State = #state{handle=Handle}) ->
     Reply = geef_nif:config_get_bool(Handle, Name),
+    {reply, Reply, State};
+
+handle_call({set_string, Name, Val}, _From, State = #state{handle=Handle}) ->
+    Reply = geef_nif:config_set_string(Handle, Name, Val),
+    {reply, Reply, State};
+
+handle_call({get_string, Name}, _From, State = #state{handle=Handle}) ->
+    Reply = geef_nif:config_get_string(Handle, Name),
     {reply, Reply, State}.
 
 %%--------------------------------------------------------------------

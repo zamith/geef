@@ -213,6 +213,14 @@ config_set_bool(_Handle, _Name, _Val) ->
 config_get_bool(_Handle, _Name) ->
     ?NIF_FN.
 
+-spec config_set_string(term(), iolist(), iolist()) -> ok | {error, term()}.
+config_set_string(_Handle, _Name, _Val) ->
+    ?NIF_FN.
+
+-spec config_get_string(term(), iolist()) -> {ok, binary()} | {error, term()}.
+config_get_string(_Handle, _Name) ->
+    ?NIF_FN.
+
 -spec config_open(iolist()) -> {ok, term()} | {error, term()}.
 config_open(_Path) ->
     ?NIF_FN.

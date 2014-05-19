@@ -23,8 +23,8 @@ bool_test({Config, _}) ->
 string_test({Config, _}) ->
     Var = "user.name",
     Val = <<"Random J. Hacker">>,
-    ok = geef_config:set(Config, Var, Val),
-    [?_assertEqual({ok, Val}, geef_config:get(Config, Var))].
+    [?_assertEqual(ok, geef_config:set(Config, Var, Val)),
+     ?_assertEqual({ok, Val}, geef_config:get_string(Config, Var))].
 
 stop({_, Path}) ->
     ok = file:delete(Path).

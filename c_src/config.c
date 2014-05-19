@@ -95,7 +95,6 @@ geef_config_get_bool(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	return enif_make_tuple2(env, atoms.ok, ret);
 }
 
-
 ERL_NIF_TERM
 geef_config_set_int(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 {
@@ -114,6 +113,59 @@ geef_config_set_int(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 
 	error = git_config_set_int64(cfg->config, (char *) bin.data, val);
 	enif_release_binary(&bin);
+
+	if (error < 0)
+		return geef_error(env);
+
+	return atoms.ok;
+}
+
+ERL_NIF_TERM
+geef_config_get_string(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
+{
+	geef_config *cfg;
+	ErlNifBinary bin, result;
+	int error;
+	const char *val;
+	ERL_NIF_TERM ret;
+
+	ret = extract(&cfg, &bin, env, argv);
+	if (ret != atoms.ok)
+		return ret;
+
+	error = git_config_get_string(&val, cfg->config, (char *) bin.data);
+	enif_release_binary(&bin);
+
+	if (error < 0)
+		return geef_error(env);
+
+	if (geef_string_to_bin(&result, val) < 0)
+		return geef_error(env);
+
+	return enif_make_tuple2(env, atoms.ok, enif_make_binary(env, &result));
+}
+
+ERL_NIF_TERM
+geef_config_set_string(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
+{
+	geef_config *cfg;
+	ErlNifBinary bin, val;
+	int error;
+	ERL_NIF_TERM ret;
+
+	ret = extract(&cfg, &bin, env, argv);
+	if (ret != atoms.ok)
+		return ret;
+
+	if (!enif_inspect_iolist_as_binary(env, argv[2], &val))
+		return enif_make_badarg(env);
+
+	if (!geef_terminate_binary(&val))
+		return geef_oom(env);
+
+	error = git_config_set_string(cfg->config, (char *) bin.data, (char *) val.data);
+	enif_release_binary(&bin);
+	enif_release_binary(&val);
 
 	if (error < 0)
 		return geef_error(env);
