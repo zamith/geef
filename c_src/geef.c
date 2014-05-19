@@ -218,6 +218,9 @@ static ErlNifFunc geef_funcs[] =
 	{"revparse_single", 2, geef_revparse_single},
 	{"config_set_bool", 3, geef_config_set_bool},
 	{"config_get_bool", 2, geef_config_get_bool},
+	{"config_set_string", 3, geef_config_set_string},
+	{"config_get_string", 2, geef_config_get_string},
+	{"config_open",     1, geef_config_open},
 };
 
 ERL_NIF_INIT(geef_nif, geef_funcs, load, NULL, upgrade, unload)
