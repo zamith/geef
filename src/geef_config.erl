@@ -36,6 +36,16 @@
 start_link(Handle) ->
     gen_server:start_link(?MODULE, Handle, []).
 
+%% @doc Open a configuration file
+-spec open(iolist()) -> {ok, pid()} | {error, term()}.
+open(Path) ->
+    case geef_nif:config_open(Path) of
+	{ok, Handle} ->
+	    start_link(Handle);
+	Error ->
+	    Error
+    end.
+
 %% @doc Set a value in the configuration
 set(Pid, Name, Val) when is_boolean(Val) ->
     gen_server:call(Pid, {set_bool, Name, Val}).

@@ -213,6 +213,10 @@ config_set_bool(_Handle, _Name, _Val) ->
 config_get_bool(_Handle, _Name) ->
     ?NIF_FN.
 
+-spec config_open(iolist()) -> {ok, term()} | {error, term()}.
+config_open(_Path) ->
+    ?NIF_FN.
+
 nif_error(Line) ->
     erlang:nif_error({nif_not_loaded,module,?MODULE,line,Line}).
 

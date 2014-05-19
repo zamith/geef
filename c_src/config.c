@@ -8,6 +8,34 @@ void geef_config_free(ErlNifEnv *env, void *cd)
 	git_config_free(cfg->config);
 }
 
+ERL_NIF_TERM
+geef_config_open(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
+{
+	geef_config *cfg;
+	ErlNifBinary bin;
+	ERL_NIF_TERM term_cfg;
+	int error;
+
+	if (!enif_inspect_iolist_as_binary(env, argv[0], &bin))
+		return enif_make_badarg(env);
+
+	if (!geef_terminate_binary(&bin))
+		return geef_oom(env);
+
+	cfg = enif_alloc_resource(geef_config_type, sizeof(geef_config));
+	error = git_config_open_ondisk(&cfg->config, (char *) bin.data);
+	enif_release_binary(&bin);
+
+	if (error < 0)
+		return geef_error(env);
+
+	term_cfg = enif_make_resource(env, cfg);
+	enif_release_resource(cfg);
+
+	return enif_make_tuple2(env, atoms.ok, term_cfg);
+
+}
+
 static ERL_NIF_TERM extract(geef_config **cfg, ErlNifBinary *bin, ErlNifEnv *env, const ERL_NIF_TERM argv[])
 {
 	if (!enif_get_resource(env, argv[0], geef_config_type, (void **) cfg))
