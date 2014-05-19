@@ -12,6 +12,7 @@
 
 %% API
 -export([start_link/1]).
+-export([open/1]).
 -export([set/3]).
 
 %% gen_server callbacks
