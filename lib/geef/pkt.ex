@@ -1,6 +1,8 @@
 require Record
 
-defrecord Geef.Request, Record.extract(:geef_request, from: "src/geef_records.hrl")
+defmodule Geef.Request do
+  defstruct Record.extract(:geef_request, from: "src/geef_records.hrl")
+end
 
 defmodule Geef.Pkt do
   

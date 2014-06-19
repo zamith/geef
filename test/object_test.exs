@@ -1,19 +1,13 @@
-Code.require_file "../test_helper.exs", __FILE__
-
 defmodule ObjectTest do
   use ExUnit.Case
   use Geef
   import RepoHelpers
 
   setup do
-    {{:ok, repo}, path} = tmp_bare()
+    {repo, path} = tmp_bare()
+    Process.link(repo)
+    on_exit(fn -> File.rm_rf!(path) end)
     {:ok, [repo: repo, path: path]}
-  end
-
-  teardown meta do
-    Repository.stop(meta[:repo])
-    File.rm_rf!(meta[:path])
-    :ok
   end
 
   test "object OO helpers", meta do
@@ -23,5 +17,7 @@ defmodule ObjectTest do
 
     content = "I'm some content"
     Odb.write(odb, content, :blob)
+
+    Repository.stop(repo)
   end
 end

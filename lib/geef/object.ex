@@ -1,26 +1,21 @@
 require Record
 
-defrecord Geef.Object, Record.extract(:geef_object, from: "src/geef_records.hrl") do
+defmodule Geef.Object do
+  defstruct type: nil, id: nil, handle: nil
 
-  @doc false
-  defmacro rebind(obj) do
-    quote do
-      set_elem(unquote(obj), 0, :geef_object)
+  def lookup(repo, id) do
+    case :geef_repo.lookup_object(repo, id) do
+      {:ok, type, handle} ->
+        {:ok, %Geef.Object{type: type, id: id, handle: handle}}
+      error ->
+        error
     end
   end
 
-  def from_erl(obj) when elem(obj, 1) == :tree do
-    set_elem(obj, 0, Geef.Tree)
-  end
-
-  def from_erl(obj) do
-    set_elem(obj, 0, Geef.Object)
-  end
-
-  def lookup(repo, id) do
-    case :geef_obj.lookup(repo, id) do
+  def lookup(repo, id, type) do
+    case lookup(repo, id) do
       {:ok, obj} ->
-        {:ok, Geef.Object.from_erl obj}
+        {:ok, obj = %Geef.Object{type: type}}
       error ->
         error
     end

@@ -1,22 +1,17 @@
 defmodule Geef.Blob do
-  alias Geef.Object
-  import Object, only: :macros
+  use Geef
 
   def lookup(repo, id) do
-    case :geef_obj.lookup(repo, id) do
-      {:ok, obj} ->
-        {:ok, Object.from_erl obj}
-      error ->
-        error
-    end
+    Object.lookup(repo, id, :blob)
   end
 
-  def size(obj = Object[type: :blob]) do
-    :geef_blob.size(rebind(obj))
+
+  def size(obj = %Object{type: :blob, handle: handle}) do
+    :geef_nif.blob_size(handle)
   end
 
-  def content(obj = Object[type: :blob]) do
-    :geef_blob.content(rebind(obj))
+  def content(obj = %Object{type: :blob, handle: handle}) do
+    :geef_nif.blob_content(handle)
   end
 
 end

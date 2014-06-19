@@ -1,22 +1,25 @@
 require Record
 
-defrecord Geef.Iterator, Record.extract(:geef_iterator, from: "src/geef_records.hrl") do
+defmodule Geef.Iterator do
   alias Geef.Iterator
   alias Geef.Reference
 
-  @doc false
-  defmacro rebind(obj) do
-    quote do
-      set_elem(unquote(obj), 0, :geef_iterator)
-    end
+  record = Record.extract(:geef_iterator, from: "src/geef_records.hrl")
+  keys   = :lists.map(&elem(&1, 0), record)
+  vals   = :lists.map(&{&1, [], nil}, keys)
+  pairs  = :lists.zip(keys, vals)
+
+  defstruct keys
+
+  def from_record({:geef_iterator, unquote_splicing(vals)}) do
+    %Geef.Iterator{unquote_splicing(pairs)}
   end
 
-  @spec from_erl(term()) :: t
-  def from_erl(iterator) do
-    set_elem(iterator, 0, Geef.Iterator)
+  def to_record(%Geef.Iterator{unquote_splicing(pairs)}) do
+    {:geef_iterator, unquote_splicing(vals)}
   end
 
-  def stream!(Iterator[type: :ref, repo: repo, regexp: regexp]) do
+  def stream!(%Iterator{type: :ref, repo: repo, regexp: regexp}) do
     iter =
       case :geef_ref.iterator(repo, regexp) do
         {:ok, iter} ->
@@ -27,8 +30,8 @@ defrecord Geef.Iterator, Record.extract(:geef_iterator, from: "src/geef_records.
     &do_stream(iter, &1, &2)
   end
 
-  defp do_stream(iter = Iterator[type: :ref], acc, fun) do
-    case :geef_ref.next(rebind(iter)) do
+  defp do_stream(iter = %Iterator{type: :ref}, acc, fun) do
+    case :geef_ref.next(to_record(iter)) do
       {:ok, ref} ->
         do_stream(iter, fun.(Reference.from_erl(ref), acc), fun)
       {:error, :iterover} ->
@@ -39,4 +42,6 @@ defrecord Geef.Iterator, Record.extract(:geef_iterator, from: "src/geef_records.
   end
 end
 
-defexception Geef.IteratorError, [message: nil]
+defmodule Geef.IteratorError do
+  defexception [message: nil]
+end

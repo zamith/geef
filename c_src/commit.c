@@ -28,6 +28,7 @@ geef_commit_tree_id(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 ERL_NIF_TERM
 geef_commit_tree(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 {
+	ErlNifBinary bin;
 	geef_object *obj, *tree;
 	ERL_NIF_TERM term_obj;
 
@@ -42,8 +43,10 @@ geef_commit_tree(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	term_obj = enif_make_resource(env, obj);
 	enif_release_resource(obj);
 
-	return enif_make_tuple3(env, atoms.ok, atoms.tree, term_obj);
+	if (geef_oid_bin(&bin, git_object_id(tree->obj)) < 0)
+		return geef_oom(env);
 
+	return enif_make_tuple3(env, atoms.ok, enif_make_binary(env, &bin), term_obj);
 }
 
 ERL_NIF_TERM

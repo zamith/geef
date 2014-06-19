@@ -6,6 +6,7 @@ defmodule RepoHelpers do
     n = node()
     dir = :io_lib.format("geef-~p~p~p~p.git", [n, a, b, c])
     path = Path.join(System.tmp_dir!, dir)
-    {Geef.Repository.init(path, true), path}
+    {:ok, repo} = Geef.Repository.init(path, true)
+    {repo, path}
   end
 end

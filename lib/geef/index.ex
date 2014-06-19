@@ -1,22 +1,28 @@
 require Record
 
+defmodule Geef.Index.Entry do
+  record = Record.extract(:geef_index_entry, from: "src/geef_records.hrl")
+  keys   = :lists.map(&elem(&1, 0), record)
+  vals   = :lists.map(&{&1, [], nil}, keys)
+  pairs  = :lists.zip(keys, vals)
+
+  defstruct keys
+
+  def from_record({:geef_index_entry, unquote_splicing(vals)}) do
+    %Geef.Index.Entry{unquote_splicing(pairs)}
+  end
+
+  def to_record(%Geef.Index.Entry{unquote_splicing(pairs)}) do
+    {:geef_index_entry, unquote_splicing(vals)}
+  end
+
+end
+
 defmodule Geef.Index do
   use Geef
   alias Geef.Index.Entry
 
-  defmacrop to_erl(entry) do
-    quote do
-      set_elem(unquote(entry), 0, :geef_index_entry)
-    end
-  end
-
-  defmacrop from_erl(entry) do
-    quote do
-      set_elem(unquote(entry), 0, Geef.Index.Entry)
-    end
-  end
-
-  defp maybe_entry({:ok, entry}), do: {:ok, from_erl(entry)}
+  defp maybe_entry({:ok, entry}), do: {:ok, Entry.from_record(entry)}
   defp maybe_entry(error = {:error, _}), do: error
 
   @spec new :: {:ok, pid()} | :ignore | {:error, term()}
@@ -26,7 +32,7 @@ defmodule Geef.Index do
 
   @spec add(pid(), Entry.t()) :: :ok | {:error, term()}
   def add(pid, entry) do
-    :geef_index.add(pid, to_erl(entry))
+    :geef_index.add(pid, Entry.to_record(entry))
   end
 
   @spec clear(pid()) :: :ok
@@ -68,5 +74,3 @@ defmodule Geef.Index do
   end
 
 end
-
-defrecord Geef.Index.Entry, Record.extract(:geef_index_entry, from: "src/geef_records.hrl")

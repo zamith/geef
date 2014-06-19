@@ -14,8 +14,8 @@ tree_id(#geef_object{type=commit,handle=Handle}) ->
 -spec tree(commit()) -> {ok, geef_tree:tree()} | {error, term()}.
 tree(#geef_object{type=commit,handle=Handle}) ->
     case geef_nif:commit_tree(Handle) of
-	{ok, Type, Handle} ->
-	    {ok, #geef_object{type=Type, handle=Handle}};
+	{ok, Id, Handle} ->
+	    {ok, #geef_object{id=Id, handle=Handle}};
 	Other ->
 	    Other
     end.

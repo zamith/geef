@@ -1,19 +1,12 @@
-Code.require_file "../test_helper.exs", __FILE__
-
 defmodule ReferenceTest do
   use ExUnit.Case
   use Geef
   import RepoHelpers
 
   setup do
-    {{:ok, repo}, path} = tmp_bare()
+    {repo, path} = tmp_bare()
+    on_exit(fn -> File.rm_rf!(path) end)
     {:ok, [repo: repo, path: path]}
-  end
-
-  teardown meta do
-    Repository.stop(meta[:repo])
-    File.rm_rf!(meta[:path])
-    :ok
   end
 
   test "creating and looking up", meta do
@@ -25,12 +18,14 @@ defmodule ReferenceTest do
     refname = "refs/tags/foo"
     {:ok, ref} = Reference.create(repo, refname, id)
     {:ok, looked_up} = Reference.lookup(repo, refname)
-    ref == looked_up
+    assert ref == looked_up
 
     refname = "refs/tags/foo2"
     {:ok, ref} = Reference.create_symbolic(repo, refname, id)
     {:ok, looked_up} = Reference.lookup(repo, refname)
-    ref == looked_up
+    assert ref == looked_up
+
+    Repository.stop(repo)
   end
 
 end

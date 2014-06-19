@@ -1,60 +1,67 @@
 require Record
 
-defrecord Geef.TreeEntry, Record.extract(:geef_tree_entry, from: "src/geef_records.hrl") do
-  @spec from_erl(term()) :: t
-  def from_erl(obj) do
-    set_elem(obj, 0, Geef.TreeEntry)
-  end
+defmodule Geef.TreeEntry do
+  defstruct mode: nil, type: nil, id: nil, name: nil
 end
 
-defrecord Geef.Tree, Record.extract(:geef_object, from: "src/geef_records.hrl") do
+defmodule Geef.Tree do
   alias Geef.Object
   alias Geef.TreeEntry
 
-  import Object, only: :macros
-
-  @type t :: Object[type: :commit]
+  @type t :: Object[type: :tree]
 
   def lookup(repo, id) do
-    case :geef_tree.lookup(repo, id) do
-      {:ok, obj} ->
-        {:ok, Object.from_erl obj}
-      error ->
-        error
-    end
+    Object.lookup(repo, id, :tree)
   end
 
-  defp maybe_entry({:ok, entry}), do: {:ok, TreeEntry.from_erl entry}
+  defp maybe_entry({:ok, mode, type, id, name}) do
+    {:ok, %TreeEntry{mode: mode, type: type, id: id, name: name}}
+  end
   defp maybe_entry(error = {:error, _}), do: error
 
-  def get(tree, path), do: :geef_tree.get(rebind(tree), path) |> maybe_entry
-  def nth(tree, pos), do: :geef_tree.nth(rebind(tree), pos) |> maybe_entry
+  def get(%Object{type: :tree, handle: handle}, path) do
+    :geef_nif.tree_bypath(handle, path) |> maybe_entry
+  end
 
-  def count(tree), do: :geef_tree.count(rebind(tree))
+  def nth(%Object{type: :tree, handle: handle}, nth) do
+    :geef_nif.tree_nth(handle, nth) |> maybe_entry
+  end
+
+  def count(%Object{type: :tree, handle: handle}) do
+    :geef_nif.tree_count(handle)
+  end
 
 end
 
-defimpl Access, for: Geef.Tree do
+defimpl Access, for: Geef.Object do
+  alias Geef.Object
   alias Geef.Tree
 
-  def access(tree, key) when is_number(key) do
+  def get(tree = %Object{type: :tree}, key) when is_number(key) do
     case Tree.nth(tree, key) do
       {:ok, entry} -> entry
       {:error, _} -> nil
     end
   end
 
-  def access(tree, key) do
+  def get(tree = %Object{type: :tree}, key) do
     case Tree.get(tree, key) do
       {:ok, entry} -> entry
       {:error, _} -> nil
     end
   end
 
+  # Git data is immutable
+  def get_and_update(_tree, _key, _fun) do
+    raise ArgumentError
+  end
+
 end
 
-defexception Geef.TreeError, reason: nil do
-  def message(Geef.TreeError[reason: reason]) do
+defmodule Geef.TreeError do
+  defexception [reason: nil]
+
+  def message(%Geef.TreeError{reason: reason}) do
     "tree error #{inspect reason}"
   end
 end
