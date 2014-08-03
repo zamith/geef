@@ -6,13 +6,15 @@ defmodule Geef.Index.Entry do
   vals   = :lists.map(&{&1, [], nil}, keys)
   pairs  = :lists.zip(keys, vals)
 
-  defstruct keys
+  defaults = :lists.map(fn(_) -> :undefined end, keys)
+
+  defstruct :lists.zip(keys, defaults)
 
   def from_record({:geef_index_entry, unquote_splicing(vals)}) do
     %Geef.Index.Entry{unquote_splicing(pairs)}
   end
 
-  def to_record(%Geef.Index.Entry{unquote_splicing(pairs)}) do
+  def to_record(e = %Geef.Index.Entry{unquote_splicing(pairs)}) do
     {:geef_index_entry, unquote_splicing(vals)}
   end
 
@@ -58,6 +60,10 @@ defmodule Geef.Index do
   @spec write(pid()) :: {:error, term()} | :ok
   def write(pid) do
     :geef_index.write(pid)
+  end
+
+  def write_tree(pid, repo) do
+    :geef_index.write_tree(pid, repo)
   end
 
   @spec write!(pid()) :: :ok
