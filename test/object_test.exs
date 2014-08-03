@@ -15,8 +15,9 @@ defmodule ObjectTest do
     { :ok, odb } = Repository.odb(repo)
     #{ :ok, index } = :geef_index.new
 
-    content = "I'm some content"
-    Odb.write(odb, content, :blob)
+    content = "This is some text that will go in a file"
+    {:ok, id} = Odb.write(odb, content, :blob)
+    assert id == Oid.parse("c300118399f01fe52b316061b5d32beb27e0adfd")
 
     Repository.stop(repo)
   end

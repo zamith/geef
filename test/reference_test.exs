@@ -20,9 +20,9 @@ defmodule ReferenceTest do
     {:ok, looked_up} = Reference.lookup(repo, refname)
     assert ref == looked_up
 
-    refname = "refs/tags/foo2"
-    {:ok, ref} = Reference.create_symbolic(repo, refname, id)
-    {:ok, looked_up} = Reference.lookup(repo, refname)
+    refname2 = "refs/tags/foo2"
+    {:ok, ref} = Reference.create_symbolic(repo, refname2, refname)
+    {:ok, looked_up} = Reference.lookup(repo, refname2)
     assert ref == looked_up
 
     Repository.stop(repo)

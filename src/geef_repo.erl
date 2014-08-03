@@ -16,6 +16,7 @@
 -export([reference_has_log/2]).
 -export([reflog_read/2, reflog_delete/2]).
 -export([config/1]).
+-export([reference_lookup/2]).
 
 -include("geef_records.hrl").
 -record(state, {handle}).
@@ -76,6 +77,12 @@ is_bare(Pid) ->
 -spec references(pid()) -> [binary()].
 references(Pid) ->
     gen_server:call(Pid, refs).
+
+reference_lookup(Pid, Name) ->
+    gen_server:call(Pid, {lookup_reference, Name}).
+
+reference_resolve(Pid, Name) ->
+    gen_server:call(Pid, {lookup_resolve, Name}).
 
 lookup_object(Pid, Oid) ->
     gen_server:call(Pid, {lookup_object, Oid}).
@@ -163,6 +170,13 @@ handle_call({reflog_delete, Name}, _From, State = #state{handle=Handle}) ->
     Reply = geef_nif:reflog_delete(Handle, Name),
     {reply, Reply, State};
 
+handle_call({lookup_reference, Name}, _From, State = #state{handle=Handle}) ->
+    Reply = geef_nif:reference_lookup(Handle, Name),
+    {reply, Reply, State};
+
+handle_call({reference_resolve, Name}, _From, State = #state{handle=Handle}) ->
+    Reply = geef_nif:reference_resolve(Handle, Name),
+    {reply, Reply, State};
 
 handle_call(config, _From, State = #state{handle=Handle}) ->
     Reply = handle_config(Handle),
