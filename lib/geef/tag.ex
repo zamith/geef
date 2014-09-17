@@ -6,7 +6,7 @@ defmodule Geef.Tag do
     Object.lookup(repo, id, :tag)
   end
 
-  def peel(tag = %Object{type: :tag, handle: handle}) do
+  def peel(%Object{type: :tag, handle: handle}) do
     case :geef_nif.tag_peel(handle) do
       {:ok, type, id, peeled_handle} ->
         {:ok, %Object{type: type, id: id, handle: peeled_handle}}

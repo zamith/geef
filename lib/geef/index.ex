@@ -14,7 +14,7 @@ defmodule Geef.Index.Entry do
     %Geef.Index.Entry{unquote_splicing(pairs)}
   end
 
-  def to_record(e = %Geef.Index.Entry{unquote_splicing(pairs)}) do
+  def to_record(_ = %Geef.Index.Entry{unquote_splicing(pairs)}) do
     {:geef_index_entry, unquote_splicing(vals)}
   end
 

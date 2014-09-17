@@ -9,12 +9,12 @@ defmodule Geef.Commit do
   end
 
   @spec tree_id(Object.t) :: Oid.t
-  def tree_id(commit = %Object{type: :commit, handle: handle}) do
+  def tree_id(%Object{type: :commit, handle: handle}) do
     :geef_nif.commit_tree_id(handle)
   end
 
   @spec tree(t) :: {:ok, Tree.t} | {:error, any}
-  def tree(commit = %Object{type: :commit, handle: handle}) do
+  def tree(%Object{type: :commit, handle: handle}) do
     case :geef_nif.commit_tree(handle) do
       {:ok, id, handle} ->
         {:ok, %Object{type: :tree, id: id, handle: handle}}

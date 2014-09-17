@@ -6,11 +6,11 @@ defmodule Geef.Blob do
   end
 
 
-  def size(obj = %Object{type: :blob, handle: handle}) do
+  def size(%Object{type: :blob, handle: handle}) do
     :geef_nif.blob_size(handle)
   end
 
-  def content(obj = %Object{type: :blob, handle: handle}) do
+  def content(%Object{type: :blob, handle: handle}) do
     :geef_nif.blob_content(handle)
   end
 

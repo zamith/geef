@@ -14,8 +14,8 @@ defmodule Geef.Object do
 
   def lookup(repo, id, type) do
     case lookup(repo, id) do
-      {:ok, obj} ->
-        {:ok, obj = %Geef.Object{type: type}}
+      {:ok, obj = %Geef.Object{type: ^type}} ->
+        {:ok, obj}
       error ->
         error
     end
