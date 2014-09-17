@@ -46,7 +46,7 @@ ref = Reference.lookup!(repo, "HEAD") |> Reference.resolve!
 references, objects, etc are elixir records. Trees implement the Access protocol
 
 ```elixir
-Reference[name: name] = Reference.lookup!(repo, "refs/heads/master")
+%Reference{name: name} = Reference.lookup!(repo, "refs/heads/master")
 IO.puts name
 {:ok, tree} = Tree.lookup(repo, "abcde...")
 IO.inspect tree["src/geef_pkt.erl"]
