@@ -25,6 +25,9 @@ defmodule ReferenceTest do
     {:ok, looked_up} = Reference.lookup(repo, refname2)
     assert ref == looked_up
 
+    {:ok, ref} = Reference.lookup(repo, "HEAD")
+    Reference.resolve(ref)
+
     Repository.stop(repo)
   end
 

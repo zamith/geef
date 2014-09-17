@@ -14,6 +14,7 @@
 	 lookup_object/2, revwalk/1, stop/1,
 	 reference_dwim/2, handle/1, iterator/2]).
 -export([reference_has_log/2]).
+-export([reference_resolve/2]).
 -export([reflog_read/2, reflog_delete/2]).
 -export([config/1]).
 -export([reference_lookup/2]).
@@ -82,7 +83,7 @@ reference_lookup(Pid, Name) ->
     gen_server:call(Pid, {lookup_reference, Name}).
 
 reference_resolve(Pid, Name) ->
-    gen_server:call(Pid, {lookup_resolve, Name}).
+    gen_server:call(Pid, {reference_resolve, Name}).
 
 lookup_object(Pid, Oid) ->
     gen_server:call(Pid, {lookup_object, Oid}).
