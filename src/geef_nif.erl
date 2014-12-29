@@ -115,6 +115,10 @@ commit_tree(_Handle) ->
 commit_create(_RepoHandle, _Ref, _Author, _Committer, _Encoding, _Message, _Tree, _Parents) ->
     ?NIF_FN.
 
+-spec commit_message(term) -> binary().
+commit_message(_CommitHandle) ->
+    ?NIF_FN.
+
 -spec tree_bypath(term, iolist()) -> term().
 tree_bypath(_TreeHandle, _Path) ->
     nif_error(?LINE).

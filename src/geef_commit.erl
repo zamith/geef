@@ -1,6 +1,7 @@
 -module(geef_commit).
 -export([tree_id/1, tree/1, lookup/2]).
 -export([create/5, create/6, create/7]).
+-export([message/1]).
 
 -include("geef_records.hrl").
 
@@ -53,3 +54,7 @@ create(Repo, Person = #geef_signature{}, Message, Tree, Parents, Opts) ->
 
 create(Repo, Person = #geef_signature{}, Message, Tree, Parents) ->
     create(Repo, Person, Person, Message, Tree, Parents, []).
+
+-spec message(commit()) -> {ok, binary()} | {error, term()}.
+message(#geef_object{type=commit,handle=Handle}) ->
+    geef_nif:commit_message(Handle).

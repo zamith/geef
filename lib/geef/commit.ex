@@ -31,4 +31,12 @@ defmodule Geef.Commit do
     :geef_commit.create(repo, Signature.to_record(author), Signature.to_record(committer), message, tree, parents, opts)
   end
 
+  @spec message(t) :: {:ok, String.t} | {:error, term}
+  def message(%Object{type: :commit, handle: handle}) do
+    :geef_nif.commit_message(handle)
+  end
+
+  @spec message!(t) :: String.t
+  def message!(commit), do: message(commit) |> Geef.assert_ok
+
 end
