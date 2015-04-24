@@ -7,7 +7,8 @@ repo_test_() ->
     {foreach, fun start/0, fun stop/1, [fun bare_test/1, fun odb_write_test/1,
 					fun ref_test/1, fun index_add_test/1,
 					fun ref_iter_test/1, fun revparse_test/1,
-					fun commit_create_test/1, fun commit_message_test/1]}.
+					fun commit_create_test/1, fun commit_message_test/1,
+					fun commit_tree_test/1]}.
 
 start() ->
     {A, B, C} = now(),
@@ -110,6 +111,13 @@ commit_message_test(Repo) ->
     {ok, Commit} = geef_commit:lookup(Repo, CommitId),
     Resp = geef_commit:message(Commit),
     [?_assertMatch({ok, <<"Commit message">>}, Resp)].
+
+commit_tree_test(Repo) ->
+    commit_create_test(Repo),
+    CommitId = geef_oid:parse("bf968373f95f8fed2a24f9d25ebf06521359c6bc"),
+    {ok, Commit} = geef_commit:lookup(Repo, CommitId),
+    Resp = geef_commit:tree(Commit),
+    [?_assertMatch({ok, _}, Resp)].
 
 rm_r(Path) ->
     case filelib:is_dir(Path) of
