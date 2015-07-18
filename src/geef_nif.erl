@@ -159,6 +159,9 @@ revwalk_next(_Walk) ->
 revwalk_sorting(_Walk, _Sort) ->
     ?NIF_FN.
 
+revwalk_simplify_first_parent(_Walk) ->
+    ?NIF_FN.
+
 revwalk_reset(_Walk) ->
     ?NIF_FN.
 

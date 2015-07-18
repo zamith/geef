@@ -18,6 +18,7 @@ defmodule Geef.Repository do
   def gitdir(repo), do: :geef_repo.path(repo)
   def workdir(repo), do: :geef_repo.workdir(repo)
   def config(repo), do: :geef_repo.config(repo)
+  def revwalk(repo), do: :geef_repo.revwalk(repo)
 
   def reference_names(repo), do: :geef_repo.references(repo)
 end

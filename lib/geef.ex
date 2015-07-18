@@ -12,6 +12,7 @@ defmodule Geef do
       alias Geef.Oid
       alias Geef.Reference
       alias Geef.Repository
+      alias Geef.Revwalk
       alias Geef.Signature
       alias Geef.Tree
       alias Geef.Tag
