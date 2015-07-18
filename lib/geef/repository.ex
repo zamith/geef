@@ -15,7 +15,9 @@ defmodule Geef.Repository do
   def discover(path), do: :geef_repo.discover(path)
 
   def bare?(repo), do: :geef_repo.is_bare(repo)
+  def gitdir(repo), do: :geef_repo.path(repo)
   def workdir(repo), do: :geef_repo.workdir(repo)
+  def config(repo), do: :geef_repo.config(repo)
 
   def reference_names(repo), do: :geef_repo.references(repo)
 end
