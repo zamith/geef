@@ -16,6 +16,8 @@ defmodule Geef.Object do
     case lookup(repo, id) do
       {:ok, obj = %Geef.Object{type: ^type}} ->
         {:ok, obj}
+      {:ok, _obj} ->
+        {:error, :type_mismatch}
       error ->
         error
     end
