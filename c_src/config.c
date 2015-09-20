@@ -125,21 +125,24 @@ geef_config_get_string(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 {
 	geef_config *cfg;
 	ErlNifBinary bin, result;
+	git_buf buf = { 0 };
 	int error;
-	const char *val;
 	ERL_NIF_TERM ret;
 
 	ret = extract(&cfg, &bin, env, argv);
 	if (ret != atoms.ok)
 		return ret;
 
-	error = git_config_get_string(&val, cfg->config, (char *) bin.data);
+	error = git_config_get_string_buf(&buf, cfg->config, (char *) bin.data);
 	enif_release_binary(&bin);
 
 	if (error < 0)
 		return geef_error(env);
 
-	if (geef_string_to_bin(&result, val) < 0)
+	error = geef_string_to_bin(&result, buf.ptr);
+	git_buf_free(&buf);
+
+	if (error < 0)
 		return geef_error(env);
 
 	return enif_make_tuple2(env, atoms.ok, enif_make_binary(env, &result));

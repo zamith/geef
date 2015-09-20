@@ -111,11 +111,11 @@ geef_index_add(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	memset(&entry, 0, sizeof(entry));
 
 	if (enif_compare(eentry[1], atoms.undefined) &&
-	    !enif_get_int64(env, eentry[1], &entry.ctime.seconds))
+	    !enif_get_int(env, eentry[1], &entry.ctime.seconds))
 		return enif_make_badarg(env);
 
 	if (enif_compare(eentry[2], atoms.undefined) &&
-	    !enif_get_int64(env, eentry[2], &entry.mtime.seconds))
+	    !enif_get_int(env, eentry[2], &entry.mtime.seconds))
 		return enif_make_badarg(env);
 
 	if (enif_compare(eentry[3], atoms.undefined) &&
@@ -137,7 +137,7 @@ geef_index_add(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	    !enif_get_uint(env, eentry[7], &entry.gid))
 		return enif_make_badarg(env);
 
-	if (!enif_get_int64(env, eentry[8], &entry.file_size))
+	if (!enif_get_uint(env, eentry[8], &entry.file_size))
 		return enif_make_badarg(env);
 
 	/* [9] comes later */
