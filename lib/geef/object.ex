@@ -1,6 +1,10 @@
 require Record
 
 defmodule Geef.Object do
+  @behaviour Access
+  alias Geef.Object
+  alias Geef.Tree
+
   defstruct type: nil, id: nil, handle: nil
 
   def lookup(repo, id) do
@@ -30,6 +34,26 @@ defmodule Geef.Object do
       {:error, err} ->
         raise err
     end
+  end
+
+  def fetch(tree = %Object{type: :tree}, key) when is_number(key) do
+    Tree.nth(tree, key)
+  end
+
+  def fetch(tree = %Object{type: :tree}, key) do
+    Tree.get(tree, key)
+  end
+
+  def get(tree = %Object{type: :tree}, key) do
+    case fetch(tree, key) do
+      {:ok, entry} -> entry
+      {:error, _} -> nil
+    end
+  end
+
+  # Git data is immutable
+  def get_and_update(_tree, _key, _fun) do
+    raise ArgumentError
   end
 
 end
