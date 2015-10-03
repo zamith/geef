@@ -10,7 +10,7 @@ defmodule Mix.Tasks.Compile.Nif do
     `["c_src"]`. Can be configured as:
 
     ````
-    [ptahs: ["c_src", "vendor/src"]]
+    [paths: ["c_src", "vendor/src"]]
     ````
 
   * `:exts` - extensions of the source files. Defaults to `[:c]`, can
