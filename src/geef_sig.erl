@@ -24,7 +24,7 @@ default(Repo) ->
 %% @doc Create a signature with the specified username and email, with
 %% a timestamp of now
 now(Name, Email) ->
-    Now = now(),
+    Now = os:timestamp(),
     %% We ask two questions "what's the time here?" and "what's the
     %% time in UTC-Land?". The difference in minutes is our offset.
     Local = calendar:datetime_to_gregorian_seconds(calendar:now_to_local_time(Now)),
