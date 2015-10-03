@@ -11,7 +11,7 @@ repo_test_() ->
 					fun commit_tree_test/1]}.
 
 start() ->
-    {A, B, C} = now(),
+    {A, B, C} = os:timestamp(),
     N = node(),
     TmpDir = io_lib:format("/tmp/geef-~p~p~p~p.git", [N, A, B, C]),
     {ok, Repo} = geef_repo:init(TmpDir, true),
