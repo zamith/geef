@@ -118,7 +118,7 @@ defmodule Geef.Mixfile do
   end
 
   def nif do
-    [ file: "priv/geef.so",
+    [ file: "#{Path.join [__DIR__, "priv", "geef.so"]}",
       flags: "-lgit2" ]
   end
 
