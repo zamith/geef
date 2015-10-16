@@ -1,10 +1,11 @@
 defmodule Geef.Revwalk do
   import Geef
+  use Geef
   alias Geef.Object
 
   def stop(walk), do: :geef_revwalk.stop(walk)
 
-  def open(repo) when is_pid(repo), do: Geef.Repository.revwalk(repo)
+  def open(repo) when is_pid(repo), do: Repository.revwalk(repo)
   def open!(arg), do: open(arg) |> assert_ok
 
   def push(walk, %Object{type: :commit, id: commit}), do: push(walk, commit)
