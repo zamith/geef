@@ -1,5 +1,6 @@
 defmodule Geef.Revwalk do
   import Geef
+  use Geef
   alias Geef.Object
 
   def stop(walk), do: :geef_revwalk.stop(walk)
