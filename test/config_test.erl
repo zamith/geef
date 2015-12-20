@@ -8,7 +8,7 @@ config_test_() ->
 					fun string_test/1]}.
 
 start() ->
-    {A, B, C} = now(),
+    {A, B, C} = os:timestamp(),
     N = node(),
     TmpFile = io_lib:format("/tmp/geef-~p~p~p~p.gitconfig", [N, A, B, C]),
     {ok, Config} = geef_config:open(TmpFile),

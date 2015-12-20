@@ -57,7 +57,7 @@ geef_config_set_bool(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	ErlNifBinary bin;
 	int error, val;
 	ERL_NIF_TERM ret;
-	
+
 	ret = extract(&cfg, &bin, env, argv);
 	if (ret != atoms.ok)
 		return ret;
@@ -80,7 +80,7 @@ geef_config_get_bool(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 	ErlNifBinary bin;
 	int error, val;
 	ERL_NIF_TERM ret;
-	
+
 	ret = extract(&cfg, &bin, env, argv);
 	if (ret != atoms.ok)
 		return ret;
@@ -100,10 +100,10 @@ geef_config_set_int(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 {
 	geef_config *cfg;
 	ErlNifBinary bin;
-	int64_t val;
+	ErlNifSInt64 val;
 	int error;
 	ERL_NIF_TERM ret;
-	
+
 	ret = extract(&cfg, &bin, env, argv);
 	if (ret != atoms.ok)
 		return ret;

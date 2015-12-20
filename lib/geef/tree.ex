@@ -33,31 +33,6 @@ defmodule Geef.Tree do
 
 end
 
-defimpl Access, for: Geef.Object do
-  alias Geef.Object
-  alias Geef.Tree
-
-  def get(tree = %Object{type: :tree}, key) when is_number(key) do
-    case Tree.nth(tree, key) do
-      {:ok, entry} -> entry
-      {:error, _} -> nil
-    end
-  end
-
-  def get(tree = %Object{type: :tree}, key) do
-    case Tree.get(tree, key) do
-      {:ok, entry} -> entry
-      {:error, _} -> nil
-    end
-  end
-
-  # Git data is immutable
-  def get_and_update(_tree, _key, _fun) do
-    raise ArgumentError
-  end
-
-end
-
 defmodule Geef.TreeError do
   defexception [reason: nil]
 
