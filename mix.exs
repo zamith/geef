@@ -54,11 +54,13 @@ defmodule Mix.Tasks.Compile.Nif do
     exts = Keyword.get(config, :exts, [:c])
     compiler = Keyword.get(config, :compilers, ["cc", "gcc", "clang"]) |> find_compiler
 
-    if cflags = System.get_env("CFLAGS") do
-      # FIXME: this isn't going to work too well with quoted spaces
-      # inside arguments
-      flags = [flags, String.split(cflags)]
-    end
+    flags =
+      case cflags = System.get_env("CFLAGS") do
+	# FIXME: this isn't going to work too well with quoted spaces
+	# inside arguments
+	true -> [flags, String.split(cflags)]
+	_ -> flags
+      end
 
     # Create the directory (e.g. "priv/")
     File.mkdir_p!(Path.dirname(file))

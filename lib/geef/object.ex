@@ -44,15 +44,19 @@ defmodule Geef.Object do
     Tree.get(tree, key)
   end
 
-  def get(tree = %Object{type: :tree}, key) do
+  def get(tree = %Object{type: :tree}, key, default \\ nil) do
     case fetch(tree, key) do
       {:ok, entry} -> entry
-      {:error, _} -> nil
+      {:error, _} -> default
     end
   end
 
   # Git data is immutable
   def get_and_update(_tree, _key, _fun) do
+    raise ArgumentError
+  end
+
+  def pop(_tree, _key) do
     raise ArgumentError
   end
 
