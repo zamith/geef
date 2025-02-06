@@ -20,6 +20,6 @@ defmodule Geef.Config do
     :geef_config.get_string(config, make_config_key(key))
   end
 
-  defp make_config_key(key) when is_binary(key), do: String.to_char_list(key)
+  defp make_config_key(key) when is_binary(key), do: String.to_charlist(key)
   defp make_config_key(key), do: key
 end

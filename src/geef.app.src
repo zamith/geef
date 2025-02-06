@@ -1,6 +1,6 @@
 {application, geef,
  [
-  {description, ""},
+  {description, "Wrapper over libgit2"},
   {vsn, "0.0.1"},
   {registered, []},
   {applications, [

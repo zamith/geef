@@ -4,7 +4,7 @@
 -include_lib("eunit/include/eunit.hrl").
 -endif.
 
--include("geef_records.hrl").
+-include("./src/geef_records.hrl").
 
 -type blob() :: geef_obj:object(blob).
 -export_type([blob/0]).

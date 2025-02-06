@@ -2,9 +2,74 @@
 %%% NIF functions, not to be used directly.
 
 -module(geef_nif).
--compile(export_all).
+-export([
+    repository_open/1,
+    repository_is_bare/1,
+    repository_get_path/1,
+    repository_get_workdir/1,
+    repository_get_odb/1,
+    repository_get_config/1,
+    repository_init/2,
+    repository_discover/1,
+    reference_list/1,
+    reference_create/5,
+    reference_to_id/2,
+    reference_glob/2,
+    reference_lookup/2,
+    reference_iterator/2,
+    reference_next/1,
+    reference_resolve/2,
+    reference_dwim/2,
+    reference_has_log/2,
+    reflog_read/2,
+    reflog_delete/2,
+    odb_object_exists/2,
+    odb_write/3,
+    oid_fmt/1,
+    oid_parse/1,
+    object_lookup/2,
+    object_id/1,
+    commit_tree_id/1,
+    commit_tree/1,
+    commit_create/8,
+    commit_message/1,
+    tree_bypath/2,
+    tree_nth/2,
+    tree_count/1,
+    blob_size/1,
+    blob_content/1,
+    tag_peel/1,
+    library_version/0,
+    revwalk_new/1,
+    revwalk_push/3,
+    revwalk_next/1,
+    revwalk_sorting/2,
+    revwalk_simplify_first_parent/1,
+    revwalk_reset/1,
+    index_new/0,
+    index_write/1,
+    index_write_tree/1,
+    index_write_tree/2,
+    index_read_tree/2,
+    index_count/1,
+    index_nth/2,
+    index_get/3,
+    index_add/2,
+    index_clear/1,
+    signature_default/1,
+    signature_new/2,
+    signature_new/3,
+    revparse_single/2,
+    config_set_bool/3,
+    config_get_bool/2,
+    config_set_string/3,
+    config_get_string/2,
+    config_open/1,
+    nif_error/1,
+    load_enif/0
+]).
 
--include("geef_records.hrl").
+-include("./src/geef_records.hrl").
 
 -on_load(load_enif/0).
 
@@ -85,7 +150,7 @@ reflog_read(_Handle, _Name) ->
 reflog_delete(_Handle, _Name) ->
     ?NIF_FN.
 
-odb_object_exists(_Val, _Val) ->
+odb_object_exists(_Val, _OtherVal) ->
     nif_error(?LINE).
 
 -spec odb_write(term(), iolist(), atom()) -> term().
@@ -238,8 +303,8 @@ nif_error(Line) ->
 load_enif() ->
     case code:priv_dir(geef) of
         {error, bad_name} ->
-            SoName = filename:join("priv", geef);
+            SoName = "priv/geef";
         Dir ->
-            SoName = filename:join(Dir, geef)
+            SoName = filename:join(Dir, "geef")
     end,
     erlang:load_nif(SoName, 0).

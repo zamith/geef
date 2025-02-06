@@ -35,13 +35,13 @@ defmodule Mix.Tasks.Compile.Nif do
   """
 
   def run(_) do
-    project = Mix.Project.get!
+    project = Mix.Project.get!()
 
-    Mix.shell.info("* Running make...")
-    Mix.shell.info(:os.cmd('make'))
+    Mix.shell().info("* Running make...")
+    Mix.shell().info(:os.cmd(~c"make"))
 
     if function_exported?(project, :nif, 0) do
-      do_run(project.nif)
+      do_run(project.nif())
     else
       :noop
     end
@@ -56,10 +56,10 @@ defmodule Mix.Tasks.Compile.Nif do
 
     flags =
       case cflags = System.get_env("CFLAGS") do
-	# FIXME: this isn't going to work too well with quoted spaces
-	# inside arguments
-	true -> [flags, String.split(cflags)]
-	_ -> flags
+        # FIXME: this isn't going to work too well with quoted spaces
+        # inside arguments
+        true -> [flags, String.split(cflags)]
+        _ -> flags
       end
 
     # Create the directory (e.g. "priv/")
@@ -74,15 +74,21 @@ defmodule Mix.Tasks.Compile.Nif do
     case Mix.Utils.extract_stale(to_check, [file]) do
       [] ->
         :noop
+
       _ ->
-        Mix.shell.info("* Compiling #{file}")
-        args = ["-shared", "-fpic", "-o", file, to_compile, flags] |> List.flatten
-        port = Port.open({:spawn_executable, compiler},
-                         [:stream, :binary, :use_stdio, :stderr_to_stdout, :hide,
-                          :exit_status, {:args, args}])
+        Mix.shell().info("* Compiling #{file}")
+        args = ["-shared", "-fpic", "-o", file, to_compile, flags] |> List.flatten()
+
+        port =
+          Port.open(
+            {:spawn_executable, compiler},
+            [:stream, :binary, :use_stdio, :stderr_to_stdout, :hide, :exit_status, {:args, args}]
+          )
+
         if do_cmd(port) != 0 do
           raise Mix.Error, message: "Error compiling #{file}"
         end
+
         :ok
     end
   end
@@ -91,6 +97,7 @@ defmodule Mix.Tasks.Compile.Nif do
     case System.find_executable(compiler) do
       nil ->
         find_compiler(tail)
+
       path ->
         path
     end
@@ -101,32 +108,41 @@ defmodule Mix.Tasks.Compile.Nif do
       {^port, {:data, data}} ->
         IO.write(data)
         do_cmd(port)
+
       {^port, {:exit_status, status}} ->
         status
     end
   end
-
 end
 
 defmodule Geef.Mixfile do
   use Mix.Project
 
   def project do
-    [ app: :geef,
+    env = Mix.env()
+
+    [
+      app: :geef,
       version: "0.0.1",
-      compilers: [:nif, :erlang, :elixir, :app],
-      deps: deps,
-      dialyzer: dialyzer ]
+      elixir: "~> 1.17",
+      elixirc_paths: elixirc_paths(env),
+      start_permanent: env == :prod,
+      deps: deps()
+    ]
   end
 
   def nif do
-    [ file: "#{Path.join [__DIR__, "priv", "geef.so"]}",
-      flags: "-lgit2" ]
+    [file: "#{Path.join([__DIR__, "priv", "geef.so"])}", flags: "-lgit2 -L/opt/homebrew/lib"]
   end
 
-  # Configuration for the OTP application
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
+
+  # Run "mix help compile.app" to learn about applications.
   def application do
-    []
+    [
+      extra_applications: [:logger]
+    ]
   end
 
   # Returns the list of dependencies in the format:
@@ -134,10 +150,4 @@ defmodule Geef.Mixfile do
   defp deps do
     []
   end
-
-  def dialyzer do
-    [ plt_apps: [:erts, :kernel, :stdlib, :mnesia],
-      flags: ["-Wunmatched_returns","-Werror_handling","-Wrace_conditions", "-Wno_opaque"]]
-  end
-
 end

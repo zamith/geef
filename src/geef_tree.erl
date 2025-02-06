@@ -6,7 +6,7 @@
 
 -export([get/2, nth/2, count/1, lookup/2]).
 
--include("geef_records.hrl").
+-include("./src/geef_records.hrl").
 
 -type tree() :: geef_obj:object(tree).
 -type entry() :: #geef_tree_entry{}.

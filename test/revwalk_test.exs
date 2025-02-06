@@ -3,9 +3,8 @@ defmodule RevwalkTest do
   use Geef
   import RepoHelpers
 
-
   setup do
-    {repo, path, head, boring_ancestor} = tmp_commit_line
+    {repo, path, head, boring_ancestor} = tmp_commit_line()
     Process.link(repo)
     {:ok, walk} = Repository.revwalk(repo)
     on_exit(fn -> File.rm_rf!(path) end)
@@ -19,8 +18,9 @@ defmodule RevwalkTest do
     assert 3 = count_walk(walk)
   end
 
-  defp count_walk walk, acc \\ 0
-  defp count_walk walk, acc do
+  defp count_walk(walk, acc \\ 0)
+
+  defp count_walk(walk, acc) do
     case Revwalk.next(walk) do
       {:ok, _} -> count_walk(walk, acc + 1)
       {:error, :iterover} -> acc
